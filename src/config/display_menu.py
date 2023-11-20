@@ -32,8 +32,9 @@ class DisplayMenu:
     3> Read FeedBacks
     4> Raise Issues
     5> See Salary History
-    6> Change Password
-    7> Log Out
+    6> Handle Leaves
+    7> Change Password
+    8> Log Out
     \n"""
     HANDLE_TEACHER_PROMPT = """\nWhat do you want to do?
     1> Approve Teacher

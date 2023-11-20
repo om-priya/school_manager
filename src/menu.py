@@ -81,7 +81,7 @@ def teacher_menu(user_id):
     """Contains Menu For Teacher"""
     print(DisplayMenu.TEACHER_MAIN_PROMPT)
 
-    user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-7]"))
+    user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-8]"))
 
     while True:
         match user_req:
@@ -96,14 +96,16 @@ def teacher_menu(user_id):
             case "5":
                 TeacherController.salary_history(user_id=user_id)
             case "6":
-                change_password(user_id)
+                TeacherController.handle_leaves(user_id=user_id)
             case "7":
+                change_password(user_id)
+            case "8":
                 print(PromptMessage.LOGGED_OUT)
             case _:
-                print(PromptMessage.INVALID_INPUT.format("Enter only [1-7]"))
+                print(PromptMessage.INVALID_INPUT.format("Enter only [1-8]"))
         # breaking from super admin loop
-        if user_req in ["6", "7"]:
+        if user_req in ["7", "8"]:
             break
 
         print(DisplayMenu.TEACHER_MAIN_PROMPT)
-        user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-7]"))
+        user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-8]"))
