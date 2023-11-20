@@ -1,6 +1,7 @@
 """Leave Handler File"""
 
 import logging
+import time
 from datetime import datetime
 import shortuuid
 from src.config.regex_pattern import RegexPatterns
@@ -27,6 +28,13 @@ def apply_leave(user_id):
     if leave_date <= curr_date:
         logger.error("%s leave_date is previous to curr date %s", leave_date, curr_date)
         print(PromptMessage.INVALID_DATE.format(leave_date, curr_date))
+        return
+
+    # to handle date which fits the format but can't be possible in real world
+    try:
+        leave_date = time.strptime(leave_date, "%d-%m-%Y")
+    except ValueError:
+        print("Invalid date!")
         return
 
     no_of_days = pattern_validator(
