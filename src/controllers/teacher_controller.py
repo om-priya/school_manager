@@ -6,10 +6,11 @@ from src.controllers.helper.helper_function import (
     view_personal_info,
     check_empty_data,
 )
-from src.config.display_menu import PromptMessage
+from src.config.display_menu import PromptMessage, DisplayMenu
 from src.config.headers_for_output import TableHeaders
 from src.config.sqlite_queries import TeacherQueries, UserQueries
 from src.controllers.handlers import issue_handler as IssueHandler
+from src.controllers.handlers import leave_handler as LeaveHandler
 from src.database import database_access as DAO
 from src.utils.pretty_print import pretty_print
 
@@ -50,3 +51,20 @@ def raise_issue(user_id):
 def salary_history(user_id):
     """To view salary history for a teacher"""
     fetch_salary_history(user_id)
+
+
+def handle_leaves(user_id):
+    """It will handle all the leaves related functionality"""
+    while True:
+        print(DisplayMenu.LEAVES_PROMPT)
+
+        user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-2]"))
+        match user_req:
+            case "1":
+                LeaveHandler.see_leave_status(user_id=user_id)
+            case "2":
+                LeaveHandler.apply_leave(user_id=user_id)
+            case "3":
+                break
+            case _:
+                print(PromptMessage.INVALID_INPUT.format("Enter Only [1-3]"))
