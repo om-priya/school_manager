@@ -2,9 +2,9 @@
 import os
 import shortuuid
 from dotenv import load_dotenv
-from src.database import database_access as DAO
-from src.config.sqlite_queries import CreateTable
-from src.utils.hash_password import hash_password
+from database import database_access as DAO
+from config.sqlite_queries import CreateTable
+from utils.hash_password import hash_password
 
 load_dotenv()
 

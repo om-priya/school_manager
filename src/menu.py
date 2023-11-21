@@ -1,11 +1,11 @@
 """This File COntains the Menu of Different roles through Which a end-point user can 
 go through different modules"""
-from src.config.display_menu import DisplayMenu, PromptMessage
-from src.controllers import principal_controller as PrincipalController
-from src.controllers import super_admin_controller as SuperAdminController
-from src.controllers import teacher_controller as TeacherController
-from src.controllers.helper.helper_function import change_password
-from src.utils.exception_handler import exception_checker
+from config.display_menu import DisplayMenu, PromptMessage
+from controllers import principal_controller as PrincipalController
+from controllers import super_admin_controller as SuperAdminController
+from controllers import teacher_controller as TeacherController
+from controllers.helper.helper_function import change_password
+from utils.exception_handler import exception_checker
 
 
 @exception_checker

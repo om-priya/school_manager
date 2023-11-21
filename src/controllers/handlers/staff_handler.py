@@ -1,13 +1,13 @@
 """Staff Handler File"""
 import shortuuid
-from src.config.regex_pattern import RegexPatterns
-from src.config.sqlite_queries import StaffQueries
-from src.config.headers_for_output import TableHeaders
-from src.config.display_menu import PromptMessage
-from src.database import database_access as DAO
-from src.utils.pretty_print import pretty_print
-from src.utils.exception_handler import exception_checker
-from src.utils import validate
+from config.regex_pattern import RegexPatterns
+from config.sqlite_queries import StaffQueries
+from config.headers_for_output import TableHeaders
+from config.display_menu import PromptMessage
+from database import database_access as DAO
+from utils.pretty_print import pretty_print
+from utils.exception_handler import exception_checker
+from utils import validate
 
 
 def fetch_staff_status(staff_id):

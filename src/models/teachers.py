@@ -1,13 +1,13 @@
 """This file contains a class for teacher"""
 import logging
 import shortuuid
-from src.models.users import User
-from src.config.display_menu import PromptMessage
-from src.database import database_access as DAO
-from src.database.db_connector import DatabaseConnection
-from src.config.sqlite_queries import TeacherQueries, CreateTable, DatabaseConfig
-from src.utils.exception_handler import exception_checker
-from src.utils.hash_password import hash_password
+from models.users import User
+from config.display_menu import PromptMessage
+from database import database_access as DAO
+from database.db_connector import DatabaseConnection
+from config.sqlite_queries import TeacherQueries, CreateTable, DatabaseConfig
+from utils.exception_handler import exception_checker
+from utils.hash_password import hash_password
 
 logger = logging.getLogger(__name__)
 

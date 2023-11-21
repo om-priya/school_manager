@@ -3,15 +3,15 @@
 from datetime import datetime
 import logging
 import shortuuid
-from src.config.regex_pattern import RegexPatterns
-from src.config.headers_for_output import TableHeaders
-from src.utils.pretty_print import pretty_print
-from src.utils.validate import pattern_validator, uuid_validator
-from src.utils.exception_handler import exception_checker
-from src.config.sqlite_queries import TeacherQueries, CreateTable, PrincipalQueries
-from src.config.display_menu import PromptMessage
-from src.database import database_access as DAO
-from src.controllers.helper.helper_function import check_empty_data
+from config.regex_pattern import RegexPatterns
+from config.headers_for_output import TableHeaders
+from utils.pretty_print import pretty_print
+from utils.validate import pattern_validator, uuid_validator
+from utils.exception_handler import exception_checker
+from config.sqlite_queries import TeacherQueries, CreateTable, PrincipalQueries
+from config.display_menu import PromptMessage
+from database import database_access as DAO
+from controllers.helper.helper_function import check_empty_data
 
 logger = logging.getLogger(__name__)
 

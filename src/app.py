@@ -3,10 +3,10 @@ through which they can manage different entities in their school.
 The base assumption of this project is that it manages with the perspective of one school 
 To check for super admin credentials go to /src/super_admin_meny.py """
 import logging
-from src.config.display_menu import DisplayMenu, PromptMessage
-from src.menu import super_admin_menu, principal_menu, teacher_menu
-from src.controllers import user_controller as UserController
-from src.utils.initializer import initialize_app
+from config.display_menu import DisplayMenu, PromptMessage
+from menu import super_admin_menu, principal_menu, teacher_menu
+from controllers import user_controller as UserController
+from utils.initializer import initialize_app
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",

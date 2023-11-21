@@ -2,9 +2,8 @@
 
 import re
 import maskpass
-from src.config.regex_pattern import RegexPatterns
-
-from src.config.display_menu import PromptMessage
+from config.regex_pattern import RegexPatterns
+from config.display_menu import PromptMessage
 
 
 def validator(pattern, input_data):

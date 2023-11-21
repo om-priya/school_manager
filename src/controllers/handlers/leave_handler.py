@@ -4,15 +4,15 @@ import logging
 import time
 from datetime import datetime
 import shortuuid
-from src.config.regex_pattern import RegexPatterns
-from src.config.sqlite_queries import UserQueries, CreateTable
-from src.config.display_menu import PromptMessage
-from src.config.headers_for_output import TableHeaders
-from src.database import database_access as DAO
-from src.utils.pretty_print import pretty_print
-from src.utils.validate import pattern_validator
-from src.utils.exception_handler import exception_checker
-from src.controllers.helper.helper_function import check_empty_data
+from config.regex_pattern import RegexPatterns
+from config.sqlite_queries import UserQueries, CreateTable
+from config.display_menu import PromptMessage
+from config.headers_for_output import TableHeaders
+from database import database_access as DAO
+from utils.pretty_print import pretty_print
+from utils.validate import pattern_validator
+from utils.exception_handler import exception_checker
+from controllers.helper.helper_function import check_empty_data
 
 logger = logging.getLogger(__name__)
 

@@ -1,18 +1,18 @@
 """ This Module Contains all the functionality that a teacher can perform """
 import logging
-from src.controllers.handlers.event_handler import read_event
-from src.controllers.helper.helper_function import (
+from controllers.handlers.event_handler import read_event
+from controllers.helper.helper_function import (
     fetch_salary_history,
     view_personal_info,
     check_empty_data,
 )
-from src.config.display_menu import PromptMessage, DisplayMenu
-from src.config.headers_for_output import TableHeaders
-from src.config.sqlite_queries import TeacherQueries, UserQueries
-from src.controllers.handlers import issue_handler as IssueHandler
-from src.controllers.handlers import leave_handler as LeaveHandler
-from src.database import database_access as DAO
-from src.utils.pretty_print import pretty_print
+from config.display_menu import PromptMessage, DisplayMenu
+from config.headers_for_output import TableHeaders
+from config.sqlite_queries import TeacherQueries, UserQueries
+from controllers.handlers import issue_handler as IssueHandler
+from controllers.handlers import leave_handler as LeaveHandler
+from database import database_access as DAO
+from utils.pretty_print import pretty_print
 
 logger = logging.getLogger(__name__)
 

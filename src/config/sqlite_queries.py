@@ -4,7 +4,7 @@
 class DatabaseConfig:
     """This Class contains config for database"""
 
-    DB_PATH = "src\\database\\school.db"
+    DB_PATH = "database\\school.db"
 
 
 class TeacherQueries:

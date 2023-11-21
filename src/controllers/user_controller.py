@@ -1,13 +1,13 @@
 """This module controls the login and signup functionality"""
 import logging
-from src.models.principals import Principal
-from src.models.teachers import Teacher
-from src.config.display_menu import PromptMessage
-from src.config.regex_pattern import RegexPatterns
-from src.config.sqlite_queries import UserQueries
-from src.database import database_access as DAO
-from src.utils import validate
-from src.utils.hash_password import hash_password
+from models.principals import Principal
+from models.teachers import Teacher
+from config.display_menu import PromptMessage
+from config.regex_pattern import RegexPatterns
+from config.sqlite_queries import UserQueries
+from database import database_access as DAO
+from utils import validate
+from utils.hash_password import hash_password
 
 logger = logging.getLogger(__name__)
 

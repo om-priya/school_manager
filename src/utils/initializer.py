@@ -1,10 +1,10 @@
 """This Function will run before main and create table and db"""
 
 import logging
-from src.database import database_access as DAO
-from src.database.db_connector import DatabaseConnection
-from src.config.sqlite_queries import CreateTable, UserQueries, DatabaseConfig
-from src.super_admin_info import create_super_admin
+from database import database_access as DAO
+from database.db_connector import DatabaseConnection
+from config.sqlite_queries import CreateTable, UserQueries, DatabaseConfig
+from super_admin_info import create_super_admin
 
 logger = logging.getLogger(__name__)
 

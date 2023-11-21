@@ -2,7 +2,7 @@
 from functools import wraps
 import logging
 import sqlite3
-from src.config.display_menu import PromptMessage
+from config.display_menu import PromptMessage
 
 logger = logging.getLogger(__name__)
 

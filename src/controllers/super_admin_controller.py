@@ -2,21 +2,21 @@
 import logging
 from datetime import datetime
 import shortuuid
-from src.config.display_menu import DisplayMenu, PromptMessage
-from src.config.regex_pattern import RegexPatterns
-from src.config.headers_for_output import TableHeaders
-from src.config.sqlite_queries import (
+from config.display_menu import DisplayMenu, PromptMessage
+from config.regex_pattern import RegexPatterns
+from config.headers_for_output import TableHeaders
+from config.sqlite_queries import (
     TeacherQueries,
     PrincipalQueries,
     UserQueries,
     CreateTable,
 )
-from src.controllers.handlers import principal_handler as PrincipalHandler
-from src.controllers.handlers import staff_handler as StaffHandler
-from src.controllers.helper.helper_function import check_empty_data
-from src.database import database_access as DAO
-from src.utils.pretty_print import pretty_print
-from src.utils import validate
+from controllers.handlers import principal_handler as PrincipalHandler
+from controllers.handlers import staff_handler as StaffHandler
+from controllers.helper.helper_function import check_empty_data
+from database import database_access as DAO
+from utils.pretty_print import pretty_print
+from utils import validate
 
 logger = logging.getLogger(__name__)
 

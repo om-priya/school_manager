@@ -1,14 +1,14 @@
 """Principal Handler File"""
 import logging
-from src.config.regex_pattern import RegexPatterns
-from src.config.headers_for_output import TableHeaders
-from src.utils.pretty_print import pretty_print
-from src.utils.exception_handler import exception_checker
-from src.utils import validate
-from src.config.sqlite_queries import PrincipalQueries
-from src.config.display_menu import PromptMessage
-from src.controllers.helper.helper_function import check_empty_data
-from src.database import database_access as DAO
+from config.regex_pattern import RegexPatterns
+from config.headers_for_output import TableHeaders
+from utils.pretty_print import pretty_print
+from utils.exception_handler import exception_checker
+from utils import validate
+from config.sqlite_queries import PrincipalQueries
+from config.display_menu import PromptMessage
+from controllers.helper.helper_function import check_empty_data
+from database import database_access as DAO
 
 logger = logging.getLogger(__name__)
 

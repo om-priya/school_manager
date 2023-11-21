@@ -1,14 +1,14 @@
 """This file contains some helper function which are used for multiple controllers"""
 
 import logging
-from src.config.display_menu import PromptMessage
-from src.config.sqlite_queries import UserQueries
-from src.config.regex_pattern import RegexPatterns
-from src.config.headers_for_output import TableHeaders
-from src.database import database_access as DAO
-from src.utils.pretty_print import pretty_print
-from src.utils.hash_password import hash_password
-from src.utils import validate
+from config.display_menu import PromptMessage
+from config.sqlite_queries import UserQueries
+from config.regex_pattern import RegexPatterns
+from config.headers_for_output import TableHeaders
+from database import database_access as DAO
+from utils.pretty_print import pretty_print
+from utils.hash_password import hash_password
+from utils import validate
 
 logger = logging.getLogger(__name__)
 
