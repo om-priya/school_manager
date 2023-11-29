@@ -4,3 +4,4 @@ logs.log
 __pycache__
 .idea
 .pytest_cache
+.tox

@@ -4,7 +4,7 @@ import shortuuid
 from models.users import User
 from config.display_menu import PromptMessage
 
-from database import database_access as DAO
+from database.database_access import DatabaseAccess
 from database.db_connector import DatabaseConnection
 from config.sqlite_queries import (
     PrincipalQueries,
@@ -39,7 +39,7 @@ class Principal(User):
     @exception_checker
     def save_principal(self):
         """Save Principal to DB"""
-        school_id = DAO.execute_returning_query(
+        school_id = DatabaseAccess.execute_returning_query(
             TeacherQueries.GET_SCHOOL_ID, (self.school_name,)
         )
         if len(school_id) == 0:

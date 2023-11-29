@@ -8,188 +8,198 @@ from utils import validate
 from config.sqlite_queries import PrincipalQueries
 from config.display_menu import PromptMessage
 from controllers.helper.helper_function import check_empty_data
-from database import database_access as DAO
+from database.database_access import DatabaseAccess
 
 logger = logging.getLogger(__name__)
 
 
-def get_all_active_pid():
-    """Fetch All Principal Id who are active"""
-    res_data = DAO.execute_returning_query(PrincipalQueries.FETCH_PRINCIPAL_ID)
+class PrincipalHandler:
+    @staticmethod
+    def get_all_active_pid():
+        """Fetch All Principal Id who are active"""
+        res_data = DatabaseAccess.execute_returning_query(
+            PrincipalQueries.FETCH_PRINCIPAL_ID
+        )
 
-    return res_data
+        return res_data
 
+    @staticmethod
+    def get_all_pending_id():
+        """Fetch Principal Id who were pending"""
+        res_data = DatabaseAccess.execute_returning_query(
+            PrincipalQueries.FETCH_PENDING_PRINCIPAL_ID
+        )
 
-def get_all_pending_id():
-    """Fetch Principal Id who were pending"""
-    res_data = DAO.execute_returning_query(PrincipalQueries.FETCH_PENDING_PRINCIPAL_ID)
+        return res_data
 
-    return res_data
+    @exception_checker
+    def approve_principal(self):
+        """Approve principal"""
+        principal_id = validate.uuid_validator(
+            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
+            RegexPatterns.UUID_PATTERN,
+        )
 
+        all_principal_id = self.get_all_active_pid()
 
-@exception_checker
-def approve_principal():
-    """Approve principal"""
-    principal_id = validate.uuid_validator(
-        PromptMessage.TAKE_SPECIFIC_ID.format("Principal"), RegexPatterns.UUID_PATTERN
-    )
+        # handling for no principal present
+        if len(all_principal_id) == 0:
+            pending_id = self.get_all_pending_id()
 
-    all_principal_id = get_all_active_pid()
+            # handling for no pending request
+            if check_empty_data(
+                pending_id, PromptMessage.NOTHING_FOUND.format("request for approval")
+            ):
+                return
 
-    # handling for no principal present
-    if len(all_principal_id) == 0:
-        pending_id = get_all_pending_id()
+            # checking whether input id is in pending or not
+            for p_id in pending_id:
+                if p_id[0] == principal_id:
+                    break
+            else:
+                logger.info("Invalid Id's Given")
+                print(PromptMessage.NOTHING_FOUND.format("Principal"))
+                return
+            # saving to db after checking edge cases
 
-        # handling for no pending request
-        if check_empty_data(
-            pending_id, PromptMessage.NOTHING_FOUND.format("request for approval")
-        ):
+            DatabaseAccess.execute_non_returning_query(
+                PrincipalQueries.APPROVE_PRINCIPAL, (principal_id,)
+            )
+        else:
+            logger.warning("Can't add more than one principal")
+            print(PromptMessage.MULTIPLE_PRINCIPAL_ERROR)
             return
 
-        # checking whether input id is in pending or not
-        for p_id in pending_id:
-            if p_id[0] == principal_id:
-                break
-        else:
-            logger.info("Invalid Id's Given")
+        print(PromptMessage.ADDED_SUCCESSFULLY.format("Principal"))
+
+    @exception_checker
+    def get_all_principal(self):
+        """Get All principals"""
+        res_data = DatabaseAccess.execute_returning_query(
+            PrincipalQueries.GET_ALL_PRINCIPAL
+        )
+
+        if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
+            return
+
+        headers = ["User_id", "name", "gender", "email", "status"]
+        headers = (
+            TableHeaders.ID.format("User"),
+            TableHeaders.NAME,
+            TableHeaders.GENDER,
+            TableHeaders.EMAIL,
+            TableHeaders.STATUS,
+        )
+        pretty_print(res_data, headers)
+
+    @exception_checker
+    def get_principal_by_id(self):
+        """Get Specific principal"""
+        principal_id = validate.uuid_validator(
+            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
+            RegexPatterns.UUID_PATTERN,
+        )
+
+        res_data = DatabaseAccess.execute_returning_query(
+            PrincipalQueries.GET_PRINCIPAL_BY_ID, (principal_id,)
+        )
+
+        if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
+            return
+
+        headers = (
+            TableHeaders.ID.format("User"),
+            TableHeaders.NAME,
+            TableHeaders.GENDER,
+            TableHeaders.EMAIL,
+            TableHeaders.STATUS,
+        )
+        pretty_print(res_data, headers)
+
+    @exception_checker
+    def update_principal(self):
+        """Update principal"""
+        # taking input from console
+        principal_id = validate.uuid_validator(
+            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
+            RegexPatterns.UUID_PATTERN,
+        )
+        field_to_update = input(PromptMessage.FIELD_UPDATE).lower()
+
+        all_principal_id = self.get_all_active_pid()
+
+        # Checking with assumption only one principal is present
+        if principal_id != all_principal_id[0][0]:
             print(PromptMessage.NOTHING_FOUND.format("Principal"))
             return
-        # saving to db after checking edge cases
 
-        DAO.execute_non_returning_query(
-            PrincipalQueries.APPROVE_PRINCIPAL, (principal_id,)
+        options = (
+            TableHeaders.NAME.lower(),
+            TableHeaders.GENDER.lower(),
+            TableHeaders.EMAIL.lower(),
+            TableHeaders.PHONE.lower(),
+            TableHeaders.EXPERIENCE.lower(),
         )
-    else:
-        logger.warning("Can't add more than one principal")
-        print(PromptMessage.MULTIPLE_PRINCIPAL_ERROR)
-        return
 
-    print(PromptMessage.ADDED_SUCCESSFULLY.format("Principal"))
+        # checking field to update
+        if field_to_update not in options:
+            logger.info("No Such Field is present")
+            print(PromptMessage.NOTHING_FOUND.format("Field"))
+            return
 
+        # getting table name
+        if field_to_update in options[:4]:
+            table_name = "user"
+        else:
+            table_name = "principal"
 
-@exception_checker
-def get_all_principal():
-    """Get All principals"""
-    res_data = DAO.execute_returning_query(PrincipalQueries.GET_ALL_PRINCIPAL)
+        # validating and saving to db
+        match field_to_update:
+            case "name":
+                update_value = validate.pattern_validator(
+                    PromptMessage.TAKE_INPUT.format("Name"), RegexPatterns.NAME_PATTERN
+                )
+            case "gender":
+                update_value = validate.pattern_validator(
+                    PromptMessage.TAKE_INPUT.format("Gender (M/F)"),
+                    RegexPatterns.GENDER_PATTERN,
+                )
+            case "email":
+                update_value = validate.pattern_validator(
+                    PromptMessage.TAKE_INPUT.format("email"),
+                    RegexPatterns.EMAIL_PATTERN,
+                )
+            case "phone":
+                update_value = validate.pattern_validator(
+                    PromptMessage.TAKE_INPUT.format("Phone Number"),
+                    RegexPatterns.PHONE_PATTERN,
+                )
+            case "experience":
+                update_value = validate.pattern_validator(
+                    PromptMessage.TAKE_INPUT.format("Experience in Year"),
+                    RegexPatterns.EXPERIENCE_PATTERN,
+                )
 
-    if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
-        return
+        DatabaseAccess.execute_non_returning_query(
+            PrincipalQueries.UPDATE_PRINCIPAL.format(table_name, field_to_update),
+            (update_value, principal_id),
+        )
 
-    headers = ["User_id", "name", "gender", "email", "status"]
-    headers = (
-        TableHeaders.ID.format("User"),
-        TableHeaders.NAME,
-        TableHeaders.GENDER,
-        TableHeaders.EMAIL,
-        TableHeaders.STATUS,
-    )
-    pretty_print(res_data, headers)
+    @exception_checker
+    def delete_principal(self):
+        """Delete Principal"""
+        principal_id = validate.uuid_validator(
+            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
+            RegexPatterns.UUID_PATTERN,
+        )
 
+        all_principal_id = self.get_all_active_pid()
 
-@exception_checker
-def get_principal_by_id():
-    """Get Specific principal"""
-    principal_id = validate.uuid_validator(
-        PromptMessage.TAKE_SPECIFIC_ID.format("Principal"), RegexPatterns.UUID_PATTERN
-    )
+        if principal_id != all_principal_id[0][0]:
+            logger.error("No Such Principal With id %s", principal_id)
+            print(PromptMessage.NOTHING_FOUND.format("Principal"))
+            return
 
-    res_data = DAO.execute_returning_query(
-        PrincipalQueries.GET_PRINCIPAL_BY_ID, (principal_id,)
-    )
-
-    if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
-        return
-
-    headers = (
-        TableHeaders.ID.format("User"),
-        TableHeaders.NAME,
-        TableHeaders.GENDER,
-        TableHeaders.EMAIL,
-        TableHeaders.STATUS,
-    )
-    pretty_print(res_data, headers)
-
-
-@exception_checker
-def update_principal():
-    """Update principal"""
-    # taking input from console
-    principal_id = validate.uuid_validator(
-        PromptMessage.TAKE_SPECIFIC_ID.format("Principal"), RegexPatterns.UUID_PATTERN
-    )
-    field_to_update = input(PromptMessage.FIELD_UPDATE).lower()
-
-    all_principal_id = get_all_active_pid()
-
-    # Checking with assumption only one principal is present
-    if principal_id != all_principal_id[0][0]:
-        print(PromptMessage.NOTHING_FOUND.format("Principal"))
-        return
-
-    options = (
-        TableHeaders.NAME.lower(),
-        TableHeaders.GENDER.lower(),
-        TableHeaders.EMAIL.lower(),
-        TableHeaders.PHONE.lower(),
-        TableHeaders.EXPERIENCE.lower(),
-    )
-
-    # checking field to update
-    if field_to_update not in options:
-        logger.info("No Such Field is present")
-        print(PromptMessage.NOTHING_FOUND.format("Field"))
-        return
-
-    # getting table name
-    if field_to_update in options[:4]:
-        table_name = "user"
-    else:
-        table_name = "principal"
-
-    # validating and saving to db
-    match field_to_update:
-        case "name":
-            update_value = validate.pattern_validator(
-                PromptMessage.TAKE_INPUT.format("Name"), RegexPatterns.NAME_PATTERN
-            )
-        case "gender":
-            update_value = validate.pattern_validator(
-                PromptMessage.TAKE_INPUT.format("Gender (M/F)"),
-                RegexPatterns.GENDER_PATTERN,
-            )
-        case "email":
-            update_value = validate.pattern_validator(
-                PromptMessage.TAKE_INPUT.format("email"), RegexPatterns.EMAIL_PATTERN
-            )
-        case "phone":
-            update_value = validate.pattern_validator(
-                PromptMessage.TAKE_INPUT.format("Phone Number"),
-                RegexPatterns.PHONE_PATTERN,
-            )
-        case "experience":
-            update_value = validate.pattern_validator(
-                PromptMessage.TAKE_INPUT.format("Experience in Year"),
-                RegexPatterns.EXPERIENCE_PATTERN,
-            )
-
-    DAO.execute_non_returning_query(
-        PrincipalQueries.UPDATE_PRINCIPAL.format(table_name, field_to_update),
-        (update_value, principal_id),
-    )
-
-
-@exception_checker
-def delete_principal():
-    """Delete Principal"""
-    principal_id = validate.uuid_validator(
-        PromptMessage.TAKE_SPECIFIC_ID.format("Principal"), RegexPatterns.UUID_PATTERN
-    )
-
-    all_principal_id = get_all_active_pid()
-
-    if principal_id != all_principal_id[0][0]:
-        logger.error("No Such Principal With id %s", principal_id)
-        print(PromptMessage.NOTHING_FOUND.format("Principal"))
-        return
-
-    DAO.execute_non_returning_query(PrincipalQueries.DELETE_PRINCIPAL, (principal_id,))
+        DatabaseAccess.execute_non_returning_query(
+            PrincipalQueries.DELETE_PRINCIPAL, (principal_id,)
+        )
