@@ -1,6 +1,7 @@
 # To mock whole db
 import pytest
 import sqlite3
+from src.database.db_connector import DatabaseConnection
 
 
 @pytest.fixture
@@ -41,3 +42,11 @@ def mock_execute_non_returning_query_with_error():
         raise sqlite3.Error
 
     return func_with_error
+
+
+@pytest.fixture
+def mock_database_connection(mocker):
+    mock_connection = mocker.MagicMock(spec=DatabaseConnection)
+    mock_connection.__enter__.return_value = mock_connection
+    mock_connection.__exit__.return_value = None
+    return mock_connection

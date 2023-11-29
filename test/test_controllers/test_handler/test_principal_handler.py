@@ -50,7 +50,7 @@ def set_mockeypatch_for_non_returning_query_with_error(
 
 
 @pytest.fixture
-def set_mockeypatch_for_non_returning_query_with_error(
+def set_mockeypatch_for_non_returning_query_without_error(
     monkeypatch, mock_execute_non_returning_query
 ):
     monkeypatch.setattr(
@@ -82,3 +82,156 @@ def test_get_all_pending_id_without_error(
     actual_data = PrincipalHandler.get_all_pending_id()
     assert [("om", "Priya"), ("Shreyansh", "Agrawal")] == actual_data
 
+
+def test_approve_principal_with_active_principal(
+    monkeypatch, dummy_principal_handler_obj, capsys
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "abc",
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: [("abc",)]
+    )
+    dummy_principal_handler_obj.approve_principal()
+    captured = capsys.readouterr()
+    assert "\nCan't add more than one principal" in captured.out
+
+
+def test_approve_principal_with_no_active_no_pending(
+    monkeypatch, dummy_principal_handler_obj, capsys
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "abc",
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: []
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: []
+    )
+    dummy_principal_handler_obj.approve_principal()
+    captured = capsys.readouterr()
+    assert "\nNo such request for approval Found\n" in captured.out
+
+
+def test_approve_principal_with_no_active_invalid_id(
+    monkeypatch, dummy_principal_handler_obj, capsys
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "abc",
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: []
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj,
+        "get_all_pending_id",
+        lambda *args: [("om",), ("Shreyansh",)],
+    )
+    dummy_principal_handler_obj.approve_principal()
+    captured = capsys.readouterr()
+    assert "\nNo such Principal Found\n" in captured.out
+
+
+def test_approve_principal_with_no_active_valid_id(
+    monkeypatch, dummy_principal_handler_obj, mock_execute_non_returning_query, capsys
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "om",
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: []
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj,
+        "get_all_pending_id",
+        lambda *args: [("om",), ("Shreyansh",)],
+    )
+    dummy_principal_handler_obj.approve_principal()
+    captured = capsys.readouterr()
+    assert "\nPrincipal Added Successfully\n" in captured.out
+
+
+def test_get_all_principal_with_no_data(
+    set_mockeypatch_for_returning_query_with_no_data,
+    dummy_principal_handler_obj,
+    capsys,
+):
+    dummy_principal_handler_obj.get_all_principal()
+    captured = capsys.readouterr()
+    assert "\nNo such Principal Found\n" in captured.out
+
+
+def test_get_all_principal_with_data(
+    set_mockeypatch_for_returning_query_valid_data,
+    dummy_principal_handler_obj,
+    capsys,
+):
+    dummy_principal_handler_obj.get_all_principal()
+    captured = capsys.readouterr()
+    assert "om" in captured.out
+
+
+def test_get_principal_by_id_with_no_data(
+    monkeypatch,
+    set_mockeypatch_for_returning_query_with_no_data,
+    dummy_principal_handler_obj,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "om",
+    )
+    dummy_principal_handler_obj.get_principal_by_id()
+    captured = capsys.readouterr()
+    assert "\nNo such Principal Found\n" in captured.out
+
+
+def test_get_principal_by_id_with_data(
+    monkeypatch,
+    set_mockeypatch_for_returning_query_valid_data,
+    dummy_principal_handler_obj,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "om",
+    )
+    dummy_principal_handler_obj.get_principal_by_id()
+    captured = capsys.readouterr()
+    assert "om" in captured.out
+
+
+def test_delete_principal_invalid_id(monkeypatch, dummy_principal_handler_obj, capsys):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "abc",
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: [("om",)]
+    )
+    dummy_principal_handler_obj.delete_principal()
+    captured = capsys.readouterr()
+    assert "\nNo such Principal Found\n" in captured.out
+
+
+def test_delete_principal_valid_id(
+    monkeypatch,
+    dummy_principal_handler_obj,
+    set_mockeypatch_for_non_returning_query_without_error,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "om",
+    )
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: [("om",)]
+    )
+    dummy_principal_handler_obj.delete_principal()
+    captured = capsys.readouterr()
+    assert "\nDeleted Successfully" in captured.out

@@ -41,7 +41,6 @@ class PrincipalHandler:
         )
 
         all_principal_id = self.get_all_active_pid()
-
         # handling for no principal present
         if len(all_principal_id) == 0:
             pending_id = self.get_all_pending_id()
@@ -82,7 +81,6 @@ class PrincipalHandler:
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
             return
 
-        headers = ["User_id", "name", "gender", "email", "status"]
         headers = (
             TableHeaders.ID.format("User"),
             TableHeaders.NAME,
@@ -203,3 +201,4 @@ class PrincipalHandler:
         DatabaseAccess.execute_non_returning_query(
             PrincipalQueries.DELETE_PRINCIPAL, (principal_id,)
         )
+        print(PromptMessage.SUCCESS_ACTION.format("Deleted"))
