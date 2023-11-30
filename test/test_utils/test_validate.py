@@ -82,7 +82,6 @@ def test_uuid_validator(monkeypatch):
 
 # testing for password validator
 def test_password_validator(monkeypatch):
-    pattern = RegexPatterns.UUID_PATTERN
     test_data_for_input = ["", "1234w", "om1 priya", "Ompriya@123"]
 
     monkeypatch.setattr(

@@ -1,5 +1,6 @@
 from src.models.principals import Principal
 import pytest
+from src.database.db_connector import DatabaseConnection
 
 
 @pytest.fixture
@@ -15,6 +16,18 @@ def dummy_principal_obj():
     }
     dummy_obj = Principal(principal_info)
     return dummy_obj
+
+
+@pytest.fixture
+def mock_database_connection_for_principal(mocker):
+    mock_connection = mocker.MagicMock(spec=DatabaseConnection)
+    mocker.patch(
+        "src.models.principals.DatabaseConnection", return_value=mock_connection
+    )
+    mock_cursor = mocker.MagicMock()
+    mock_connection.__enter__.return_value.cursor.return_value = mock_cursor
+    mock_connection.__exit__.return_value = None
+    return mock_cursor
 
 
 def test_save_principal_invalid_school_name(
@@ -34,7 +47,7 @@ def test_save_principal_valid_school_name(
     monkeypatch,
     mock_execute_returning_query_valid_data,
     dummy_principal_obj,
-    mock_database_connection,
+    mock_database_connection_for_principal,
     capsys,
 ):
     monkeypatch.setattr(
@@ -42,7 +55,8 @@ def test_save_principal_valid_school_name(
         mock_execute_returning_query_valid_data,
     )
     monkeypatch.setattr(
-        "src.models.principals.DatabaseConnection", mock_database_connection
+        "src.models.principals.DatabaseConnection",
+        mock_database_connection_for_principal,
     )
     dummy_principal_obj.save_principal()
 
