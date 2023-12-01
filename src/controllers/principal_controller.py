@@ -26,7 +26,6 @@ class PrincipalController:
 
     def handle_teacher(self):
         """It will handle all the teacher related functionality"""
-        teacher_handler_obj = TeacherHandler()
         while True:
             print(DisplayMenu.HANDLE_TEACHER_PROMPT)
 

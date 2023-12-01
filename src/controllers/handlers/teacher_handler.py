@@ -189,3 +189,4 @@ class TeacherHandler:
         DatabaseAccess.execute_non_returning_query(
             TeacherQueries.DELETE_TEACHER, (teacher_id,)
         )
+        print(PromptMessage.SUCCESS_ACTION.format("Deleted"))

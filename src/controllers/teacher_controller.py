@@ -62,7 +62,7 @@ class TeacherController:
         while True:
             print(DisplayMenu.LEAVES_PROMPT)
 
-            user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-2]"))
+            user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-3]"))
             match user_req:
                 case "1":
                     self.leave_handler_obj.see_leave_status()
