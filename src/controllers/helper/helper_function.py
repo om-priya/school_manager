@@ -5,7 +5,7 @@ from config.display_menu import PromptMessage
 from config.sqlite_queries import UserQueries
 from config.regex_pattern import RegexPatterns
 from config.headers_for_output import TableHeaders
-from database import database_access as DAO
+from database.database_access import DatabaseAccess
 from utils.pretty_print import pretty_print
 from utils.hash_password import hash_password
 from utils import validate
@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 def fetch_salary_history(user_id):
     """Fetching salary history of a particular user"""
-    res_data = DAO.execute_returning_query(UserQueries.GET_SALARY_HISTORY, (user_id,))
+    res_data = DatabaseAccess.execute_returning_query(
+        UserQueries.GET_SALARY_HISTORY, (user_id,)
+    )
 
     # if there is no any records for a teacher
     if len(res_data) == 0:
@@ -35,7 +37,7 @@ def fetch_salary_history(user_id):
 
 def view_personal_info(query, user_id):
     """This function will print a user profile"""
-    res_data = DAO.execute_returning_query(query, (user_id,))
+    res_data = DatabaseAccess.execute_returning_query(query, (user_id,))
 
     # info for logged in user
     headers = (
@@ -58,7 +60,9 @@ def change_password(user_id):
 
     # checking in db with username and password
     params = (username, hashed_password, user_id)
-    res_data = DAO.execute_returning_query(UserQueries.CHECK_USER_EXIST, params)
+    res_data = DatabaseAccess.execute_returning_query(
+        UserQueries.CHECK_USER_EXIST, params
+    )
 
     if len(res_data) == 0:
         print(PromptMessage.WRONG_CREDENTIALS)
@@ -70,7 +74,9 @@ def change_password(user_id):
 
     # update new password to db
     params = (hashed_new_password, user_id)
-    DAO.execute_non_returning_query(UserQueries.CHANGE_PASSWORD_QUERY, params)
+    DatabaseAccess.execute_non_returning_query(
+        UserQueries.CHANGE_PASSWORD_QUERY, params
+    )
     logger.info("Password Changed for user %s", user_id)
     print("Password Updated Successfully")
 

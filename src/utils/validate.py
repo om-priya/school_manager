@@ -1,9 +1,13 @@
 """This module is responsible for validating input fields"""
 
 import re
+from datetime import datetime
 import maskpass
+import logging
 from config.regex_pattern import RegexPatterns
 from config.display_menu import PromptMessage
+
+logger = logging.getLogger(__name__)
 
 
 def validator(pattern, input_data):
@@ -46,3 +50,20 @@ def password_validator():
             password,
         )
     return password
+
+
+def validate_date(prompt) -> None:
+    """Checking date if valid or not"""
+    while True:
+        date_str = input(prompt)
+        try:
+            start_date = datetime.strptime(date_str, "%d-%m-%Y").date()
+            if start_date > datetime.now().date():
+                return start_date
+            elif start_date <= datetime.now().date():
+                print(PromptMessage.INVALID_INPUT.format("For Date"))
+            else:
+                print(PromptMessage.INVALID_INPUT.format("For Date"))
+        except ValueError:
+            logger.exception(ValueError)
+            print(PromptMessage.INVALID_INPUT.format("For Date"))

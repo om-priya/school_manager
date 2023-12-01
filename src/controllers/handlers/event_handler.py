@@ -10,38 +10,45 @@ from utils.exception_handler import exception_checker
 from config.sqlite_queries import CreateTable, UserQueries
 from config.display_menu import PromptMessage
 from config.headers_for_output import TableHeaders
-from database import database_access as DAO
+from database.database_access import DatabaseAccess
 from controllers.helper.helper_function import check_empty_data
 
 logger = logging.getLogger(__name__)
 
 
-@exception_checker
-def read_event():
-    """Read Events"""
-    res_data = DAO.execute_returning_query(UserQueries.READ_NOTICE)
+class EventHandler:
+    def __init__(self, user_id):
+        self.user_id = user_id
 
-    if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Notice")):
-        return
+    @exception_checker
+    def read_event(self):
+        """Read Events"""
+        res_data = DatabaseAccess.execute_returning_query(UserQueries.READ_NOTICE)
 
-    headers = (TableHeaders.ID.format("Notice"), TableHeaders.MESSAGE.format("Notice"))
-    pretty_print(res_data, headers)
+        if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Notice")):
+            return
 
+        headers = (
+            TableHeaders.ID.format("Notice"),
+            TableHeaders.MESSAGE.format("Notice"),
+        )
+        pretty_print(res_data, headers)
 
-@exception_checker
-def create_event(user_id):
-    """Create Events"""
-    notice_id = shortuuid.ShortUUID().random(length=6)
-    created_by = user_id
-    notice_mssg = pattern_validator(
-        PromptMessage.TAKE_INPUT.format("Notice Message"), RegexPatterns.MESSAGE_PATTERN
-    )
-    create_date = datetime.now().strftime("%d-%m-%Y")
+    @exception_checker
+    def create_event(self):
+        """Create Events"""
+        notice_id = shortuuid.ShortUUID().random(length=6)
+        created_by = self.user_id
+        notice_mssg = pattern_validator(
+            PromptMessage.TAKE_INPUT.format("Notice Message"),
+            RegexPatterns.MESSAGE_PATTERN,
+        )
+        create_date = datetime.now().strftime("%d-%m-%Y")
 
-    # Inserting into db
-    DAO.execute_non_returning_query(
-        CreateTable.INSERT_INTO_NOTICE,
-        (notice_id, created_by, notice_mssg, create_date),
-    )
-    logger.info("Added to Notice Board")
-    print(PromptMessage.ADDED_SUCCESSFULLY.format("Notice"))
+        # Inserting into db
+        DatabaseAccess.execute_non_returning_query(
+            CreateTable.INSERT_INTO_NOTICE,
+            (notice_id, created_by, notice_mssg, create_date),
+        )
+        logger.info("Added to Notice Board")
+        print(PromptMessage.ADDED_SUCCESSFULLY.format("Notice"))

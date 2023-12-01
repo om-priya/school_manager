@@ -15,7 +15,7 @@ def exception_checker(func):
         try:
             func(*args, **kwargs)
         except sqlite3.OperationalError as soe:
-            print(f"{PromptMessage.WRONG_QUERY} {soe}")
+            print(f"{PromptMessage.WRONG_QUERY}")
             logger.exception("Something went wrong while executing Query %s", soe)
         except sqlite3.IntegrityError as ige:
             print(f"Integrity Constraint Failed: {ige}")

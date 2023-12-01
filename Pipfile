@@ -8,6 +8,9 @@ shortuuid = "*"
 maskpass = "*"
 tabulate = "*"
 python-dotenv = "*"
+tox = "*"
+pytest-mock = "*"
+pytest-cov = "*"
 
 [dev-packages]
 

@@ -1,64 +1,62 @@
 """Leave Handler File"""
 
 import logging
-import time
 from datetime import datetime
 import shortuuid
 from config.regex_pattern import RegexPatterns
 from config.sqlite_queries import UserQueries, CreateTable
 from config.display_menu import PromptMessage
 from config.headers_for_output import TableHeaders
-from database import database_access as DAO
+from database.database_access import DatabaseAccess
 from utils.pretty_print import pretty_print
-from utils.validate import pattern_validator
+from utils.validate import pattern_validator, validate_date
 from utils.exception_handler import exception_checker
 from controllers.helper.helper_function import check_empty_data
 
 logger = logging.getLogger(__name__)
 
 
-@exception_checker
-def apply_leave(user_id):
-    """Apply Leave"""
-    leave_id = shortuuid.ShortUUID().random(length=6)
-    leave_date = pattern_validator(PromptMessage.DATE_INPUT, RegexPatterns.DATE_PATTERN)
+class LeaveHandler:
+    def __init__(self, user_id):
+        self.user_id = user_id
 
-    curr_date = datetime.now().strftime("%d-%m-%Y")
+    @exception_checker
+    def apply_leave(self):
+        """Apply Leave"""
+        leave_id = shortuuid.ShortUUID().random(length=6)
 
-    if leave_date <= curr_date:
-        logger.error("%s leave_date is previous to curr date %s", leave_date, curr_date)
-        print(PromptMessage.INVALID_DATE.format(leave_date, curr_date))
-        return
+        # to handle date which fits the format but can't be possible in real world
+        leave_date = validate_date(PromptMessage.DATE_INPUT)
 
-    # to handle date which fits the format but can't be possible in real world
-    try:
-        leave_date = time.strptime(leave_date, "%d-%m-%Y")
-    except ValueError:
-        print("Invalid date!")
-        return
+        no_of_days = pattern_validator(
+            PromptMessage.TAKE_INPUT.format("No of Days for leave"),
+            RegexPatterns.DAYS_PATTERN,
+        )
 
-    no_of_days = pattern_validator(
-        PromptMessage.TAKE_INPUT.format("No of Days for leave"),
-        RegexPatterns.DAYS_PATTERN,
-    )
+        DatabaseAccess.execute_non_returning_query(
+            CreateTable.INSERT_INTO_LEAVES,
+            (leave_id, leave_date, no_of_days, self.user_id, "pending"),
+        )
 
-    DAO.execute_non_returning_query(
-        CreateTable.INSERT_INTO_LEAVES,
-        (leave_id, leave_date, no_of_days, user_id, "pending"),
-    )
+        logger.info("Applied to leave by user %s", self.user_id)
+        print(PromptMessage.ADDED_SUCCESSFULLY.format("Leave Request"))
 
-    logger.info("Applied to leave by user %s", user_id)
-    print(PromptMessage.ADDED_SUCCESSFULLY.format("Leave Request"))
+    @exception_checker
+    def see_leave_status(self):
+        """See Leave Status"""
+        res_data = DatabaseAccess.execute_returning_query(
+            UserQueries.FETCH_LEAVE_STATUS, (self.user_id,)
+        )
 
+        if check_empty_data(
+            res_data, PromptMessage.NOTHING_FOUND.format("Leaves Record")
+        ):
+            return
 
-@exception_checker
-def see_leave_status(user_id):
-    """See Leave Status"""
-    res_data = DAO.execute_returning_query(UserQueries.FETCH_LEAVE_STATUS, (user_id,))
+        headers = (
+            TableHeaders.LEAVE_DATE,
+            TableHeaders.NO_OF_DAYS,
+            TableHeaders.STATUS,
+        )
 
-    if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Leaves Record")):
-        return
-
-    headers = (TableHeaders.LEAVE_DATE, TableHeaders.NO_OF_DAYS, TableHeaders.STATUS)
-
-    pretty_print(res_data, headers=headers)
+        pretty_print(res_data, headers=headers)

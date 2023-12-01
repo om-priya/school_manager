@@ -2,7 +2,7 @@
 import os
 import shortuuid
 from dotenv import load_dotenv
-from database import database_access as DAO
+from database.database_access import DatabaseAccess
 from config.sqlite_queries import CreateTable
 from utils.hash_password import hash_password
 
@@ -43,7 +43,13 @@ def create_super_admin():
     )
 
     # Execute query
-    DAO.execute_non_returning_query(CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple)
-    DAO.execute_non_returning_query(CreateTable.INSERT_INTO_MAPPING, map_tuple)
-    DAO.execute_non_returning_query(CreateTable.INSERT_INTO_USER, user_tuple)
-    DAO.execute_non_returning_query(CreateTable.INSERT_INTO_SCHOOL, school_tuple)
+    DatabaseAccess.execute_non_returning_query(
+        CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple
+    )
+    DatabaseAccess.execute_non_returning_query(
+        CreateTable.INSERT_INTO_MAPPING, map_tuple
+    )
+    DatabaseAccess.execute_non_returning_query(CreateTable.INSERT_INTO_USER, user_tuple)
+    DatabaseAccess.execute_non_returning_query(
+        CreateTable.INSERT_INTO_SCHOOL, school_tuple
+    )

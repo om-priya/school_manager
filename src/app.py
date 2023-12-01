@@ -4,8 +4,8 @@ The base assumption of this project is that it manages with the perspective of o
 To check for super admin credentials go to /src/super_admin_meny.py """
 import logging
 from config.display_menu import DisplayMenu, PromptMessage
-from menu import super_admin_menu, principal_menu, teacher_menu
-from controllers import user_controller as UserController
+from menu import UserScreen
+from controllers.user_controller import AuthenticationController
 from utils.initializer import initialize_app
 
 logging.basicConfig(
@@ -33,22 +33,23 @@ def main():
             user_req = input(PromptMessage.TAKE_INPUT.format("Query"))
             if user_req == "1":
                 # Function returning 3 things
-                is_logged_in, user_id, role = UserController.is_logged_in()
+                is_logged_in, user_id, role = AuthenticationController.is_logged_in()
             elif user_req == "2":
                 # saving to db with status pending
-                UserController.sign_up()
+                AuthenticationController.sign_up()
             else:
                 print(PromptMessage.INVALID_INPUT.format("Only [1,2]"))
 
         logger.info("Logged in user: %s, role: %s", user_id, role)
 
+        user_screen = UserScreen(user_id)
         while True:
             if role == "superadmin":
-                super_admin_menu(user_id=user_id)
+                user_screen.super_admin_menu()
             elif role == "principal":
-                principal_menu(user_id=user_id)
+                user_screen.principal_menu()
             elif role == "teacher":
-                teacher_menu(user_id=user_id)
+                user_screen.teacher_menu()
             else:
                 print(PromptMessage.DENIED_ACCESS.format("to access Portal"))
             # Resetting the variable due to logged out functionality
