@@ -15,7 +15,7 @@ def mock_database_connection_for_initializer(mocker):
     return mock_cursor
 
 
-def test_initialize_app(
+def test_initialize_app_with_super_admin(
     monkeypatch,
     mock_database_connection_for_initializer,
     mock_execute_returning_query_valid_data,

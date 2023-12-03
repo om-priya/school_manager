@@ -94,16 +94,6 @@ def test_password_validator(monkeypatch):
     assert expected_result == "Ompriya@123"
 
 
-@pytest.fixture
-def mock_datetime(mocker):
-    datetime_obj = mocker.Mock()
-    datetime_obj.strptime.return_vale.date.return_value = datetime.strptime(
-        "04-12-2023", "%d-%m-%Y"
-    ).date()
-    datetime_obj.now.return_vale.date.return_value = "03-12-2023"
-    return datetime_obj
-
-
 def test_validate_date(monkeypatch, capsys):
     past_date = (datetime.now() - timedelta(days=7)).strftime("%d-%m-%Y")
     future_date = (datetime.now() + timedelta(days=7)).strftime("%d-%m-%Y")
