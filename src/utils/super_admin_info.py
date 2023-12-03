@@ -2,7 +2,8 @@
 import os
 import shortuuid
 from dotenv import load_dotenv
-from database.database_access import DatabaseAccess
+from database.db_connector import DatabaseConnection
+from config.sqlite_queries import DatabaseConfig
 from config.sqlite_queries import CreateTable
 from utils.hash_password import hash_password
 
@@ -43,13 +44,9 @@ def create_super_admin():
     )
 
     # Execute query
-    DatabaseAccess.execute_non_returning_query(
-        CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple
-    )
-    DatabaseAccess.execute_non_returning_query(
-        CreateTable.INSERT_INTO_MAPPING, map_tuple
-    )
-    DatabaseAccess.execute_non_returning_query(CreateTable.INSERT_INTO_USER, user_tuple)
-    DatabaseAccess.execute_non_returning_query(
-        CreateTable.INSERT_INTO_SCHOOL, school_tuple
-    )
+    with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
+        cursor = connection.cursor()
+        cursor.execute(CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple)
+        cursor.execute(CreateTable.INSERT_INTO_MAPPING, map_tuple)
+        cursor.execute(CreateTable.INSERT_INTO_USER, user_tuple)
+        cursor.execute(CreateTable.INSERT_INTO_SCHOOL, school_tuple)
