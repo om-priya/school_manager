@@ -16,7 +16,7 @@ class TableHeaders:
     PAY_DATE = "Pay Date"
     NAME = "Name"
     PHONE = "Phone"
-    EMAIL = "E-Mail"
+    EMAIL = "EMail"
     EXPERTISE = "Expertise"
     ADDRESS = "Address"
     GENDER = "Gender"
