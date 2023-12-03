@@ -1,5 +1,6 @@
 from src.controllers.handlers.staff_handler import StaffHandler
 import pytest
+import builtins
 
 
 @pytest.fixture
@@ -90,6 +91,56 @@ def test_create_staff(
 
     captured = capsys.readouterr()
     assert "\nStaff Added Successfully\n" in captured.out
+
+
+@pytest.mark.parametrize("field_to_update", ["name", "phone", "gender"])
+def test_update_staff(
+    monkeypatch,
+    dummy_staff_handler_obj,
+    mock_execute_non_returning_query,
+    field_to_update,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.staff_handler.validate.uuid_validator",
+        lambda *args: "abc1AS",
+    )
+    monkeypatch.setattr(
+        "src.controllers.handlers.staff_handler.StaffHandler.check_staff",
+        lambda *args: True,
+    )
+    monkeypatch.setattr(builtins, "input", lambda *args: field_to_update)
+    monkeypatch.setattr(
+        "src.controllers.handlers.staff_handler.validate.pattern_validator",
+        lambda *args: "dummy value",
+    )
+    monkeypatch.setattr(
+        "src.controllers.handlers.staff_handler.DatabaseAccess.execute_non_returning_query",
+        mock_execute_non_returning_query,
+    )
+    dummy_staff_handler_obj.update_staff()
+    captured = capsys.readouterr()
+
+    assert "\nUpdated Successfully" in captured.out
+
+
+def test_update_staff_invalid_staff(
+    monkeypatch,
+    dummy_staff_handler_obj,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.staff_handler.validate.uuid_validator",
+        lambda *args: "abc1AS",
+    )
+    monkeypatch.setattr(
+        "src.controllers.handlers.staff_handler.StaffHandler.check_staff",
+        lambda *args: False,
+    )
+    dummy_staff_handler_obj.update_staff()
+    captured = capsys.readouterr()
+
+    assert "\nNo such Staff Found\n" in captured.out
 
 
 def test_delete_staff_with_invalid_staff(monkeypatch, dummy_staff_handler_obj, capsys):

@@ -62,8 +62,6 @@ def validate_date(prompt) -> None:
                 return start_date
             elif start_date <= datetime.now().date():
                 print(PromptMessage.INVALID_INPUT.format("For Date"))
-            else:
-                print(PromptMessage.INVALID_INPUT.format("For Date"))
         except ValueError:
             logger.exception(ValueError)
             print(PromptMessage.INVALID_INPUT.format("For Date"))

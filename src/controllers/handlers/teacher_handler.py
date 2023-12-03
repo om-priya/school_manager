@@ -107,7 +107,6 @@ class TeacherHandler:
             PromptMessage.TAKE_SPECIFIC_ID.format("Teacher"), RegexPatterns.UUID_PATTERN
         )
         field_to_update = input(PromptMessage.FIELD_UPDATE)
-        options = ("name", "phone", "email", "experience")
         options = (
             TableHeaders.NAME.lower(),
             TableHeaders.PHONE.lower(),

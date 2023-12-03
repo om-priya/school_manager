@@ -34,7 +34,9 @@ class StaffHandler:
     @exception_checker
     def view_staff(self):
         """View Staff Members"""
-        res_data = DatabaseAccess.execute_returning_query(StaffQueries.VIEW_ALL_STAFF,(self.user_id,))
+        res_data = DatabaseAccess.execute_returning_query(
+            StaffQueries.VIEW_ALL_STAFF, (self.user_id,)
+        )
 
         # for no staff members
         if len(res_data) == 0:
@@ -110,7 +112,7 @@ class StaffHandler:
 
         # if wrong field is provided
         if field_to_update not in options:
-            print(PromptMessage.INVALID_INPUT)
+            print(PromptMessage.INVALID_INPUT.format("foe the field name"))
             return
 
         # taking updated value with input validation

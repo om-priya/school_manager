@@ -1,6 +1,7 @@
 from src.controllers.handlers.principal_handler import PrincipalHandler
 import pytest
 import sqlite3
+import builtins
 
 
 @pytest.fixture
@@ -204,6 +205,38 @@ def test_get_principal_by_id_with_data(
     dummy_principal_handler_obj.get_principal_by_id()
     captured = capsys.readouterr()
     assert "om" in captured.out
+
+
+@pytest.mark.parametrize(
+    "field_to_update", ["name", "gender", "email", "phone", "experience"]
+)
+def test_update_principal(
+    monkeypatch,
+    field_to_update,
+    mock_execute_non_returning_query,
+    dummy_principal_handler_obj,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.uuid_validator",
+        lambda *args: "abc",
+    )
+    monkeypatch.setattr(builtins, "input", lambda *args: field_to_update)
+    monkeypatch.setattr(
+        dummy_principal_handler_obj, "get_all_active_pid", lambda *args: [("abc",)]
+    )
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.validate.pattern_validator",
+        lambda *args: "dummy data",
+    )
+    monkeypatch.setattr(
+        "src.controllers.handlers.principal_handler.DatabaseAccess.execute_non_returning_query",
+        mock_execute_non_returning_query,
+    )
+    dummy_principal_handler_obj.update_principal()
+    captured = capsys.readouterr()
+
+    assert "\nUpdated Successfully" in captured.out
 
 
 def test_delete_principal_invalid_id(monkeypatch, dummy_principal_handler_obj, capsys):

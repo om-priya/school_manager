@@ -124,13 +124,6 @@ class PrincipalHandler:
         )
         field_to_update = input(PromptMessage.FIELD_UPDATE).lower()
 
-        all_principal_id = self.get_all_active_pid()
-
-        # Checking with assumption only one principal is present
-        if principal_id != all_principal_id[0][0]:
-            print(PromptMessage.NOTHING_FOUND.format("Principal"))
-            return
-
         options = (
             TableHeaders.NAME.lower(),
             TableHeaders.GENDER.lower(),
@@ -143,6 +136,13 @@ class PrincipalHandler:
         if field_to_update not in options:
             logger.info("No Such Field is present")
             print(PromptMessage.NOTHING_FOUND.format("Field"))
+            return
+
+        all_principal_id = self.get_all_active_pid()
+
+        # Checking with assumption only one principal is present
+        if principal_id != all_principal_id[0][0]:
+            print(PromptMessage.NOTHING_FOUND.format("Principal"))
             return
 
         # getting table name
@@ -182,6 +182,7 @@ class PrincipalHandler:
             PrincipalQueries.UPDATE_PRINCIPAL.format(table_name, field_to_update),
             (update_value, principal_id),
         )
+        print(PromptMessage.SUCCESS_ACTION.format("Updated"))
 
     @exception_checker
     def delete_principal(self):

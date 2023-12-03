@@ -101,3 +101,64 @@ def test_distribute_salary_with_no_teacher_no_principal(
     captured = capsys.readouterr()
     assert "\nNo such Teacher Found\n" in captured.out
     assert "\nNo such Principal Found\n" in captured.out
+
+
+def test_approve_leave_with_pending_request_valid_leave_id(
+    monkeypatch,
+    mock_execute_returning_query_valid_data,
+    mock_execute_non_returning_query,
+    mock_super_admin_controller_obj,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.super_admin_controller.DatabaseAccess.execute_returning_query",
+        mock_execute_returning_query_valid_data,
+    )
+    monkeypatch.setattr(
+        "src.controllers.super_admin_controller.validate.uuid_validator",
+        lambda *args: "om",
+    )
+    monkeypatch.setattr(
+        "src.controllers.super_admin_controller.DatabaseAccess.execute_non_returning_query",
+        mock_execute_non_returning_query,
+    )
+    mock_super_admin_controller_obj.approve_leave()
+    captured = capsys.readouterr()
+
+    assert "\nLeave Added Successfully\n" in captured.out
+
+
+def test_approve_leave_with_no_pending_request(
+    monkeypatch,
+    mock_execute_returning_query_no_data,
+    mock_super_admin_controller_obj,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.super_admin_controller.DatabaseAccess.execute_returning_query",
+        mock_execute_returning_query_no_data,
+    )
+    mock_super_admin_controller_obj.approve_leave()
+    captured = capsys.readouterr()
+
+    assert "\nNo such Pending leave request Found\n" in captured.out
+
+
+def test_approve_leave_with_pending_request_invalid_id(
+    monkeypatch,
+    mock_execute_returning_query_valid_data,
+    mock_super_admin_controller_obj,
+    capsys,
+):
+    monkeypatch.setattr(
+        "src.controllers.super_admin_controller.DatabaseAccess.execute_returning_query",
+        mock_execute_returning_query_valid_data,
+    )
+    monkeypatch.setattr(
+        "src.controllers.super_admin_controller.validate.uuid_validator",
+        lambda *args: "millind",
+    )
+    mock_super_admin_controller_obj.approve_leave()
+    captured = capsys.readouterr()
+
+    assert "\nNo such Leave Record Found\n\n" in captured.out

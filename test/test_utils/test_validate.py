@@ -4,9 +4,11 @@ from src.utils.validate import (
     pattern_validator,
     uuid_validator,
     password_validator,
+    validate_date,
 )
 from src.config.regex_pattern import RegexPatterns
 import pytest
+from datetime import datetime, timedelta
 
 valid_input_data = [
     (RegexPatterns.UUID_PATTERN, "123ASd"),
@@ -90,3 +92,35 @@ def test_password_validator(monkeypatch):
     )
     expected_result = password_validator()
     assert expected_result == "Ompriya@123"
+
+
+def test_validate_date(monkeypatch, capsys):
+    past_date = (datetime.now() - timedelta(days=7)).strftime("%d-%m-%Y")
+    future_date = (datetime.now() + timedelta(days=7)).strftime("%d-%m-%Y")
+    options = [past_date, future_date]
+    monkeypatch.setattr("builtins.input", lambda _: options.pop(0))
+
+    expected_result = validate_date("")
+
+    captured = capsys.readouterr()
+
+    assert "\nInvalid Input For Date\n" in captured.out
+    assert str(expected_result) == (datetime.now() + timedelta(days=7)).strftime(
+        "%Y-%m-%d"
+    )
+
+
+def test_validate_date_invalid_date(monkeypatch, capsys):
+    invalid_date = "30-02-2023"
+    future_date = (datetime.now() + timedelta(days=7)).strftime("%d-%m-%Y")
+    options = [invalid_date, future_date]
+    monkeypatch.setattr("builtins.input", lambda _: options.pop(0))
+
+    expected_result = validate_date("")
+
+    captured = capsys.readouterr()
+
+    assert "\nInvalid Input For Date\n" in captured.out
+    assert str(expected_result) == (datetime.now() + timedelta(days=7)).strftime(
+        "%Y-%m-%d"
+    )
