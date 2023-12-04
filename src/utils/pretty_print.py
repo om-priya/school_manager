@@ -3,5 +3,14 @@ from tabulate import tabulate
 
 
 def pretty_print(res_data, headers):
-    """This Function is responsible to print data to console"""
+    """
+    Pretty prints tabular data to the console.
+
+    Parameters:
+    - res_data (list of lists): The data to be printed in tabular form.
+    - headers (list): The headers for the columns in the table.
+
+    Returns:
+    None
+    """
     print(tabulate(res_data, headers=headers, tablefmt="rounded_outline"))

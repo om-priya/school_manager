@@ -10,11 +10,25 @@ from utils.exception_handler import exception_checker
 
 class UserScreen:
     def __init__(self, user_id):
+        """
+        Initializes a UserScreen object with the provided user ID.
+
+        Parameters:
+        - user_id (str): The unique identifier for the user.
+
+        Returns:
+        None
+        """
         self.user_id = user_id
 
     @exception_checker
     def super_admin_menu(self):
-        """Contains Menu For Super Admin"""
+        """
+        Displays the menu for Super Admin and handles user input accordingly.
+
+        Returns:
+        None
+        """
         print(DisplayMenu.SUPER_ADMIN_MAIN_PROMPT)
 
         user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-6]"))
@@ -45,7 +59,12 @@ class UserScreen:
 
     @exception_checker
     def principal_menu(self):
-        """Contains Menu For Principal"""
+        """
+        Displays the menu for Principal and handles user input accordingly.
+
+        Returns:
+        None
+        """
         print(DisplayMenu.PRINCIPAL_MAIN_PROMPT)
 
         user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-9]"))
@@ -82,7 +101,12 @@ class UserScreen:
 
     @exception_checker
     def teacher_menu(self):
-        """Contains Menu For Teacher"""
+        """
+        Displays the menu for Teacher and handles user input accordingly.
+
+        Returns:
+        None
+        """
         print(DisplayMenu.TEACHER_MAIN_PROMPT)
 
         user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-8]"))

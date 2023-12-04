@@ -12,7 +12,7 @@ class DatabaseAccess:
     # execute query of non returning type such as update, delete, insert
     @classmethod
     def execute_non_returning_query(cls, query, params=None):
-        """This function will execute the query of non returning type"""
+        """Execute a non-returning query (update, delete, insert)."""
         with DatabaseConnection(cls.DB_PATH) as connection:
             cursor = connection.cursor()
             if params is None:
@@ -23,7 +23,7 @@ class DatabaseAccess:
     # execute query of returning type such as read
     @classmethod
     def execute_returning_query(cls, query, params=None):
-        """This function will execute the query of returning type"""
+        """Execute a returning query (read)."""
         with DatabaseConnection(cls.DB_PATH) as connection:
             cursor = connection.cursor()
             if params is None:

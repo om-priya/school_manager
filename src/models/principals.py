@@ -19,9 +19,25 @@ logger = logging.getLogger(__name__)
 
 
 class Principal(User):
-    """Principal Class which will inherit from User"""
+    """
+    Principal class inherits from User for storing principal-specific information.
+
+    Attributes:
+    - experience (str): The experience of the principal.
+    - user_id (str): The unique identifier for the principal.
+    - role (str): The role of the principal.
+    - password (str): The hashed password of the principal.
+    - status (str): The status of the principal.
+    - username (str): The username derived from the principal's email.
+    """
 
     def __init__(self, principal_info):
+        """
+        Initializes a Principal object with principal-specific information.
+
+        Parameters:
+        - principal_info (dict): A dictionary containing principal information.
+        """
         super().__init__(
             principal_info["name"],
             principal_info["gender"],
@@ -38,7 +54,15 @@ class Principal(User):
 
     @exception_checker
     def save_principal(self):
-        """Save Principal to DB"""
+        """
+        Save the Principal object to the database.
+
+        Raises:
+        - ValueError: If school is not found or principal_info is invalid.
+
+        Returns:
+        None
+        """
         school_id = DatabaseAccess.execute_returning_query(
             TeacherQueries.GET_SCHOOL_ID, (self.school_name,)
         )

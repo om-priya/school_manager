@@ -13,9 +13,26 @@ logger = logging.getLogger(__name__)
 
 
 class Teacher(User):
-    """Teacher object which will inherit from user"""
+    """
+    Teacher class inherits from User for storing teacher-specific information.
+
+    Attributes:
+    - experience (str): The experience of the teacher.
+    - fav_subject (str): The favorite subject of the teacher.
+    - user_id (str): The unique identifier for the teacher.
+    - role (str): The role of the teacher.
+    - password (str): The hashed password of the teacher.
+    - status (str): The status of the teacher.
+    - username (str): The username derived from the teacher's email.
+    """
 
     def __init__(self, teacher_info):
+        """
+        Initializes a Teacher object with teacher-specific information.
+
+        Parameters:
+        - teacher_info (dict): A dictionary containing teacher information.
+        """
         super().__init__(
             teacher_info["name"],
             teacher_info["gender"],
@@ -33,7 +50,15 @@ class Teacher(User):
 
     @exception_checker
     def save_teacher(self):
-        """Save Teacher To DB"""
+        """
+        Save the Teacher object to the database.
+
+        Raises:
+        - ValueError: If school is not found or teacher_info is invalid.
+
+        Returns:
+        None
+        """
         school_id = DatabaseAccess.execute_returning_query(
             TeacherQueries.GET_SCHOOL_ID, (self.school_name,)
         )

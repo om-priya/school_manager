@@ -18,7 +18,27 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    """This Function is responsible for making my app run contineously"""
+    """
+    This function manages the continuous operation of the application.
+
+    The function initializes variables for user authentication and runs a continuous loop
+    to handle user login, signup, and access to different menus based on user roles (superadmin, principal, teacher).
+
+    Parameters:
+    None
+
+    Returns:
+    None
+
+    Flow:
+    1. While the user is not logged in, the function prompts for login or signup.
+    2. If the user chooses to log in, the authentication controller verifies credentials and sets user information.
+    3. If the user chooses to sign up, the authentication controller registers a new user with pending status.
+    4. Once logged in, the function logs user information and presents the corresponding user menu based on their role.
+    5. The user menus are specific to superadmin, principal, and teacher roles.
+    6. If an invalid role is detected, access is denied.
+    7. After accessing a menu, the user is logged out, and the loop restarts for the next user interaction.
+    """
 
     # setting initial value to default
     is_logged_in = False

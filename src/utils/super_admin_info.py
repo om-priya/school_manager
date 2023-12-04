@@ -11,7 +11,18 @@ load_dotenv()
 
 
 def create_super_admin():
-    """Create super Admin to db if super admin doesn't exists"""
+    """
+    Create a super admin in the database if one doesn't already exist.
+
+    Retrieves necessary information from environment variables and generates unique identifiers.
+    Hashes the password, then saves the super admin information to the database.
+
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
     user_id = "S" + shortuuid.ShortUUID().random(length=6)
     school_id = shortuuid.ShortUUID().random(length=6)
     name = os.getenv("NAME")

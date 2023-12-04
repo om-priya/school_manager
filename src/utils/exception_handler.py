@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def exception_checker(func):
-    """This is a decorator function to handle exception"""
+    """Decorator function to handle exceptions"""
 
     @wraps(func)
     def exception_handler(*args, **kwargs):

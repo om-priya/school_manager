@@ -10,7 +10,15 @@ logger = logging.getLogger(__name__)
 
 
 def initialize_app():
-    """Create Db and super admin"""
+    """
+    Initialize the application by creating tables in the database and checking for the existence of a super admin.
+
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
 
     # creating table in the db
     with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
