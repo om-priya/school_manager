@@ -15,8 +15,12 @@ logger = logging.getLogger(__name__)
 class AuthenticationController:
     @staticmethod
     def is_logged_in():
-        """This function is for checking whether the user is valid or not,\
-            this will return True/False, user_id, status, role"""
+        """
+        Check whether the user is valid or not.
+
+        Returns:
+        List: ['success': True/False, 'user_id': user_id, 'status': status]
+        """
         # Taking Username and password and validating it
         username = validate.pattern_validator(
             PromptMessage.TAKE_INPUT.format("Username"), RegexPatterns.USERNAME_PATTERN
@@ -47,7 +51,7 @@ class AuthenticationController:
 
     @staticmethod
     def sign_up():
-        """This function is responsible for signing user on platform"""
+        """This function is responsible for signing up a user on the platform."""
         print(PromptMessage.GREET_PROMPT.format("User"))
         print("\n")
 

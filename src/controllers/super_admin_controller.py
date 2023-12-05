@@ -23,12 +23,18 @@ logger = logging.getLogger(__name__)
 
 class SuperAdminController:
     def __init__(self, user_id):
+        """
+        Initializes a SuperAdminController object.
+
+        Parameters:
+        - user_id (str): The unique identifier for the super admin.
+        """
         self.user_id = user_id
         self.principal_handler_obj = PrincipalHandler()
         self.staff_handler_obj = StaffHandler(self.user_id)
 
     def handle_principal(self):
-        """Handling Principal"""
+        """Handle principal-related tasks."""
         while True:
             print(DisplayMenu.HANDLE_PRINCIPAL_PROMPT)
 
@@ -51,7 +57,7 @@ class SuperAdminController:
                     print(PromptMessage.INVALID_INPUT.format("Enter Only [1-6]"))
 
     def handle_staff(self):
-        """Handling Staff"""
+        """Handle staff-related tasks."""
         while True:
             print(DisplayMenu.HANDLE_STAFF_PROMPT)
 
@@ -72,7 +78,7 @@ class SuperAdminController:
                     print(PromptMessage.INVALID_INPUT.format("Enter Only [1-5]"))
 
     def distribute_salary(self):
-        """Distribute Salary"""
+        """Distribute salary to teachers and principals."""
         TEACHER_SALARY = 1000
         PRINCIPAL_SALARY = 5000
         # Getting values to insert it in db
@@ -129,7 +135,7 @@ class SuperAdminController:
                 )
 
     def approve_leave(self):
-        """Approve Leave"""
+        """Approve Pending Leaves of teacher and principal"""
         res_data = DatabaseAccess.execute_returning_query(
             UserQueries.GET_PENDING_LEAVES
         )

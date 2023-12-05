@@ -25,7 +25,7 @@ class PrincipalController:
         self.issue_handler_obj = IssueHandler(self.user_id)
 
     def handle_teacher(self):
-        """It will handle all the teacher related functionality"""
+        """It will handle all the teacher-related task"""
         while True:
             print(DisplayMenu.HANDLE_TEACHER_PROMPT)
 
@@ -47,7 +47,7 @@ class PrincipalController:
                     print(PromptMessage.INVALID_INPUT.format("Enter Only [1-6]"))
 
     def handle_feedbacks(self):
-        """It will handle all the feedback related functionality"""
+        """It will handle all the feedback-related task"""
         while True:
             print(DisplayMenu.FEEDBACK_PROMPT)
 
@@ -63,7 +63,7 @@ class PrincipalController:
                     print(PromptMessage.INVALID_INPUT.format("Enter Only [1-3]"))
 
     def handle_events(self):
-        """It will handle all the events related functionality"""
+        """It will handle all the events-related task"""
         while True:
             print(DisplayMenu.EVENTS_PROMPT)
 
@@ -79,7 +79,7 @@ class PrincipalController:
                     print(PromptMessage.INVALID_INPUT.format("Enter Only [1-3]"))
 
     def handle_leaves(self):
-        """It will handle all the leaves related functionality"""
+        """It will handle all the leaves-related task"""
         while True:
             print(DisplayMenu.LEAVES_PROMPT)
 

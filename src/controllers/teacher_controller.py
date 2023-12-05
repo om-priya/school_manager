@@ -19,6 +19,12 @@ logger = logging.getLogger(__name__)
 
 class TeacherController:
     def __init__(self, user_id):
+        """
+        Initializes a TeacherController object.
+
+        Parameters:
+        - user_id (str): The unique identifier for the teacher.
+        """
         self.user_id = user_id
         self.event_handler_obj = EventHandler(self.user_id)
         self.leave_handler_obj = LeaveHandler(self.user_id)
@@ -58,7 +64,7 @@ class TeacherController:
         fetch_salary_history(self.user_id)
 
     def handle_leaves(self):
-        """It will handle all the leaves related functionality"""
+        """Manage all leave-related functionality."""
         while True:
             print(DisplayMenu.LEAVES_PROMPT)
 
