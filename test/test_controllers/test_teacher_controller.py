@@ -24,55 +24,62 @@ def mock_super_admin_controller_obj(mocker):
     return dummy_obj
 
 
-def test_read_notice(mock_super_admin_controller_obj):
-    mock_super_admin_controller_obj.read_notice()
-    assert mock_super_admin_controller_obj.event_handler_obj.read_event.call_count == 1
+class TestTeacherController:
+    def test_read_notice(self, mock_super_admin_controller_obj):
+        mock_super_admin_controller_obj.read_notice()
+        assert (
+            mock_super_admin_controller_obj.event_handler_obj.read_event.call_count == 1
+        )
 
+    def test_raise_issue(self, mock_super_admin_controller_obj):
+        mock_super_admin_controller_obj.raise_issue()
+        assert (
+            mock_super_admin_controller_obj.issue_handler_obj.raise_issue.call_count
+            == 1
+        )
 
-def test_raise_issue(mock_super_admin_controller_obj):
-    mock_super_admin_controller_obj.raise_issue()
-    assert mock_super_admin_controller_obj.issue_handler_obj.raise_issue.call_count == 1
+    def test_handle_leaves(self, monkeypatch, mock_super_admin_controller_obj, capsys):
+        options = ["1", "2", "ab", "3"]
+        monkeypatch.setattr(builtins, "input", lambda *args: options.pop(0))
+        mock_super_admin_controller_obj.handle_leaves()
+        assert (
+            mock_super_admin_controller_obj.leave_handler_obj.see_leave_status.call_count
+            == 1
+        )
+        assert (
+            mock_super_admin_controller_obj.leave_handler_obj.apply_leave.call_count
+            == 1
+        )
 
+        captured = capsys.readouterr()
+        assert "\nInvalid Input Enter Only [1-3]\n" in captured.out
 
-def test_handle_leaves(monkeypatch, mock_super_admin_controller_obj, capsys):
-    options = ["1", "2", "ab", "3"]
-    monkeypatch.setattr(builtins, "input", lambda *args: options.pop(0))
-    mock_super_admin_controller_obj.handle_leaves()
-    assert (
-        mock_super_admin_controller_obj.leave_handler_obj.see_leave_status.call_count
-        == 1
-    )
-    assert mock_super_admin_controller_obj.leave_handler_obj.apply_leave.call_count == 1
-
-    captured = capsys.readouterr()
-    assert "\nInvalid Input Enter Only [1-3]\n" in captured.out
-
-
-def test_read_feedbacks_no_data(
-    monkeypatch,
-    mock_execute_returning_query_no_data,
-    mock_super_admin_controller_obj,
-    capsys,
-):
-    monkeypatch.setattr(
-        "src.controllers.teacher_controller.DatabaseAccess.execute_returning_query",
+    def test_read_feedbacks_no_data(
+        self,
+        monkeypatch,
         mock_execute_returning_query_no_data,
-    )
-    mock_super_admin_controller_obj.read_feedbacks()
-    captured = capsys.readouterr()
-    assert "\nNo such Feedback Found\n" in captured.out
+        mock_super_admin_controller_obj,
+        capsys,
+    ):
+        monkeypatch.setattr(
+            "src.controllers.teacher_controller.DatabaseAccess.execute_returning_query",
+            mock_execute_returning_query_no_data,
+        )
+        mock_super_admin_controller_obj.read_feedbacks()
+        captured = capsys.readouterr()
+        assert "\nNo such Feedback Found\n" in captured.out
 
-
-def test_read_feedbacks_with_data(
-    monkeypatch,
-    mock_execute_returning_query_valid_data,
-    mock_super_admin_controller_obj,
-    capsys,
-):
-    monkeypatch.setattr(
-        "src.controllers.teacher_controller.DatabaseAccess.execute_returning_query",
+    def test_read_feedbacks_with_data(
+        self,
+        monkeypatch,
         mock_execute_returning_query_valid_data,
-    )
-    mock_super_admin_controller_obj.read_feedbacks()
-    captured = capsys.readouterr()
-    assert "om" in captured.out
+        mock_super_admin_controller_obj,
+        capsys,
+    ):
+        monkeypatch.setattr(
+            "src.controllers.teacher_controller.DatabaseAccess.execute_returning_query",
+            mock_execute_returning_query_valid_data,
+        )
+        mock_super_admin_controller_obj.read_feedbacks()
+        captured = capsys.readouterr()
+        assert "om" in captured.out

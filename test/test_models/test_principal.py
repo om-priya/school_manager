@@ -30,37 +30,43 @@ def mock_database_connection_for_principal(mocker):
     return mock_cursor
 
 
-def test_save_principal_invalid_school_name(
-    monkeypatch, mock_execute_returning_query_no_data, dummy_principal_obj, capsys
-):
-    monkeypatch.setattr(
-        "src.models.teachers.DatabaseAccess.execute_returning_query",
+class TestPrincipal:
+    def test_save_principal_invalid_school_name(
+        self,
+        monkeypatch,
         mock_execute_returning_query_no_data,
-    )
-    dummy_principal_obj.save_principal()
-    captured = capsys.readouterr()
+        dummy_principal_obj,
+        capsys,
+    ):
+        monkeypatch.setattr(
+            "src.models.teachers.DatabaseAccess.execute_returning_query",
+            mock_execute_returning_query_no_data,
+        )
+        dummy_principal_obj.save_principal()
+        captured = capsys.readouterr()
 
-    assert "\nWrong School Or School is not in the system" in captured.out
+        assert "\nWrong School Or School is not in the system" in captured.out
 
-
-def test_save_principal_valid_school_name(
-    monkeypatch,
-    mock_execute_returning_query_valid_data,
-    dummy_principal_obj,
-    mock_database_connection_for_principal,
-    capsys,
-):
-    monkeypatch.setattr(
-        "src.models.principals.DatabaseAccess.execute_returning_query",
+    def test_save_principal_valid_school_name(
+        self,
+        monkeypatch,
         mock_execute_returning_query_valid_data,
-    )
-    monkeypatch.setattr(
-        "src.models.principals.DatabaseConnection",
+        dummy_principal_obj,
         mock_database_connection_for_principal,
-    )
-    dummy_principal_obj.save_principal()
+        capsys,
+    ):
+        monkeypatch.setattr(
+            "src.models.principals.DatabaseAccess.execute_returning_query",
+            mock_execute_returning_query_valid_data,
+        )
+        monkeypatch.setattr(
+            "src.models.principals.DatabaseConnection",
+            mock_database_connection_for_principal,
+        )
+        dummy_principal_obj.save_principal()
 
-    captured = capsys.readouterr()
-    assert (
-        "\nSigned Up Successfully Wait for Super Admin to approve it." in captured.out
-    )
+        captured = capsys.readouterr()
+        assert (
+            "\nSigned Up Successfully Wait for Super Admin to approve it."
+            in captured.out
+        )

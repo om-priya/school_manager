@@ -15,30 +15,34 @@ def mock_database_connection_for_initializer(mocker):
     return mock_cursor
 
 
-def test_initialize_app_with_super_admin(
-    monkeypatch,
-    mock_database_connection_for_initializer,
-    mock_execute_returning_query_valid_data,
-):
-    mock_cursor = mock_database_connection_for_initializer
-    monkeypatch.setattr(
-        "src.utils.initializer.DatabaseAccess.execute_returning_query",
+class TestInitializeApp:
+    def test_initialize_app_with_super_admin(
+        self,
+        monkeypatch,
+        mock_database_connection_for_initializer,
         mock_execute_returning_query_valid_data,
-    )
-    initialize_app()
-    assert mock_cursor.execute.call_count == 12
+    ):
+        mock_cursor = mock_database_connection_for_initializer
+        monkeypatch.setattr(
+            "src.utils.initializer.DatabaseAccess.execute_returning_query",
+            mock_execute_returning_query_valid_data,
+        )
+        initialize_app()
+        assert mock_cursor.execute.call_count == 12
 
-
-def test_initialize_app(
-    monkeypatch,
-    mock_database_connection_for_initializer,
-    mock_execute_returning_query_no_data,
-):
-    mock_cursor = mock_database_connection_for_initializer
-    monkeypatch.setattr(
-        "src.utils.initializer.DatabaseAccess.execute_returning_query",
+    def test_initialize_app(
+        self,
+        monkeypatch,
+        mock_database_connection_for_initializer,
         mock_execute_returning_query_no_data,
-    )
-    monkeypatch.setattr("src.utils.initializer.create_super_admin", lambda *args: None)
-    initialize_app()
-    assert mock_cursor.execute.call_count == 12
+    ):
+        mock_cursor = mock_database_connection_for_initializer
+        monkeypatch.setattr(
+            "src.utils.initializer.DatabaseAccess.execute_returning_query",
+            mock_execute_returning_query_no_data,
+        )
+        monkeypatch.setattr(
+            "src.utils.initializer.create_super_admin", lambda *args: None
+        )
+        initialize_app()
+        assert mock_cursor.execute.call_count == 12

@@ -14,22 +14,22 @@ def mock_database_connection_for_super_admin_info(mocker):
     mock_connection.__exit__.return_value = None
     return mock_cursor
 
+class TestCreateSuperAdmin:
+    def test_create_super_admin(self, monkeypatch, mock_database_connection_for_super_admin_info):
+        monkeypatch.setenv("NAME", "TestingName")
+        monkeypatch.setenv("GENDER", "m")
+        monkeypatch.setenv("EMAIL", "abc@gmail.com")
+        monkeypatch.setenv("PHONE", "1234567878")
+        monkeypatch.setenv("ROLE", "Test Super Admin")
+        monkeypatch.setenv("STATUS", "Active")
+        monkeypatch.setenv("USER_NAME", "abc")
+        monkeypatch.setenv("PASSWORD", "TestingPassword")
+        monkeypatch.setenv("SCHOOL_NAME", "dav public school")
+        monkeypatch.setenv("SCHOOL_LOCATION", "Noida")
+        monkeypatch.setenv("SCHOOL_EMAIL", "school@gmail.com")
+        monkeypatch.setenv("SCHOOL_CONTACT", "3232323232")
 
-def test_create_super_admin(monkeypatch, mock_database_connection_for_super_admin_info):
-    monkeypatch.setenv("NAME", "TestingName")
-    monkeypatch.setenv("GENDER", "m")
-    monkeypatch.setenv("EMAIL", "abc@gmail.com")
-    monkeypatch.setenv("PHONE", "1234567878")
-    monkeypatch.setenv("ROLE", "Test Super Admin")
-    monkeypatch.setenv("STATUS", "Active")
-    monkeypatch.setenv("USER_NAME", "abc")
-    monkeypatch.setenv("PASSWORD", "TestingPassword")
-    monkeypatch.setenv("SCHOOL_NAME", "dav public school")
-    monkeypatch.setenv("SCHOOL_LOCATION", "Noida")
-    monkeypatch.setenv("SCHOOL_EMAIL", "school@gmail.com")
-    monkeypatch.setenv("SCHOOL_CONTACT", "3232323232")
+        mock_cursor = mock_database_connection_for_super_admin_info
+        create_super_admin()
 
-    mock_cursor = mock_database_connection_for_super_admin_info
-    create_super_admin()
-
-    assert mock_cursor.execute.call_count == 4
+        assert mock_cursor.execute.call_count == 4

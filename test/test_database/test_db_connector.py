@@ -3,12 +3,12 @@ import sqlite3
 import pytest
 
 
-def test_database_connection_class():
-    with DatabaseConnection(":memory:") as conn:
-        assert conn is not None
-
-
-def test_database_connection_class_error(caplog):
-    with pytest.raises(sqlite3.Error):
+class TestDatabaseConnection:
+    def test_database_connection_class(self):
         with DatabaseConnection(":memory:") as conn:
-            raise sqlite3.Error
+            assert conn is not None
+
+    def test_database_connection_class_error(self, caplog):
+        with pytest.raises(sqlite3.Error):
+            with DatabaseConnection(":memory:") as conn:
+                raise sqlite3.Error
