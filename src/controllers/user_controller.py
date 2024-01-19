@@ -19,7 +19,7 @@ class AuthenticationController:
         Check whether the user is valid or not.
 
         Returns:
-        List: ['success': True/False, 'user_id': user_id, 'status': status]
+        List: ['success': True/False, 'user_id': user_id, 'role': role]
         """
         # Taking Username and password and validating it
         username = validate.pattern_validator(
