@@ -12,6 +12,7 @@ from config.sqlite_queries import TeacherQueries, CreateTable, PrincipalQueries
 from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess
 from controllers.helper.helper_function import check_empty_data
+from utils.custom_error import DataNotFound
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,6 @@ class FeedbackHandler:
     def __init__(self, user_id):
         self.user_id = user_id
 
-    @exception_checker
     def read_feedback(self):
         """Read Feedbacks"""
         res_data = DatabaseAccess.execute_returning_query(
@@ -28,14 +28,9 @@ class FeedbackHandler:
         )
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("FeedBack")):
-            return
+            raise DataNotFound
 
-        headers = (
-            TableHeaders.ID.format("Feedback"),
-            TableHeaders.MESSAGE.format("Feedback"),
-            TableHeaders.CREATED_DATE,
-        )
-        pretty_print(res_data, headers)
+        return res_data
 
     @exception_checker
     def give_feedback(self):

@@ -32,7 +32,7 @@ def create_super_admin():
     role = os.getenv("ROLE")
     status = os.getenv("STATUS")
     user_name = os.getenv("USER_NAME")
-    password = os.getenv("PASSWORD")
+    password = os.getenv("SUPER_PASSWORD")
     hashed_password = hash_password(password)
     school_name = os.getenv("SCHOOL_NAME")
     school_location = os.getenv("SCHOOL_LOCATION")

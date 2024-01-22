@@ -1,6 +1,8 @@
 """ This Module is for creating context manager for db connection"""
-import sqlite3
 import logging
+import os
+import mysql.connector
+import sqlite3
 
 logger = logging.getLogger("db_logger")
 
@@ -13,7 +15,15 @@ class DatabaseConnection:
         self.host = host
 
     def __enter__(self):
-        self.connection = sqlite3.connect(self.host)
+        self.connection = mysql.connector.connect(
+            user=os.getenv("USER"),
+            password=os.getenv("PASSWORD"),
+            host=os.getenv("HOST"),
+        )
+        # self.connection = sqlite3.connect(self.host)
+        cursor = self.connection.cursor()
+        cursor.execute("CREATE DATABASE IF NOT EXISTS mydb")
+        cursor.execute("USE mydb")
         return self.connection
 
     def __exit__(self, exc_type, exc_val, exc_traceback):

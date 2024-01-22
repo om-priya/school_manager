@@ -14,7 +14,7 @@ class DatabaseAccess:
     def execute_non_returning_query(cls, query, params=None):
         """Execute a non-returning query (update, delete, insert)."""
         with DatabaseConnection(cls.DB_PATH) as connection:
-            cursor = connection.cursor()
+            cursor = connection.cursor(dictionary=True)
             if params is None:
                 cursor.execute(query)
             else:
