@@ -52,7 +52,6 @@ class Principal(User):
         self.status = "pending"
         self.password = hash_password(principal_info["password"])
 
-    @exception_checker
     def save_principal(self):
         """
         Save the Principal object to the database.
@@ -83,7 +82,7 @@ class Principal(User):
         user_tuple = (self.user_id, self.name, self.gender, self.email, self.phone)
         principal_tuple = (self.user_id, self.experience)
 
-        with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
+        with DatabaseConnection() as connection:
             cursor = connection.cursor()
             cursor.execute(CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple)
             cursor.execute(CreateTable.INSERT_INTO_MAPPING, map_tuple)

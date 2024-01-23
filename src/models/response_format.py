@@ -26,7 +26,7 @@ class SuccessResponse:
 
     def get_json(self):
         return {
-            "success": ErrorResponse.success,
+            "success": SuccessResponse.success,
             "status_code": self.status_code,
             "message": self.message,
             "data": {"json": self.res_data},

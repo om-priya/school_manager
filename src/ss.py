@@ -5,7 +5,7 @@ To check for super admin credentials go to /src/super_admin_meny.py """
 import logging
 from config.display_menu import DisplayMenu, PromptMessage
 from menu import UserScreen
-from controllers.user_controller import AuthenticationController
+from controllers.auth_controller import AuthenticationController
 from utils.initializer import initialize_app
 
 logging.basicConfig(

@@ -10,9 +10,8 @@ logger = logging.getLogger("db_logger")
 class DatabaseConnection:
     """This class creates a context manager for database connection"""
 
-    def __init__(self, host):
+    def __init__(self):
         self.connection = None
-        self.host = host
 
     def __enter__(self):
         self.connection = mysql.connector.connect(

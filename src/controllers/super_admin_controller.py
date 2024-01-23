@@ -11,9 +11,9 @@ from config.sqlite_queries import (
     UserQueries,
     CreateTable,
 )
-from controllers.handlers.principal_handler import PrincipalHandler
-from controllers.handlers.staff_handler import StaffHandler
-from controllers.helper.helper_function import check_empty_data
+from handlers.principal_handler import PrincipalHandler
+from handlers.staff_handler import StaffHandler
+from helper.helper_function import check_empty_data
 from database.database_access import DatabaseAccess
 from utils.pretty_print import pretty_print
 from utils import validate
@@ -38,7 +38,6 @@ class SuperAdminController:
         while True:
             print(DisplayMenu.HANDLE_PRINCIPAL_PROMPT)
 
-            
             user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-6]"))
             match user_req:
                 case "1":
@@ -61,7 +60,6 @@ class SuperAdminController:
         while True:
             print(DisplayMenu.HANDLE_STAFF_PROMPT)
 
-            
             user_req = input(PromptMessage.TAKE_INPUT.format("Query [1-5]"))
             match user_req:
                 case "1":

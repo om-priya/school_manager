@@ -48,7 +48,6 @@ class Teacher(User):
         self.status = "pending"
         self.username = teacher_info["email"].split("@")[0]
 
-    @exception_checker
     def save_teacher(self):
         """
         Save the Teacher object to the database.
@@ -62,13 +61,13 @@ class Teacher(User):
         school_id = DatabaseAccess.execute_returning_query(
             TeacherQueries.GET_SCHOOL_ID, (self.school_name,)
         )
-
+        print(school_id)
         if len(school_id) == 0:
             print(PromptMessage.NO_SCHOOL_FOUND)
             logger.error("No such school present in the system")
             return
 
-        school_id = school_id[0][0]
+        school_id = school_id[0]["school_id"]
         # creating tuple for execution
         cred_tuple = (
             self.username,
@@ -81,7 +80,7 @@ class Teacher(User):
         user_tuple = (self.user_id, self.name, self.gender, self.email, self.phone)
         teacher_tuple = (self.user_id, self.experience, self.fav_subject)
 
-        with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
+        with DatabaseConnection() as connection:
             cursor = connection.cursor()
             cursor.execute(CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple)
             cursor.execute(CreateTable.INSERT_INTO_MAPPING, map_tuple)

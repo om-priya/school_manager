@@ -11,7 +11,7 @@ from database.database_access import DatabaseAccess
 from utils.pretty_print import pretty_print
 from utils.validate import pattern_validator, validate_date
 from utils.exception_handler import exception_checker
-from controllers.helper.helper_function import check_empty_data
+from helper.helper_function import check_empty_data
 
 logger = logging.getLogger(__name__)
 

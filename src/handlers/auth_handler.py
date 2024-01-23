@@ -2,18 +2,18 @@
 import logging
 from models.principals import Principal
 from models.teachers import Teacher
-from config.display_menu import PromptMessage
-from config.regex_pattern import RegexPatterns
 from config.sqlite_queries import UserQueries
 from database.database_access import DatabaseAccess
 from utils import validate
 from utils.hash_password import hash_password
-from utils.custom_error import DataNotFound, InvalidCredentials, NotActive
+from utils.custom_error import DataNotFound, InvalidCredentials, NotActive, DuplicateEntry
+import mysql.connector
+
 
 logger = logging.getLogger(__name__)
 
 
-class AuthenticationController:
+class AuthenticationHandler:
     @staticmethod
     def is_logged_in(username, password):
         """
@@ -29,30 +29,32 @@ class AuthenticationController:
         data = DatabaseAccess.execute_returning_query(
             UserQueries.FETCH_FROM_CREDENTIALS, params
         )
-
         # Checking For Credentials with db response
         if len(data) == 0:
             logger.error("Wrong Credentials")
             raise InvalidCredentials
-        elif data[0][2] == "pending":
-            logger.error("Pending User %s tried to logged In", data[0][0])
+        elif data[0]["status"] == "pending":
+            logger.error("Pending User %s tried to logged In", data[0]["user_id"])
             raise NotActive
-        elif data[0][2] == "deactivate":
-            logger.error("User %s don't exists", data[0][0])
+        elif data[0]["status"] == "deactivate":
+            logger.error("User %s don't exists", data[0]["user_id"])
             raise DataNotFound
         else:
-            return [True, data[0][0], data[0][1]]
+            return [True, data[0]["user_id"], data[0]["role"]]
 
     @staticmethod
     def sign_up(user_info):
         """This function is responsible for signing up a user on the platform."""
         
         # Creating Object according to role and saving it
-        if user_info["role"] == "teacher":
-            new_teacher = Teacher(user_info)
-            logger.info("Initiating saving teacher")
-            new_teacher.save_teacher()
-        else:
-            new_principal = Principal(user_info)
-            logger.info("Initiating saving principal")
-            new_principal.save_principal()
+        try:
+            if user_info["role"] == "teacher":
+                new_teacher = Teacher(user_info)
+                logger.info("Initiating saving teacher")
+                new_teacher.save_teacher()
+            else:
+                new_principal = Principal(user_info)
+                logger.info("Initiating saving principal")
+                new_principal.save_principal()
+        except mysql.connector.IntegrityError:
+            raise DuplicateEntry

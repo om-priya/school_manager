@@ -1,6 +1,9 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from flask_smorest import Api
+from flask_smorest import Api, abort
+from models.response_format import ErrorResponse
+
+import logging
 
 from router.auth_router import blp as AuthRouter
 from router.feedback_router import blp as FeedBackRouter
@@ -25,6 +28,11 @@ def create_app():
         "OPENAPI_SWAGGER_UI_URL"
     ] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
     app.config["JWT_SECRET_KEY"] = "dbeywbsakxwj903jdsnxkcjdbdsmxxdionsalxlsakcufvdcd"
+
+    @app.errorhandler(Exception)
+    def all_exception_handler(error):
+        logging.exception(error)
+        abort(500, message=ErrorResponse(500, "Server Not Responding").get_json())
 
     # create jwtmanager instance which will handle all the jwt related logic
     jwt = JWTManager(app)

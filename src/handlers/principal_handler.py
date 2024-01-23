@@ -7,7 +7,7 @@ from utils.exception_handler import exception_checker
 from utils import validate
 from config.sqlite_queries import PrincipalQueries
 from config.display_menu import PromptMessage
-from controllers.helper.helper_function import check_empty_data
+from helper.helper_function import check_empty_data
 from database.database_access import DatabaseAccess
 
 logger = logging.getLogger(__name__)

@@ -7,14 +7,13 @@ logger = logging.getLogger("db_logger")
 
 
 class DatabaseAccess:
-    DB_PATH = DatabaseConfig.DB_PATH
 
     # execute query of non returning type such as update, delete, insert
     @classmethod
     def execute_non_returning_query(cls, query, params=None):
         """Execute a non-returning query (update, delete, insert)."""
-        with DatabaseConnection(cls.DB_PATH) as connection:
-            cursor = connection.cursor(dictionary=True)
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
             if params is None:
                 cursor.execute(query)
             else:
@@ -24,8 +23,8 @@ class DatabaseAccess:
     @classmethod
     def execute_returning_query(cls, query, params=None):
         """Execute a returning query (read)."""
-        with DatabaseConnection(cls.DB_PATH) as connection:
-            cursor = connection.cursor()
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor(dictionary=True)
             if params is None:
                 cursor.execute(query)
             else:

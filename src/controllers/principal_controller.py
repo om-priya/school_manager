@@ -1,16 +1,16 @@
 """ This module is responsible for handling all the controlers for principal """
 import logging
-from controllers.helper.helper_function import (
+from helper.helper_function import (
     fetch_salary_history,
     view_personal_info,
 )
 from config.display_menu import DisplayMenu, PromptMessage
 from config.sqlite_queries import PrincipalQueries
-from controllers.handlers.event_handler import EventHandler
-from controllers.handlers.feedback_handler import FeedbackHandler
-from controllers.handlers.issue_handler import IssueHandler
-from controllers.handlers.leave_handler import LeaveHandler
-from controllers.handlers.teacher_handler import TeacherHandler
+from handlers.event_handler import EventHandler
+from handlers.feedback_handler import FeedbackHandler
+from handlers.issue_handler import IssueHandler
+from handlers.leave_handler import LeaveHandler
+from handlers.teacher_handler import TeacherHandler
 
 logger = logging.getLogger(__name__)
 

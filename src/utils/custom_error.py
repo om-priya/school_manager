@@ -8,3 +8,6 @@ class InvalidCredentials(Exception):
 
 class NotActive(Exception):
     pass
+
+class DuplicateEntry(Exception):
+    pass

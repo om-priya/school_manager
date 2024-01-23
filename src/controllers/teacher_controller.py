@@ -1,7 +1,7 @@
 """ This Module Contains all the functionality that a teacher can perform """
 import logging
-from controllers.handlers.event_handler import EventHandler
-from controllers.helper.helper_function import (
+from handlers.event_handler import EventHandler
+from helper.helper_function import (
     fetch_salary_history,
     view_personal_info,
     check_empty_data,
@@ -9,8 +9,8 @@ from controllers.helper.helper_function import (
 from config.display_menu import PromptMessage, DisplayMenu
 from config.headers_for_output import TableHeaders
 from config.sqlite_queries import TeacherQueries, UserQueries
-from controllers.handlers.issue_handler import IssueHandler
-from controllers.handlers.leave_handler import LeaveHandler
+from handlers.issue_handler import IssueHandler
+from handlers.leave_handler import LeaveHandler
 from database.database_access import DatabaseAccess
 from utils.pretty_print import pretty_print
 

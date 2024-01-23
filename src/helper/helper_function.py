@@ -85,7 +85,6 @@ def check_empty_data(res_data, prompt_message):
     """This function will check for whether data is there or not"""
     if len(res_data) == 0:
         logger.error(prompt_message)
-        print(prompt_message)
         return True
 
     return False

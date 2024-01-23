@@ -11,7 +11,7 @@ from utils.exception_handler import exception_checker
 from config.sqlite_queries import TeacherQueries, CreateTable, PrincipalQueries
 from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess
-from controllers.helper.helper_function import check_empty_data
+from helper.helper_function import check_empty_data
 from utils.custom_error import DataNotFound
 
 logger = logging.getLogger(__name__)
@@ -32,24 +32,14 @@ class FeedbackHandler:
 
         return res_data
 
-    @exception_checker
-    def give_feedback(self):
+    def give_feedback(self, teacher_id, f_message):
         """Create Feedbacks"""
         res_data = DatabaseAccess.execute_returning_query(
             TeacherQueries.GET_APPROVED_TEACHER
         )
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Teacher")):
-            return
-
-        print("Select User ID from the available teachers list")
-        headers = (TableHeaders.ID.format("Teacher"), TableHeaders.NAME)
-        pretty_print(res_data, headers=headers)
-
-        teacher_id = uuid_validator(
-            PromptMessage.TAKE_SPECIFIC_ID.format("Teacher's"),
-            RegexPatterns.UUID_PATTERN,
-        )
+            raise DataNotFound
 
         # checking teacher's Id
         for data in res_data:
@@ -57,14 +47,10 @@ class FeedbackHandler:
                 break
         else:
             logger.error("Wrong Teacher Id")
-            print(PromptMessage.NOTHING_FOUND.format("Teacher"))
-            return
+            raise DataNotFound
 
         # Taking Info and saving it to db
         f_id = shortuuid.ShortUUID().random(length=6)
-        f_message = pattern_validator(
-            PromptMessage.TAKE_INPUT.format("Message"), RegexPatterns.MESSAGE_PATTERN
-        )
         created_date = datetime.now().strftime("%d-%m-%Y")
 
         DatabaseAccess.execute_non_returning_query(
@@ -72,4 +58,3 @@ class FeedbackHandler:
             (f_id, f_message, created_date, teacher_id, self.user_id),
         )
         logger.info("Feedback Created")
-        print(PromptMessage.ADDED_SUCCESSFULLY.format("Feedbacks"))

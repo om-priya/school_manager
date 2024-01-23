@@ -4,7 +4,7 @@ from config.display_menu import DisplayMenu, PromptMessage
 from controllers.principal_controller import PrincipalController
 from controllers.super_admin_controller import SuperAdminController
 from controllers.teacher_controller import TeacherController
-from controllers.helper.helper_function import change_password
+from helper.helper_function import change_password
 from utils.exception_handler import exception_checker
 
 

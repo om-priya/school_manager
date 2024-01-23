@@ -11,7 +11,7 @@ from config.sqlite_queries import CreateTable, UserQueries
 from config.display_menu import PromptMessage
 from config.headers_for_output import TableHeaders
 from database.database_access import DatabaseAccess
-from controllers.helper.helper_function import check_empty_data
+from helper.helper_function import check_empty_data
 
 logger = logging.getLogger(__name__)
 
