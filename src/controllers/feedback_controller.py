@@ -18,7 +18,7 @@ class FeedbackController:
                 404, message=ErrorResponse(404, "No Such Feedbacks Found").get_json()
             )
 
-    def get_teacher_feedback(self, teacher_id, feedback_info):
+    def give_teacher_feedback(self, teacher_id, feedback_info):
         try:
             jwt = get_jwt()
             user_id = jwt.get("sub").get("user_id")

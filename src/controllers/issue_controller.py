@@ -19,8 +19,9 @@ class IssueController:
         except DataNotFound:
             return abort(404, message=ErrorResponse(404, "No Such Issues Found"))
 
-    def create_issue_controller(self):
-        try:
-            pass
-        except Exception:
-            pass
+    def create_issue_controller(self, issue_mssg):
+        jwt = get_jwt()
+        user_id = jwt.get("sub").get("user_id")
+
+        IssueHandler(user_id).raise_issue(issue_mssg["issue_message"])
+        return SuccessResponse(201, "Issue Raised SuccessFully")

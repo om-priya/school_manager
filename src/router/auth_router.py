@@ -23,7 +23,7 @@ class LoginRoute(MethodView):
 @blp.route("/logout")
 class LogoutRoute(MethodView):
     def post(self):
-        return {"messgae": "Logout Successfully"}
+        return {"message": "Logout Successfully"}
 
 
 @blp.route("/signup")

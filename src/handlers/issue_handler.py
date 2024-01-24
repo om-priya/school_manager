@@ -26,16 +26,10 @@ class IssueHandler:
 
         return res_data
 
-    def raise_issue(self):
+    def raise_issue(self, issue_message):
         """To raise issue for the management"""
         issue_id = shortuuid.ShortUUID().random(length=6)
-        issue_mssg = pattern_validator(
-            PromptMessage.TAKE_INPUT.format("Issue Message"),
-            RegexPatterns.MESSAGE_PATTERN,
-        )
-
         DatabaseAccess.execute_non_returning_query(
-            CreateTable.INSERT_INTO_ISSUE, (issue_id, issue_mssg, self.user_id)
+            CreateTable.INSERT_INTO_ISSUE, (issue_id, issue_message, self.user_id)
         )
-
         logger.info("Issue Created Successfully")

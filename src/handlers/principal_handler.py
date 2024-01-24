@@ -9,6 +9,7 @@ from config.sqlite_queries import PrincipalQueries
 from config.display_menu import PromptMessage
 from helper.helper_function import check_empty_data
 from database.database_access import DatabaseAccess
+from utils.custom_error import DataNotFound, AlreadyPresent
 
 logger = logging.getLogger(__name__)
 
@@ -32,14 +33,8 @@ class PrincipalHandler:
 
         return res_data
 
-    @exception_checker
-    def approve_principal(self):
+    def approve_principal(self, principal_id):
         """Approve principal"""
-        principal_id = validate.uuid_validator(
-            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
-            RegexPatterns.UUID_PATTERN,
-        )
-
         all_principal_id = self.get_all_active_pid()
         # handling for no principal present
         if len(all_principal_id) == 0:
@@ -49,16 +44,15 @@ class PrincipalHandler:
             if check_empty_data(
                 pending_id, PromptMessage.NOTHING_FOUND.format("request for approval")
             ):
-                return
+                raise DataNotFound
 
             # checking whether input id is in pending or not
             for p_id in pending_id:
-                if p_id[0] == principal_id:
+                if p_id["user_id"] == principal_id:
                     break
             else:
                 logger.info("Invalid Id's Given")
-                print(PromptMessage.NOTHING_FOUND.format("Principal"))
-                return
+                raise DataNotFound
             # saving to db after checking edge cases
 
             DatabaseAccess.execute_non_returning_query(
@@ -66,12 +60,8 @@ class PrincipalHandler:
             )
         else:
             logger.warning("Can't add more than one principal")
-            print(PromptMessage.MULTIPLE_PRINCIPAL_ERROR)
-            return
+            raise AlreadyPresent
 
-        print(PromptMessage.ADDED_SUCCESSFULLY.format("Principal"))
-
-    @exception_checker
     def get_all_principal(self):
         """Get All principals"""
         res_data = DatabaseAccess.execute_returning_query(
@@ -79,40 +69,20 @@ class PrincipalHandler:
         )
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
-            return
+            raise DataNotFound
 
-        headers = (
-            TableHeaders.ID.format("User"),
-            TableHeaders.NAME,
-            TableHeaders.GENDER,
-            TableHeaders.EMAIL,
-            TableHeaders.STATUS,
-        )
-        pretty_print(res_data, headers)
+        return res_data
 
-    @exception_checker
-    def get_principal_by_id(self):
+    def get_principal_by_id(self, principal_id):
         """Get Specific principal"""
-        principal_id = validate.uuid_validator(
-            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
-            RegexPatterns.UUID_PATTERN,
-        )
-
         res_data = DatabaseAccess.execute_returning_query(
             PrincipalQueries.GET_PRINCIPAL_BY_ID, (principal_id,)
         )
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
-            return
+            raise DataNotFound
 
-        headers = (
-            TableHeaders.ID.format("User"),
-            TableHeaders.NAME,
-            TableHeaders.GENDER,
-            TableHeaders.EMAIL,
-            TableHeaders.STATUS,
-        )
-        pretty_print(res_data, headers)
+        return res_data
 
     @exception_checker
     def update_principal(self):
@@ -184,22 +154,14 @@ class PrincipalHandler:
         )
         print(PromptMessage.SUCCESS_ACTION.format("Updated"))
 
-    @exception_checker
-    def delete_principal(self):
+    def delete_principal(self, principal_id):
         """Delete Principal"""
-        principal_id = validate.uuid_validator(
-            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
-            RegexPatterns.UUID_PATTERN,
-        )
-
         all_principal_id = self.get_all_active_pid()
 
-        if principal_id != all_principal_id[0][0]:
+        if principal_id != all_principal_id[0]["user_id"]:
             logger.error("No Such Principal With id %s", principal_id)
-            print(PromptMessage.NOTHING_FOUND.format("Principal"))
-            return
+            raise DataNotFound
 
         DatabaseAccess.execute_non_returning_query(
             PrincipalQueries.DELETE_PRINCIPAL, (principal_id,)
         )
-        print(PromptMessage.SUCCESS_ACTION.format("Deleted"))

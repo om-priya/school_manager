@@ -9,5 +9,14 @@ class InvalidCredentials(Exception):
 class NotActive(Exception):
     pass
 
+
 class DuplicateEntry(Exception):
+    pass
+
+
+class AlreadyPresent(Exception):
+    pass
+
+
+class FailedAction(Exception):
     pass

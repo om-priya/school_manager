@@ -22,7 +22,6 @@ class GetFeedBacks(MethodView):
     def get(self):
         return FeedbackController().get_all_feedbacks()
 
-
 @blp.route("/feedbacks/<string:teacher_id>")
 class GetFeedBacksById(MethodView):
     @jwt_required
@@ -30,6 +29,6 @@ class GetFeedBacksById(MethodView):
     @blp.arguments(FeedbackSchema)
     @blp.arguments(FeedbackTeacherIdSchema, location="path")
     def post(self, feedback_info, teacher, teacher_id):
-        return FeedbackController().get_teacher_feedback(
+        return FeedbackController().give_teacher_feedback(
             teacher["teacher_id"], feedback_info
         )

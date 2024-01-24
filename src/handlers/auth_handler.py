@@ -6,7 +6,12 @@ from config.sqlite_queries import UserQueries
 from database.database_access import DatabaseAccess
 from utils import validate
 from utils.hash_password import hash_password
-from utils.custom_error import DataNotFound, InvalidCredentials, NotActive, DuplicateEntry
+from utils.custom_error import (
+    DataNotFound,
+    InvalidCredentials,
+    NotActive,
+    DuplicateEntry,
+)
 import mysql.connector
 
 
@@ -45,7 +50,7 @@ class AuthenticationHandler:
     @staticmethod
     def sign_up(user_info):
         """This function is responsible for signing up a user on the platform."""
-        
+
         # Creating Object according to role and saving it
         try:
             if user_info["role"] == "teacher":

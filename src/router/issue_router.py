@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required
 
 from utils.role_checker_decorator import access_level
 from controllers.issue_controller import IssueController
+from schema.issue_schema import IssueSchema
 
 blp = Blueprint(
     "Issue Router", __name__, url_prefix="/api/v1", description="Issue Handler Router"
@@ -19,5 +20,6 @@ class Issues(MethodView):
 
     @jwt_required
     @access_level(["teacher"])
-    def post(self):
-        return IssueController().create_issue_controller()
+    @blp.arguments(IssueSchema)
+    def post(self, issue_mssg):
+        return IssueController().create_issue_controller(issue_mssg)
