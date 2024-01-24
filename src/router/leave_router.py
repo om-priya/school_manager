@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 
 from utils.role_checker_decorator import access_level
 from controllers.leave_controller import LeavesController
-from schema.leave_schema import LeaveIdSchema
+from schema.leave_schema import LeaveIdSchema, LeaveSchema
 
 blp = Blueprint(
     "Leave Router", __name__, url_prefix="/api/v1", description="Handling Leave Router"
@@ -20,8 +20,9 @@ class LeavesRouter(MethodView):
 
     @jwt_required
     @access_level(["principal", "teacher"])
-    def post(self):
-        return LeavesController().apply_for_leave()
+    @blp.arguments(LeaveSchema)
+    def post(self, leave_details):
+        return LeavesController().apply_for_leave(leave_details)
 
 
 @blp.route("/leaves/<string:leave_id>")

@@ -17,8 +17,14 @@ class LeavesController:
         except DataNotFound:
             return abort(404, message=ErrorResponse(404, "No Leave Records Found"))
 
-    def apply_for_leave(self):
-        pass
+    def apply_for_leave(self, leave_details):
+        jwt = get_jwt()
+        user_id = jwt.get("sub").get("user_id")
+
+        LeaveHandler(user_id).apply_leave(
+            leave_details["leave_date"], leave_details["no_of_daya"]
+        )
+        return SuccessResponse(200, "Leave Applied SuccessFully")
 
     def approve_leave(self, leave_info):
         try:

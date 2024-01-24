@@ -1,10 +1,23 @@
-from marshmallow import fields, Schema, validate
+from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from config.regex_pattern import RegexPatterns
+from datetime import datetime
 
 
 class LeaveSchema(Schema):
-    leave_date = fields.Date()
+    leave_date = fields.Date(required=True)
     no_of_daya = fields.String(required=True)
+
+    @validates_schema
+    def validate_date(self, data):
+        try:
+            date_str = data["leave_date"]
+            start_date = datetime.strptime(date_str, "%d-%m-%Y").date()
+            if start_date > datetime.now().date():
+                return start_date
+            elif start_date <= datetime.now().date():
+                raise ValueError
+        except ValueError:
+            raise ValidationError(message="Date Format Is Wrong")
 
 
 class LeaveIdSchema(Schema):
