@@ -10,7 +10,12 @@ from controllers.auth_controller import AuthenticationController
 from utils.custom_error import DataNotFound, InvalidCredentials, NotActive
 
 # creating blueprint for the auth route which are login logout and signup
-blp = Blueprint("Auth_Route", __name__, description="Login, Logout and Signup Route")
+blp = Blueprint(
+    "Auth_Route",
+    __name__,
+    url_prefix="/api/v1",
+    description="Login, Logout and Signup Route",
+)
 
 
 @blp.route("/login")

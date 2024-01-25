@@ -11,6 +11,7 @@ from router.event_router import blp as EventRouter
 from router.issue_router import blp as IssueRouter
 from router.principal_router import blp as PrincipalRouter
 from router.teacher_router import blp as TeacherRouter
+from router.user_router import blp as UserRouter
 
 
 def create_app():
@@ -44,4 +45,5 @@ def create_app():
     api.register_blueprint(IssueRouter)
     api.register_blueprint(PrincipalRouter)
     api.register_blueprint(TeacherRouter)
+    api.register_blueprint(UserRouter)
     return app

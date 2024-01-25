@@ -16,7 +16,7 @@ blp = Blueprint(
 
 @blp.route("/profile")
 class MyProfile(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["teacher", "principal"])
     def get(self):
         return UserController().get_my_profile()
@@ -24,7 +24,7 @@ class MyProfile(MethodView):
 
 @blp.route("/salary-history")
 class MySalaryHistory(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["teacher", "principal"])
     def get(self):
         return UserController().get_my_salary_history()
@@ -32,7 +32,7 @@ class MySalaryHistory(MethodView):
 
 @blp.route("/change-password")
 class ChangePassword(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["teacher", "principal"])
     @blp.arguments(ChangePasswordSchema)
     def post(self, change_password_details):

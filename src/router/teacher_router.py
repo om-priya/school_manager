@@ -16,7 +16,7 @@ blp = Blueprint(
 
 @blp.route("/teachers")
 class GetAllTeachers(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["principal"])
     def get(self):
         return TeacherController().get_all_teacher()
@@ -24,13 +24,13 @@ class GetAllTeachers(MethodView):
 
 @blp.route("/teachers/<string:teacher_id>")
 class TeachersById(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["principal"])
     @blp.arguments(TeacherIdSchema, location="path")
     def get(self, teacher_info, teacher_id):
         return TeacherController().get_single_teacher(teacher_info["teacher_id"])
 
-    @jwt_required
+    @jwt_required()
     @access_level(["principal"])
     @blp.arguments(TeacherIdSchema, location="path")
     def delete(self, teacher_info, teacher_id):
@@ -39,7 +39,7 @@ class TeachersById(MethodView):
 
 @blp.route("/teachers/<string:teacher_id>/approve")
 class ApproveTeacher(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["principal"])
     @blp.arguments(TeacherIdSchema, location="path")
     def put(self, teacher_info, teacher_id):

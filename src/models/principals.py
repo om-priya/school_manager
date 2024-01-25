@@ -69,7 +69,7 @@ class Principal(User):
             print(PromptMessage.NO_SCHOOL_FOUND)
             return
 
-        school_id = school_id[0][0]
+        school_id = school_id[0]["school_id"]
         # creating tuple for execution
         cred_tuple = (
             self.username,

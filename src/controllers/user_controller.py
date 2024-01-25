@@ -19,12 +19,12 @@ class UserController:
 
             res_data = view_personal_info(role, user_id)
 
-            return SuccessResponse(200, "Your Information", res_data)
+            return SuccessResponse(200, "Your Information", res_data).get_json()
         except DataNotFound:
-            return abort(404, message=ErrorResponse(404, "No Such User Found"))
+            return abort(404, message=ErrorResponse(404, "No Such User Found").get_json())
         except FailedAction:
             return abort(
-                403, message=ErrorResponse(403, "You don't have access to This")
+                403, message=ErrorResponse(403, "You don't have access to This").get_json()
             )
 
     def get_my_salary_history(self):
@@ -34,9 +34,9 @@ class UserController:
             user_id = jwt.get("sub").get("user_id")
 
             res_data = fetch_salary_history(user_id)
-            return SuccessResponse(200, "Salary History", res_data)
+            return SuccessResponse(200, "Salary History", res_data).get_json()
         except DataNotFound:
-            return abort(404, message=ErrorResponse(404, "No Salary History Found"))
+            return abort(404, message=ErrorResponse(404, "No Salary History Found").get_json())
 
     def change_password(self, user_details):
         try:
@@ -53,6 +53,6 @@ class UserController:
             # yha pe token delte karke login karne bolo
             return SuccessResponse(
                 200, "Password Changed Successfully Please Log_In Again"
-            )
+            ).get_json()
         except InvalidCredentials:
-            abort(400, message=ErrorResponse(400, "Check Your Username and Password"))
+            abort(400, message=ErrorResponse(400, "Check Your Username and Password").get_json())

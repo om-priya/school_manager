@@ -16,15 +16,15 @@ blp = Blueprint(
 
 @blp.route("/principals")
 class GetAllPrincipals(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["superadmin"])
     def get(self):
         return PrincipalController().get_all_principals()
 
 
-@blp.route("/principal/<string:principal_id>")
+@blp.route("/principals/<string:principal_id>")
 class PrincipalById(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["superadmin"])
     @blp.arguments(PrincipalIdSchema, location="path")
     def get(self, principal_info, principal_id):
@@ -32,16 +32,16 @@ class PrincipalById(MethodView):
             principal_info["principal_id"]
         )
 
-    @jwt_required
+    @jwt_required()
     @access_level(["superadmin"])
     @blp.arguments(PrincipalIdSchema, location="path")
     def delete(self, principal_info, principal_id):
         return PrincipalController().delete_principal(principal_info["principal_id"])
 
 
-@blp.route("/principal/<string:principal_id>/approve")
+@blp.route("/principals/<string:principal_id>/approve")
 class ApprovePrincipal(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["superadmin"])
     @blp.arguments(PrincipalIdSchema, location="path")
     def put(self, principal_info, principal_id):

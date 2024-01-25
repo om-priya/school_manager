@@ -6,6 +6,7 @@ from config.sqlite_queries import UserQueries
 from database.database_access import DatabaseAccess
 from utils import validate
 from models.response_format import ErrorResponse, SuccessResponse
+from datetime import timedelta
 from flask_jwt_extended import create_access_token
 from utils.hash_password import hash_password
 from flask_smorest import abort
@@ -34,7 +35,8 @@ class AuthenticationController:
                 login_details["user_name"], login_details["password"]
             )
             access_token = create_access_token(
-                identity={"user_id": user_details[1], "role": user_details[2]}
+                identity={"user_id": user_details[1], "role": user_details[2]},
+                expires_delta=timedelta(minutes=60)
             )
             return SuccessResponse(
                 200,
@@ -69,9 +71,8 @@ class AuthenticationController:
             ).get_json()
         except DuplicateEntry:
             return abort(
-                409, message=ErrorResponse(409, "User Already Exists With Provided Info").get_json()
-            )
-        except Exception:
-            return abort(
-                500, message=ErrorResponse(500, "Server Not Responding").get_json()
+                409,
+                message=ErrorResponse(
+                    409, "User Already Exists With Provided Info"
+                ).get_json(),
             )
