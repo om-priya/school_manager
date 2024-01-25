@@ -12,7 +12,7 @@ class FeedbackController:
             user_id = jwt.get("sub").get("user_id")
 
             res_data = FeedbackHandler(user_id).read_feedback()
-            return SuccessResponse(200, "Here's the list of feedback", res_data)
+            return SuccessResponse(200, "Here's the list of feedback", res_data).get_json()
         except DataNotFound:
             return abort(
                 404, message=ErrorResponse(404, "No Such Feedbacks Found").get_json()
@@ -26,6 +26,6 @@ class FeedbackController:
             FeedbackHandler(user_id).give_feedback(
                 teacher_id, feedback_info["feedback_message"]
             )
-            return SuccessResponse(200, "FeedBack Added Successfully")
+            return SuccessResponse(200, "FeedBack Added Successfully").get_json()
         except DataNotFound:
             return abort(404, message=ErrorResponse(404, "No Teacher Found").get_json())

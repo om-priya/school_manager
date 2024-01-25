@@ -15,7 +15,7 @@ class IssueController:
 
             return SuccessResponse(
                 200, "Here's the Issues raised by teachers", res_data
-            )
+            ).get_json()
         except DataNotFound:
             return abort(404, message=ErrorResponse(404, "No Such Issues Found"))
 
@@ -24,4 +24,4 @@ class IssueController:
         user_id = jwt.get("sub").get("user_id")
 
         IssueHandler(user_id).raise_issue(issue_mssg["issue_message"])
-        return SuccessResponse(201, "Issue Raised SuccessFully")
+        return SuccessResponse(201, "Issue Raised SuccessFully").get_json()

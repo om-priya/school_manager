@@ -13,12 +13,12 @@ blp = Blueprint(
 
 @blp.route("/issues")
 class Issues(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["principal"])
     def get(self):
         return IssueController().get_all_issues()
 
-    @jwt_required
+    @jwt_required()
     @access_level(["teacher"])
     @blp.arguments(IssueSchema)
     def post(self, issue_mssg):

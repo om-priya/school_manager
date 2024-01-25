@@ -17,14 +17,14 @@ blp = Blueprint(
 
 @blp.route("/feedbacks")
 class GetFeedBacks(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["teacher", "principal"])
     def get(self):
         return FeedbackController().get_all_feedbacks()
 
 @blp.route("/feedbacks/<string:teacher_id>")
 class GetFeedBacksById(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["principal"])
     @blp.arguments(FeedbackSchema)
     @blp.arguments(FeedbackTeacherIdSchema, location="path")

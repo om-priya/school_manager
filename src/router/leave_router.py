@@ -13,12 +13,12 @@ blp = Blueprint(
 
 @blp.route("/leaves")
 class LeavesRouter(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["principal", "teacher"])
     def get(self):
         return LeavesController().get_leave_info()
 
-    @jwt_required
+    @jwt_required()
     @access_level(["principal", "teacher"])
     @blp.arguments(LeaveSchema)
     def post(self, leave_details):
@@ -27,7 +27,7 @@ class LeavesRouter(MethodView):
 
 @blp.route("/leaves/<string:leave_id>")
 class ApproveLeaves(MethodView):
-    @jwt_required
+    @jwt_required()
     @access_level(["superadmin"])
     @blp.arguments(LeaveIdSchema, location="path")
     def put(self, leave_info, leave_id):
