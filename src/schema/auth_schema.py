@@ -2,8 +2,10 @@ from typing import Any
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 from config.regex_pattern import RegexPatterns
 
+from schema.config_schema import CustomSchema
 
-class SignUpSchema(Schema):
+
+class SignUpSchema(CustomSchema):
     name = fields.String(
         required=True, validate=validate.Regexp(RegexPatterns.NAME_PATTERN)
     )
@@ -38,7 +40,7 @@ class SignUpSchema(Schema):
             raise ValidationError("Fav_Subject Didn't Provided")
 
 
-class LoginSchema(Schema):
+class LoginSchema(CustomSchema):
     user_name = fields.String(
         required=True, validate=validate.Regexp(RegexPatterns.USERNAME_PATTERN)
     )

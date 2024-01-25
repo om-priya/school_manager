@@ -20,3 +20,7 @@ class AlreadyPresent(Exception):
 
 class FailedAction(Exception):
     pass
+
+class FailedValidation(Exception):
+    def __init__(self, message):
+        self.message = message

@@ -12,6 +12,7 @@ from router.issue_router import blp as IssueRouter
 from router.principal_router import blp as PrincipalRouter
 from router.teacher_router import blp as TeacherRouter
 from router.user_router import blp as UserRouter
+from utils.custom_error import FailedValidation
 
 
 def create_app():
@@ -32,6 +33,15 @@ def create_app():
         "OPENAPI_SWAGGER_UI_URL"
     ] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
     app.config["JWT_SECRET_KEY"] = "dbeywbsakxwj903jdsnxkcjdbdsmxxdionsalxlsakcufvdcd"
+
+    app.register_error_handler(
+        FailedValidation,
+        lambda err: (ErrorResponse(422, str(err)).get_json(), 422),
+    )
+    app.register_error_handler(
+        Exception,
+        lambda _: (ErrorResponse(500, "Something Went Wrong").get_json(), 500),
+    )
 
     # create jwtmanager instance which will handle all the jwt related logic
     jwt = JWTManager(app)
