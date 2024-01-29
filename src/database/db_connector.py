@@ -2,8 +2,6 @@
 import logging
 import os
 import mysql.connector
-import sqlite3
-
 logger = logging.getLogger("db_logger")
 
 
@@ -19,7 +17,6 @@ class DatabaseConnection:
             password=os.getenv("PASSWORD"),
             host=os.getenv("HOST"),
         )
-        # self.connection = sqlite3.connect(self.host)
         cursor = self.connection.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS mydb")
         cursor.execute("USE mydb")

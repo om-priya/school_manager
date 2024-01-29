@@ -1,7 +1,6 @@
 """ This Module contains database access class which will help in executing query """
 import logging
 from database.db_connector import DatabaseConnection
-from config.sqlite_queries import DatabaseConfig
 
 logger = logging.getLogger("db_logger")
 

@@ -1,5 +1,4 @@
 """ This module is responsible for handling all the controlers for principal """
-from flask_jwt_extended import get_jwt
 from flask_smorest import abort
 from utils.custom_error import DataNotFound, AlreadyPresent
 from models.response_format import SuccessResponse, ErrorResponse

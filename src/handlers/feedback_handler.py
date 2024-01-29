@@ -3,11 +3,6 @@
 from datetime import datetime
 import logging
 import shortuuid
-from config.regex_pattern import RegexPatterns
-from config.headers_for_output import TableHeaders
-from utils.pretty_print import pretty_print
-from utils.validate import pattern_validator, uuid_validator
-from utils.exception_handler import exception_checker
 from config.sqlite_queries import TeacherQueries, CreateTable, PrincipalQueries
 from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess

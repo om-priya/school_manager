@@ -1,14 +1,8 @@
 """This module controls the login and signup functionality"""
 import logging
-from models.principals import Principal
-from models.teachers import Teacher
-from config.sqlite_queries import UserQueries
-from database.database_access import DatabaseAccess
-from utils import validate
 from models.response_format import ErrorResponse, SuccessResponse
 from datetime import timedelta
 from flask_jwt_extended import create_access_token
-from utils.hash_password import hash_password
 from flask_smorest import abort
 from utils.custom_error import (
     DataNotFound,

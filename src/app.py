@@ -14,6 +14,12 @@ from router.teacher_router import blp as TeacherRouter
 from router.user_router import blp as UserRouter
 from utils.custom_error import FailedValidation
 
+logging.basicConfig(
+    format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
+    level=logging.DEBUG,
+    filename="logs.log",
+)
+
 
 def create_app():
     """

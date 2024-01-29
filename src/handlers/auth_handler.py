@@ -1,10 +1,9 @@
 """This module controls the login and signup functionality"""
 import logging
-from models.principals import Principal
-from models.teachers import Teacher
+from models.principals import Principal, SavePrincipal
+from models.teachers import Teacher, SaveTeacher
 from config.sqlite_queries import UserQueries
 from database.database_access import DatabaseAccess
-from utils import validate
 from utils.hash_password import hash_password
 from utils.custom_error import (
     DataNotFound,
@@ -56,10 +55,11 @@ class AuthenticationHandler:
             if user_info["role"] == "teacher":
                 new_teacher = Teacher(user_info)
                 logger.info("Initiating saving teacher")
+                SaveTeacher().save_teacher(new_teacher)
                 new_teacher.save_teacher()
             else:
                 new_principal = Principal(user_info)
                 logger.info("Initiating saving principal")
-                new_principal.save_principal()
+                SavePrincipal().save_principal(new_principal)
         except mysql.connector.IntegrityError:
             raise DuplicateEntry

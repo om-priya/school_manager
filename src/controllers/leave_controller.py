@@ -1,6 +1,5 @@
 from flask_jwt_extended import get_jwt
 from flask_smorest import abort
-
 from handlers.leave_handler import LeaveHandler
 from models.response_format import SuccessResponse, ErrorResponse
 from utils.custom_error import DataNotFound

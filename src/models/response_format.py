@@ -1,6 +1,3 @@
-from flask import jsonify
-
-
 class ErrorResponse:
     success = False
 

@@ -2,11 +2,9 @@
 
 import logging
 import shortuuid
-from config.regex_pattern import RegexPatterns
 from config.sqlite_queries import UserQueries, CreateTable
 from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess
-from utils.validate import pattern_validator
 from helper.helper_function import check_empty_data
 from utils.custom_error import DataNotFound
 

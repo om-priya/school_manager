@@ -2,8 +2,6 @@
 import logging
 from config.regex_pattern import RegexPatterns
 from config.headers_for_output import TableHeaders
-from utils.pretty_print import pretty_print
-from utils.exception_handler import exception_checker
 from utils import validate
 from config.sqlite_queries import PrincipalQueries
 from config.display_menu import PromptMessage
@@ -73,86 +71,85 @@ class PrincipalHandler:
 
         return res_data
 
-    def get_principal_by_id(self, principal_id):
-        """Get Specific principal"""
-        res_data = DatabaseAccess.execute_returning_query(
-            PrincipalQueries.GET_PRINCIPAL_BY_ID, (principal_id,)
-        )
+    # def get_principal_by_id(self, principal_id):
+    #     """Get Specific principal"""
+    #     res_data = DatabaseAccess.execute_returning_query(
+    #         PrincipalQueries.GET_PRINCIPAL_BY_ID, (principal_id,)
+    #     )
 
-        if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
-            raise DataNotFound
+    #     if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
+    #         raise DataNotFound
 
-        return res_data
+    #     return res_data
 
-    @exception_checker
-    def update_principal(self):
-        """Update principal"""
-        # taking input from console
-        principal_id = validate.uuid_validator(
-            PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
-            RegexPatterns.UUID_PATTERN,
-        )
-        field_to_update = input(PromptMessage.FIELD_UPDATE).lower()
+    # def update_principal(self):
+    #     """Update principal"""
+    #     # taking input from console
+    #     principal_id = validate.uuid_validator(
+    #         PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
+    #         RegexPatterns.UUID_PATTERN,
+    #     )
+    #     field_to_update = input(PromptMessage.FIELD_UPDATE).lower()
 
-        options = (
-            TableHeaders.NAME.lower(),
-            TableHeaders.GENDER.lower(),
-            TableHeaders.EMAIL.lower(),
-            TableHeaders.PHONE.lower(),
-            TableHeaders.EXPERIENCE.lower(),
-        )
+    #     options = (
+    #         TableHeaders.NAME.lower(),
+    #         TableHeaders.GENDER.lower(),
+    #         TableHeaders.EMAIL.lower(),
+    #         TableHeaders.PHONE.lower(),
+    #         TableHeaders.EXPERIENCE.lower(),
+    #     )
 
-        # checking field to update
-        if field_to_update not in options:
-            logger.info("No Such Field is present")
-            print(PromptMessage.NOTHING_FOUND.format("Field"))
-            return
+    #     # checking field to update
+    #     if field_to_update not in options:
+    #         logger.info("No Such Field is present")
+    #         print(PromptMessage.NOTHING_FOUND.format("Field"))
+    #         return
 
-        all_principal_id = self.get_all_active_pid()
+    #     all_principal_id = self.get_all_active_pid()
 
-        # Checking with assumption only one principal is present
-        if principal_id != all_principal_id[0][0]:
-            print(PromptMessage.NOTHING_FOUND.format("Principal"))
-            return
+    #     # Checking with assumption only one principal is present
+    #     if principal_id != all_principal_id[0][0]:
+    #         print(PromptMessage.NOTHING_FOUND.format("Principal"))
+    #         return
 
-        # getting table name
-        if field_to_update in options[:4]:
-            table_name = "user"
-        else:
-            table_name = "principal"
+    #     # getting table name
+    #     if field_to_update in options[:4]:
+    #         table_name = "user"
+    #     else:
+    #         table_name = "principal"
 
-        # validating and saving to db
-        match field_to_update:
-            case "name":
-                update_value = validate.pattern_validator(
-                    PromptMessage.TAKE_INPUT.format("Name"), RegexPatterns.NAME_PATTERN
-                )
-            case "gender":
-                update_value = validate.pattern_validator(
-                    PromptMessage.TAKE_INPUT.format("Gender (M/F)"),
-                    RegexPatterns.GENDER_PATTERN,
-                )
-            case "email":
-                update_value = validate.pattern_validator(
-                    PromptMessage.TAKE_INPUT.format("email"),
-                    RegexPatterns.EMAIL_PATTERN,
-                )
-            case "phone":
-                update_value = validate.pattern_validator(
-                    PromptMessage.TAKE_INPUT.format("Phone Number"),
-                    RegexPatterns.PHONE_PATTERN,
-                )
-            case "experience":
-                update_value = validate.pattern_validator(
-                    PromptMessage.TAKE_INPUT.format("Experience in Year"),
-                    RegexPatterns.EXPERIENCE_PATTERN,
-                )
+    #     # validating and saving to db
+    #     match field_to_update:
+    #         case "name":
+    #             update_value = validate.pattern_validator(
+    #                 PromptMessage.TAKE_INPUT.format("Name"), RegexPatterns.NAME_PATTERN
+    #             )
+    #         case "gender":
+    #             update_value = validate.pattern_validator(
+    #                 PromptMessage.TAKE_INPUT.format("Gender (M/F)"),
+    #                 RegexPatterns.GENDER_PATTERN,
+    #             )
+    #         case "email":
+    #             update_value = validate.pattern_validator(
+    #                 PromptMessage.TAKE_INPUT.format("email"),
+    #                 RegexPatterns.EMAIL_PATTERN,
+    #             )
+    #         case "phone":
+    #             update_value = validate.pattern_validator(
+    #                 PromptMessage.TAKE_INPUT.format("Phone Number"),
+    #                 RegexPatterns.PHONE_PATTERN,
+    #             )
+    #         case "experience":
+    #             update_value = validate.pattern_validator(
+    #                 PromptMessage.TAKE_INPUT.format("Experience in Year"),
+    #                 RegexPatterns.EXPERIENCE_PATTERN,
+    #             )
 
-        DatabaseAccess.execute_non_returning_query(
-            PrincipalQueries.UPDATE_PRINCIPAL.format(table_name, field_to_update),
-            (update_value, principal_id),
-        )
-        print(PromptMessage.SUCCESS_ACTION.format("Updated"))
+    #     DatabaseAccess.execute_non_returning_query(
+    #         PrincipalQueries.UPDATE_PRINCIPAL.format(table_name, field_to_update),
+    #         (update_value, principal_id),
+    #     )
+    #     print(PromptMessage.SUCCESS_ACTION.format("Updated"))
 
     def delete_principal(self, principal_id):
         """Delete Principal"""

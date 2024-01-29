@@ -5,8 +5,7 @@ from models.users import User
 from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess
 from database.db_connector import DatabaseConnection
-from config.sqlite_queries import TeacherQueries, CreateTable, DatabaseConfig
-from utils.exception_handler import exception_checker
+from config.sqlite_queries import TeacherQueries, CreateTable
 from utils.hash_password import hash_password
 
 logger = logging.getLogger(__name__)
@@ -48,7 +47,9 @@ class Teacher(User):
         self.status = "pending"
         self.username = teacher_info["email"].split("@")[0]
 
-    def save_teacher(self):
+
+class SaveTeacher:
+    def save_teacher(self, teacher_obj):
         """
         Save the Teacher object to the database.
 
@@ -59,7 +60,7 @@ class Teacher(User):
         None
         """
         school_id = DatabaseAccess.execute_returning_query(
-            TeacherQueries.GET_SCHOOL_ID, (self.school_name,)
+            TeacherQueries.GET_SCHOOL_ID, (teacher_obj.school_name,)
         )
         print(school_id)
         if len(school_id) == 0:
@@ -70,15 +71,25 @@ class Teacher(User):
         school_id = school_id[0]["school_id"]
         # creating tuple for execution
         cred_tuple = (
-            self.username,
-            self.password,
-            self.user_id,
-            self.role,
-            self.status,
+            teacher_obj.username,
+            teacher_obj.password,
+            teacher_obj.user_id,
+            teacher_obj.role,
+            teacher_obj.status,
         )
-        map_tuple = (self.user_id, school_id)
-        user_tuple = (self.user_id, self.name, self.gender, self.email, self.phone)
-        teacher_tuple = (self.user_id, self.experience, self.fav_subject)
+        map_tuple = (teacher_obj.user_id, school_id)
+        user_tuple = (
+            teacher_obj.user_id,
+            teacher_obj.name,
+            teacher_obj.gender,
+            teacher_obj.email,
+            teacher_obj.phone,
+        )
+        teacher_tuple = (
+            teacher_obj.user_id,
+            teacher_obj.experience,
+            teacher_obj.fav_subject,
+        )
 
         with DatabaseConnection() as connection:
             cursor = connection.cursor()
@@ -87,7 +98,7 @@ class Teacher(User):
             cursor.execute(CreateTable.INSERT_INTO_USER, user_tuple)
             cursor.execute(TeacherQueries.INSERT_INTO_TEACHER, teacher_tuple)
 
-        logger.info("User %s %s Saved to Db", self.name, self.role)
+        logger.info("User %s %s Saved to Db", teacher_obj.name, teacher_obj.role)
 
         logger.info("Teacher Saved to DB")
         print(PromptMessage.SIGNED_UP_SUCCESS)

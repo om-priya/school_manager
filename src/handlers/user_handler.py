@@ -2,7 +2,6 @@ import logging
 from config.display_menu import PromptMessage
 from config.sqlite_queries import UserQueries
 from database.database_access import DatabaseAccess
-from utils.pretty_print import pretty_print
 from utils.hash_password import hash_password
 from utils.custom_error import FailedAction, DataNotFound, InvalidCredentials
 from handlers.principal_handler import PrincipalHandler

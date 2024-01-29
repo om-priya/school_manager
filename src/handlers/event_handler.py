@@ -3,13 +3,9 @@
 from datetime import datetime
 import logging
 import shortuuid
-from config.regex_pattern import RegexPatterns
-from utils.validate import pattern_validator
-from utils.pretty_print import pretty_print
 from utils.custom_error import DataNotFound
 from config.sqlite_queries import CreateTable, UserQueries
 from config.display_menu import PromptMessage
-from config.headers_for_output import TableHeaders
 from database.database_access import DatabaseAccess
 from helper.helper_function import check_empty_data
 
