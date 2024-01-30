@@ -6,6 +6,10 @@ logger = logging.getLogger("db_logger")
 
 
 class DatabaseAccess:
+    """
+    This is a database access class which will acts as an intermediatary
+    between our database and buisness logic
+    """
 
     # execute query of non returning type such as update, delete, insert
     @classmethod

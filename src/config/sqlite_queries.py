@@ -4,7 +4,8 @@
 class DatabaseConfig:
     """This Class contains config for database"""
 
-    DB_PATH = "src\\database\\school.db"
+    CREATE_DB = "CREATE DATABASE IF NOT EXISTS mydb"
+    USE_DB = "USE mydb"
 
 
 class TeacherQueries:

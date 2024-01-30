@@ -1,26 +1,32 @@
+"""Custom Error Classes for handling API failures"""
+
+
 class DataNotFound(Exception):
-    pass
+    """No resouce found"""
 
 
 class InvalidCredentials(Exception):
-    pass
+    """Invalid cred provided"""
 
 
 class NotActive(Exception):
-    pass
+    """User no longer active"""
 
 
 class DuplicateEntry(Exception):
-    pass
+    """Already present in db"""
 
 
 class AlreadyPresent(Exception):
-    pass
+    """Already present in system"""
 
 
 class FailedAction(Exception):
-    pass
+    """Can't perform action for this request"""
+
 
 class FailedValidation(Exception):
+    """To handle balidation error of marshmallow"""
+
     def __init__(self, message):
         self.message = message

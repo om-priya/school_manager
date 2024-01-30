@@ -2,10 +2,10 @@
 import logging
 import shortuuid
 from models.users import User
-from config.display_menu import PromptMessage
 
 from database.database_access import DatabaseAccess
 from database.db_connector import DatabaseConnection
+from config.display_menu import PromptMessage
 from config.sqlite_queries import (
     PrincipalQueries,
     TeacherQueries,
@@ -52,6 +52,10 @@ class Principal(User):
 
 
 class SavePrincipal:
+    """
+    Save Principal class to initiate the process of saving to db
+    """
+
     def save_principal(self, principla_obj):
         """
         Save the Principal object to the database.

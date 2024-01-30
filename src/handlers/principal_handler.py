@@ -1,7 +1,6 @@
 """Principal Handler File"""
 import logging
-from config.regex_pattern import RegexPatterns
-from config.headers_for_output import TableHeaders
+
 # from utils import validate
 from config.sqlite_queries import PrincipalQueries
 from config.display_menu import PromptMessage
@@ -13,6 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class PrincipalHandler:
+    """
+    This class handles the buisness logic for handling
+    CRUD on Principal
+    """
+
     @staticmethod
     def get_all_active_pid():
         """Fetch All Principal Id who are active"""

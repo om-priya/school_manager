@@ -1,10 +1,9 @@
 """This contains teacher handler functionality"""
 import logging
-from config.regex_pattern import RegexPatterns
-from config.headers_for_output import TableHeaders
 from config.display_menu import PromptMessage
 from config.sqlite_queries import TeacherQueries
 from database.database_access import DatabaseAccess
+
 # from utils import validate
 from helper.helper_function import check_empty_data
 from utils.custom_error import DataNotFound, FailedAction
@@ -13,6 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class TeacherHandler:
+    """
+    This class handles the buisness logic for handling
+    CRUD on Teacher
+    """
+
     @staticmethod
     def get_status(teacher_id):
         """This Function Will be responsible for fetching status"""
@@ -147,7 +151,7 @@ class TeacherHandler:
             if tid["user_id"] == teacher_id:
                 break
         else:
-            logger.error(PromptMessage.FAILED_ACTION.format("Delete"))
+            logger.error("Can\'t perform delete action on entered user_id")
             raise DataNotFound
         DatabaseAccess.execute_non_returning_query(
             TeacherQueries.DELETE_TEACHER, (teacher_id,)

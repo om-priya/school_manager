@@ -13,6 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 class FeedbackHandler:
+    """
+    This class handles the buisness logic for reading and giving feedbacks
+    """
+
     def __init__(self, user_id):
         self.user_id = user_id
 

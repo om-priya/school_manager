@@ -2,10 +2,10 @@
 import logging
 import shortuuid
 from models.users import User
-from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess
 from database.db_connector import DatabaseConnection
 from config.sqlite_queries import TeacherQueries, CreateTable
+from config.display_menu import PromptMessage
 from utils.hash_password import hash_password
 
 logger = logging.getLogger(__name__)
@@ -49,6 +49,10 @@ class Teacher(User):
 
 
 class SaveTeacher:
+    """
+    Save Teacher class to initiate the process of saving to db
+    """
+
     def save_teacher(self, teacher_obj):
         """
         Save the Teacher object to the database.

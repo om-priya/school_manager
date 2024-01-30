@@ -1,3 +1,8 @@
+"""
+This file handles the functionality for the user
+which are shared between all roles
+"""
+
 import logging
 from config.display_menu import PromptMessage
 from config.sqlite_queries import UserQueries
@@ -6,7 +11,7 @@ from utils.hash_password import hash_password
 from utils.custom_error import FailedAction, DataNotFound, InvalidCredentials
 from handlers.principal_handler import PrincipalHandler
 from handlers.teacher_handler import TeacherHandler
-# from utils import validate
+
 
 logger = logging.getLogger(__name__)
 

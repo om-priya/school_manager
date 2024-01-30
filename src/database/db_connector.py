@@ -2,6 +2,8 @@
 import logging
 import os
 import mysql.connector
+from config.sqlite_queries import DatabaseConfig
+
 logger = logging.getLogger("db_logger")
 
 
@@ -18,8 +20,8 @@ class DatabaseConnection:
             host=os.getenv("HOST"),
         )
         cursor = self.connection.cursor()
-        cursor.execute("CREATE DATABASE IF NOT EXISTS mydb")
-        cursor.execute("USE mydb")
+        cursor.execute(DatabaseConfig.CREATE_DB)
+        cursor.execute(DatabaseConfig.USE_DB)
         return self.connection
 
     def __exit__(self, exc_type, exc_val, exc_traceback):

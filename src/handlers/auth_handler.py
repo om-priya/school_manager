@@ -1,5 +1,8 @@
 """This module controls the login and signup functionality"""
 import logging
+
+import mysql.connector
+
 from models.principals import Principal, SavePrincipal
 from models.teachers import Teacher, SaveTeacher
 from config.sqlite_queries import UserQueries
@@ -11,13 +14,16 @@ from utils.custom_error import (
     NotActive,
     DuplicateEntry,
 )
-import mysql.connector
 
 
 logger = logging.getLogger(__name__)
 
 
 class AuthenticationHandler:
+    """
+    This class handles the buisness logic for login and signup
+    """
+
     @staticmethod
     def is_logged_in(username, password):
         """
@@ -56,10 +62,9 @@ class AuthenticationHandler:
                 new_teacher = Teacher(user_info)
                 logger.info("Initiating saving teacher")
                 SaveTeacher().save_teacher(new_teacher)
-                new_teacher.save_teacher()
             else:
                 new_principal = Principal(user_info)
                 logger.info("Initiating saving principal")
                 SavePrincipal().save_principal(new_principal)
-        except mysql.connector.IntegrityError:
-            raise DuplicateEntry
+        except mysql.connector.IntegrityError as integrity_error:
+            raise DuplicateEntry from integrity_error

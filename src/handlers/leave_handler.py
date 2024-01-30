@@ -12,6 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class LeaveHandler:
+    """
+    This class handles the buisness logic for checking leave status
+    and applying for leave
+    """
+
     def __init__(self, user_id):
         self.user_id = user_id
 
@@ -38,7 +43,7 @@ class LeaveHandler:
             raise DataNotFound
 
         return res_data
-    
+
     @staticmethod
     def approve_leave(leave_id):
         """Approve Pending Leaves of teacher and principal"""
@@ -57,10 +62,10 @@ class LeaveHandler:
             if leave_id == leave_record["leave_id"]:
                 break
         else:
-            logger.error(PromptMessage.NOTHING_FOUND.format("Leave Record"))
+            logger.error("No such leave record Found")
             raise DataNotFound
 
         DatabaseAccess.execute_non_returning_query(
             UserQueries.APPROVE_LEAVE, (leave_id,)
         )
-        logger.info(PromptMessage.ADDED_SUCCESSFULLY.format("Leave"))
+        logger.info("Leave Applied Successfully")

@@ -1,8 +1,9 @@
-"""Event Handler File"""
+"""Event Handler File contains code for handling event buisness logic"""
 
 from datetime import datetime
 import logging
 import shortuuid
+
 from utils.custom_error import DataNotFound
 from config.sqlite_queries import CreateTable, UserQueries
 from config.display_menu import PromptMessage
@@ -13,6 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class EventHandler:
+    """
+    This class handles the buisness logic for reading and creating event
+    """
+
     def __init__(self, user_id):
         self.user_id = user_id
 

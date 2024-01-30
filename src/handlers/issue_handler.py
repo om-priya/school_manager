@@ -12,6 +12,10 @@ logger = logging.getLogger(__name__)
 
 
 class IssueHandler:
+    """
+    This class handles the buisness logic for reading and raising issues
+    """
+
     def __init__(self, user_id):
         self.user_id = user_id
 
