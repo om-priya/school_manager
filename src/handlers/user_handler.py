@@ -6,7 +6,7 @@ from utils.hash_password import hash_password
 from utils.custom_error import FailedAction, DataNotFound, InvalidCredentials
 from handlers.principal_handler import PrincipalHandler
 from handlers.teacher_handler import TeacherHandler
-from utils import validate
+# from utils import validate
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,7 @@ from config.headers_for_output import TableHeaders
 from config.display_menu import PromptMessage
 from config.sqlite_queries import TeacherQueries
 from database.database_access import DatabaseAccess
-from utils import validate
+# from utils import validate
 from helper.helper_function import check_empty_data
 from utils.custom_error import DataNotFound, FailedAction
 

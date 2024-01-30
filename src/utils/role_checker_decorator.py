@@ -1,4 +1,7 @@
-from flask_jwt_extended import get_jwt, verify_jwt_in_request
+"""
+
+"""
+from flask_jwt_extended import get_jwt
 from flask_smorest import abort
 
 from models.response_format import ErrorResponse

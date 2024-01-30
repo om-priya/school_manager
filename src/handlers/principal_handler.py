@@ -2,7 +2,7 @@
 import logging
 from config.regex_pattern import RegexPatterns
 from config.headers_for_output import TableHeaders
-from utils import validate
+# from utils import validate
 from config.sqlite_queries import PrincipalQueries
 from config.display_menu import PromptMessage
 from helper.helper_function import check_empty_data
@@ -71,16 +71,16 @@ class PrincipalHandler:
 
         return res_data
 
-    # def get_principal_by_id(self, principal_id):
-    #     """Get Specific principal"""
-    #     res_data = DatabaseAccess.execute_returning_query(
-    #         PrincipalQueries.GET_PRINCIPAL_BY_ID, (principal_id,)
-    #     )
+    def get_principal_by_id(self, principal_id):
+        """Get Specific principal"""
+        res_data = DatabaseAccess.execute_returning_query(
+            PrincipalQueries.GET_PRINCIPAL_BY_ID, (principal_id,)
+        )
 
-    #     if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
-    #         raise DataNotFound
+        if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
+            raise DataNotFound
 
-    #     return res_data
+        return res_data
 
     # def update_principal(self):
     #     """Update principal"""

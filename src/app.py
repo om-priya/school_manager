@@ -1,9 +1,12 @@
+"""This module contains code for configuration of app and also 
+configuration with custom responses for generic erros
+This module also registers the different routes to the app"""
+import logging
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from flask_smorest import Api, abort
+from flask_smorest import Api
 from models.response_format import ErrorResponse
-
-import logging
 
 from router.auth_router import blp as AuthRouter
 from router.feedback_router import blp as FeedBackRouter
@@ -24,6 +27,11 @@ logging.basicConfig(
 def create_app():
     """
     This Function will create the server for my project
+    It also registers different routes with the application
+
+    (parameters) :-> None
+
+    (returns) :-> app instance made with Flask
     """
 
     # creating flask app instance with default configuration
@@ -51,6 +59,27 @@ def create_app():
 
     # create jwtmanager instance which will handle all the jwt related logic
     jwt = JWTManager(app)
+
+    # custom errors for jwt failure
+    @jwt.token_in_blocklist_loader
+    def check_if_token_in_blocklist(_jwt_header, jwt_payload):
+        pass
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(_jwt_header, _jwt_payload):
+        return (ErrorResponse(401, "Token is Revoked").get_json(), 401)
+
+    @jwt.expired_token_loader
+    def expired_token_callback(_jwt_header, _jwt_payload):
+        return (ErrorResponse(401, "Token is Not Valid").get_json(), 401)
+
+    @jwt.unauthorized_loader
+    def missing_token_callback(_error):
+        return (ErrorResponse(401, "Token is Missing").get_json(), 401)
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(_error):
+        return (ErrorResponse(401, "Invalid Token Provided").get_json(), 401)
 
     # creating the api instance which will used to register blueprint for the app
     api = Api(app)
