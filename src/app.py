@@ -1,13 +1,20 @@
-"""This module contains code for configuration of app and also 
+"""
+This module contains code for configuration of app and also 
 configuration with custom responses for generic erros
-This module also registers the different routes to the app"""
+This module also registers the different routes to the app
+
+This project aims to provide a management system for a school 
+through which they can manage different entities in their school. 
+The base assumption of this project is that it manages with the perspective of one school 
+To check for super admin credentials go to /src/super_admin_meny.py 
+"""
 import logging
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_smorest import Api
-from models.response_format import ErrorResponse
 
+from models.response_format import ErrorResponse
 from router.auth_router import blp as AuthRouter
 from router.feedback_router import blp as FeedBackRouter
 from router.event_router import blp as EventRouter
@@ -16,6 +23,7 @@ from router.principal_router import blp as PrincipalRouter
 from router.teacher_router import blp as TeacherRouter
 from router.user_router import blp as UserRouter
 from utils.custom_error import FailedValidation
+from config.display_menu import PromptMessage
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
@@ -62,24 +70,44 @@ def create_app():
 
     # custom errors for jwt failure
     @jwt.token_in_blocklist_loader
-    def check_if_token_in_blocklist(_jwt_header, jwt_payload):
+    def check_if_token_in_blocklist(_jwt_header, _jwt_payload):
         pass
 
     @jwt.revoked_token_loader
     def revoked_token_callback(_jwt_header, _jwt_payload):
-        return (ErrorResponse(401, "Token is Revoked").get_json(), 401)
+        return (
+            ErrorResponse(
+                401, PromptMessage.TOKEN_RESPONSE.format("Revoked")
+            ).get_json(),
+            401,
+        )
 
     @jwt.expired_token_loader
     def expired_token_callback(_jwt_header, _jwt_payload):
-        return (ErrorResponse(401, "Token is Not Valid").get_json(), 401)
+        return (
+            ErrorResponse(
+                401, PromptMessage.TOKEN_RESPONSE.format("Not Valid")
+            ).get_json(),
+            401,
+        )
 
     @jwt.unauthorized_loader
     def missing_token_callback(_error):
-        return (ErrorResponse(401, "Token is Missing").get_json(), 401)
+        return (
+            ErrorResponse(
+                401, PromptMessage.TOKEN_RESPONSE.format("Missing")
+            ).get_json(),
+            401,
+        )
 
     @jwt.invalid_token_loader
     def invalid_token_callback(_error):
-        return (ErrorResponse(401, "Invalid Token Provided").get_json(), 401)
+        return (
+            ErrorResponse(
+                401, PromptMessage.TOKEN_RESPONSE.format("Invalid")
+            ).get_json(),
+            401,
+        )
 
     # creating the api instance which will used to register blueprint for the app
     api = Api(app)

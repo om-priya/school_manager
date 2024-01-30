@@ -108,3 +108,4 @@ class PromptMessage:
     SUCCESS_ACTION = """\n{} Successfully"""
     WRONG_QUERY = """kindly Check Your Query: """
     NEW_PASSWORD_PROMPT = "Enter Your New Password"
+    TOKEN_RESPONSE = "Token is {}"
