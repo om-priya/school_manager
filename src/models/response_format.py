@@ -81,5 +81,5 @@ class SuccessResponse:
             "success": SuccessResponse.success,
             "status_code": self.status_code,
             "message": self.message,
-            "data": {"json": [self.res_data]},
+            "data": {"json": self.res_data},
         }

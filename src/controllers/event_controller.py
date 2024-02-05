@@ -1,6 +1,6 @@
 from handlers.event_handler import EventHandler
 from flask_smorest import abort
-from flask_jwt_extended import get_jwt
+from helper.helper_function import get_user_id_from_jwt
 from models.response_format import SuccessResponse, ErrorResponse
 from utils.custom_error import DataNotFound
 
@@ -8,8 +8,7 @@ from utils.custom_error import DataNotFound
 class EventController:
     def get_all_events(self):
         try:
-            jwt = get_jwt()
-            user_id = jwt.get("sub").get("user_id")
+            user_id = get_user_id_from_jwt()
 
             res_data = EventHandler(user_id).read_event()
             return SuccessResponse(
@@ -21,8 +20,7 @@ class EventController:
             )
 
     def post_create_event(self, event_data):
-        jwt = get_jwt()
-        user_id = jwt.get("sub").get("user_id")
+        user_id = get_user_id_from_jwt()
 
         EventHandler(user_id).create_event(event_data["event_message"])
         return SuccessResponse(200, "Event Created Successfully").get_json()

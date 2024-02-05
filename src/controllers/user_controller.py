@@ -1,4 +1,3 @@
-from flask_jwt_extended import get_jwt
 from flask_smorest import abort
 
 from handlers.user_handler import (
@@ -8,14 +7,14 @@ from handlers.user_handler import (
 )
 from utils.custom_error import DataNotFound, FailedAction, InvalidCredentials
 from models.response_format import SuccessResponse, ErrorResponse
+from helper.helper_function import get_user_id_from_jwt, get_user_role_from_jwt
 
 
 class UserController:
     def get_my_profile(self):
         try:
-            jwt = get_jwt()
-            role = jwt.get("sub").get("role")
-            user_id = jwt.get("sub").get("user_id")
+            role = get_user_role_from_jwt()
+            user_id = get_user_id_from_jwt()
 
             res_data = view_personal_info(role, user_id)
 
@@ -32,9 +31,8 @@ class UserController:
 
     def get_my_salary_history(self):
         try:
-            jwt = get_jwt()
-            role = jwt.get("sub").get("role")
-            user_id = jwt.get("sub").get("user_id")
+            role = get_user_role_from_jwt()
+            user_id = get_user_id_from_jwt()
 
             res_data = fetch_salary_history(user_id)
             return SuccessResponse(200, "Salary History", res_data).get_json()
@@ -45,9 +43,8 @@ class UserController:
 
     def change_password(self, user_details):
         try:
-            jwt = get_jwt()
-            role = jwt.get("sub").get("role")
-            user_id = jwt.get("sub").get("user_id")
+            role = get_user_role_from_jwt()
+            user_id = get_user_id_from_jwt()
 
             user_name = user_details["user_name"]
             password = user_details["password"]

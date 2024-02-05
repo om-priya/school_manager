@@ -1,9 +1,11 @@
 """This module controls the login and signup functionality"""
 import logging
-from models.response_format import ErrorResponse, SuccessResponse
 from datetime import timedelta
+
 from flask_jwt_extended import create_access_token
 from flask_smorest import abort
+
+from models.response_format import ErrorResponse, SuccessResponse
 from utils.custom_error import (
     DataNotFound,
     InvalidCredentials,
@@ -16,13 +18,13 @@ logger = logging.getLogger(__name__)
 
 
 class AuthenticationController:
+    """Controller for auth router"""
+
     @staticmethod
     def login_controller(login_details):
         """
-        Check whether the user is valid or not.
-
-        Returns:
-        List: ['success': True/False, 'user_id': user_id, 'role': role]
+        formatting data for different scenario while
+        request is on /login
         """
         try:
             user_details = AuthenticationHandler.is_logged_in(
@@ -30,7 +32,7 @@ class AuthenticationController:
             )
             access_token = create_access_token(
                 identity={"user_id": user_details[1], "role": user_details[2]},
-                expires_delta=timedelta(minutes=60)
+                expires_delta=timedelta(minutes=60),
             )
             return SuccessResponse(
                 200,

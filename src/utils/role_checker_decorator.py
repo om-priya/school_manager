@@ -2,10 +2,11 @@
 This contains the decorator which will check the role of the
 provided token
 """
-from flask_jwt_extended import get_jwt
+
 from flask_smorest import abort
 
 from models.response_format import ErrorResponse
+from helper.helper_function import get_user_role_from_jwt
 
 
 def access_level(role):
@@ -15,8 +16,7 @@ def access_level(role):
 
     def check_user(func):
         def wrapper(*args, **kwargs):
-            jwt = get_jwt()
-            token_role = jwt.get("sub").get("role")
+            token_role = get_user_role_from_jwt()
             if token_role in role:
                 return func(*args, **kwargs)
             else:

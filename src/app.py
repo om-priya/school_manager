@@ -8,6 +8,7 @@ through which they can manage different entities in their school.
 The base assumption of this project is that it manages with the perspective of one school 
 To check for super admin credentials go to /src/super_admin_meny.py 
 """
+
 import logging
 
 from flask import Flask
@@ -24,6 +25,7 @@ from router.teacher_router import blp as TeacherRouter
 from router.user_router import blp as UserRouter
 from utils.custom_error import FailedValidation
 from config.display_menu import PromptMessage
+from set_app_config import set_app_config
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
@@ -44,17 +46,8 @@ def create_app():
 
     # creating flask app instance with default configuration
     app = Flask(__name__)
-    app.config["PROPAGATE_EXCEPTIONS"] = True
-    app.config["API_TITLE"] = "School Management System REST API"
-    app.config["API_VERSION"] = "v1"
-    app.config["APPLICATION_ROOT"] = "/"
-    app.config["OPENAPI_VERSION"] = "3.0.3"
-    app.config["OPENAPI_URL_PREFIX"] = "/"
-    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/api-docs"
-    app.config[
-        "OPENAPI_SWAGGER_UI_URL"
-    ] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-    app.config["JWT_SECRET_KEY"] = "dbeywbsakxwj903jdsnxkcjdbdsmxxdionsalxlsakcufvdcd"
+
+    app = set_app_config(app)
 
     app.register_error_handler(
         FailedValidation,

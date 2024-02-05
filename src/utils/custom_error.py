@@ -26,7 +26,7 @@ class FailedAction(Exception):
 
 
 class FailedValidation(Exception):
-    """To handle balidation error of marshmallow"""
+    """To handle validation error of marshmallow"""
 
     def __init__(self, message):
         self.message = message
