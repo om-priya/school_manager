@@ -53,13 +53,13 @@ def create_app():
         FailedValidation,
         lambda err: (ErrorResponse(422, str(err)).get_json(), 422),
     )
-    app.register_error_handler(
-        Exception,
-        lambda error: (
-            ErrorResponse(500, f"Something Went Wrong {error}").get_json(),
-            500,
-        ),
-    )
+    # app.register_error_handler(
+    #     Exception,
+    #     lambda error: (
+    #         ErrorResponse(500, f"Something Went Wrong {error}").get_json(),
+    #         500,
+    #     ),
+    # )
 
     app = jwt_exception_manager(app)
 

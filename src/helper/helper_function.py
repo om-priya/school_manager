@@ -30,3 +30,8 @@ def get_user_role_from_jwt():
     jwt = get_jwt()
     role = jwt.get("sub").get("role")
     return role
+
+def get_token_id_from_jwt():
+    jwt = get_jwt()
+    token_id = jwt.get("token_id")
+    return token_id

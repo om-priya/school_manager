@@ -6,7 +6,7 @@ import mysql.connector
 
 from models.principals import Principal, SavePrincipal
 from models.teachers import Teacher, SaveTeacher
-from config.sqlite_queries import UserQueries
+from config.sqlite_queries import UserQueries, CreateTable
 from database.database_access import DatabaseAccess
 from utils.hash_password import hash_password
 from utils.custom_error import (
@@ -71,5 +71,15 @@ class AuthenticationHandler:
                 new_principal = Principal(user_info)
                 logger.info("Initiating saving principal")
                 SavePrincipal().save_principal(new_principal)
+        except mysql.connector.IntegrityError as integrity_error:
+            raise DuplicateEntry from integrity_error
+
+    @staticmethod
+    def logout_handler(token_id):
+        try:
+            DatabaseAccess.execute_non_returning_query(CreateTable.CREATE_TOKEN_TABLE)
+            DatabaseAccess.execute_non_returning_query(
+                CreateTable.INSERT_INTO_TOKEN, (token_id,)
+            )
         except mysql.connector.IntegrityError as integrity_error:
             raise DuplicateEntry from integrity_error

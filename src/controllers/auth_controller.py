@@ -4,6 +4,7 @@ import logging
 
 from flask_jwt_extended import create_access_token
 from flask_smorest import abort
+from shortuuid import ShortUUID
 
 from models.response_format import ErrorResponse, SuccessResponse
 from utils.custom_error import (
@@ -13,7 +14,7 @@ from utils.custom_error import (
     DuplicateEntry,
 )
 from handlers.auth_handler import AuthenticationHandler
-from helper.helper_function import get_request_id
+from helper.helper_function import get_request_id, get_token_id_from_jwt
 
 logger = logging.getLogger(__name__)
 
@@ -35,9 +36,10 @@ class AuthenticationController:
             )
 
             logger.info(f"{get_request_id()} successfully validated")
-
+            token_identifier = {"token_id": ShortUUID().random(length=10)}
             access_token = create_access_token(
-                identity={"user_id": user_details[1], "role": user_details[2]}
+                identity={"user_id": user_details[1], "role": user_details[2]},
+                additional_claims=token_identifier,
             )
 
             logger.info(f"{get_request_id()} jwt token is generated and returned")
@@ -79,10 +81,25 @@ class AuthenticationController:
             return abort(
                 404,
                 message=ErrorResponse(
-                    409, "No Such School present in the system"
+                    404, "No Such School present in the system"
                 ).get_json(),
             )
         except DuplicateEntry:
+            return abort(
+                409,
+                message=ErrorResponse(
+                    409, "User Already Exists With Provided Info"
+                ).get_json(),
+            )
+
+    @staticmethod
+    def logout_controller():
+        try:
+            token_id = get_token_id_from_jwt()
+            AuthenticationHandler.logout_handler(token_id)
+            return SuccessResponse(200, "Log Out Successfully").get_json()
+        except DuplicateEntry:
+            logger.critical("Someone Tried to use blocklist token")
             return abort(
                 409,
                 message=ErrorResponse(

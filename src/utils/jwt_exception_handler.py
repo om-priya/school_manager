@@ -16,11 +16,6 @@ def jwt_exception_manager(app):
     # create jwtmanager instance which will handle all the jwt related logic
     jwt = JWTManager(app)
 
-    # custom errors for jwt failure
-    @jwt.token_in_blocklist_loader
-    def check_if_token_in_blocklist(_jwt_header, _jwt_payload):
-        pass
-
     @jwt.revoked_token_loader
     def revoked_token_callback(_jwt_header, _jwt_payload):
         logger.warning(f"{get_request_id()} token is revoked")

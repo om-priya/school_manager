@@ -3,6 +3,7 @@
 import logging
 from flask_smorest import Blueprint
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from schema.auth_schema import LoginSchema, SignUpSchema
 from controllers.auth_controller import AuthenticationController
 from helper.helper_function import get_request_id
@@ -33,10 +34,11 @@ class LoginRoute(MethodView):
 class LogoutRoute(MethodView):
     """Logout Route"""
 
+    @jwt_required()
     def post(self):
         """post method for /logout"""
         logger.info(f"{get_request_id()} hit /logout post endpoint")
-        return {"message": "Logout Successfully"}
+        return AuthenticationController.logout_controller()
 
 
 @blp.route("/signup")

@@ -126,6 +126,7 @@ class UserQueries:
         FROM credential 
         WHERE username = %s AND password = %s AND user_id = %s AND status = 'active'"""
     CHANGE_PASSWORD_QUERY = """UPDATE credential SET password = %s WHERE user_id = %s"""
+    FETCH_FROM_TOKEN = """SELECT * FROM block_token WHERE token_id = %s"""
 
 
 class CreateTable:
@@ -209,6 +210,12 @@ class CreateTable:
         status VARCHAR(256),
         school_id VARCHAR(256)
     )"""
+    CREATE_TOKEN_TABLE = """CREATE TABLE IF NOT EXISTS block_token (
+        token_id VARCHAR(256) PRIMARY KEY
+    )"""
+    INSERT_INTO_TOKEN = """INSERT INTO block_token
+        (token_id)
+        VALUES (%s)"""
     INSERT_INTO_CREDENTIAL = """INSERT INTO credential
     (username, password, user_id, role, status) 
     VALUES (%s, %s, %s, %s, %s)"""
