@@ -2,6 +2,7 @@
 
 import logging
 from flask_jwt_extended import get_jwt
+from flask import request
 
 logger = logging.getLogger(__name__)
 
@@ -25,3 +26,7 @@ def get_user_role_from_jwt():
     jwt = get_jwt()
     role = jwt.get("sub").get("role")
     return role
+
+
+def get_request_id():
+    return request.environ.get("X-Request-Id")

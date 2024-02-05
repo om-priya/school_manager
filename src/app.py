@@ -11,9 +11,9 @@ To check for super admin credentials go to /src/super_admin_meny.py
 
 import logging
 
-from flask import Flask
-from flask_jwt_extended import JWTManager
+from flask import Flask, request
 from flask_smorest import Api
+from shortuuid import ShortUUID
 
 from models.response_format import ErrorResponse
 from router.auth_router import blp as AuthRouter
@@ -24,8 +24,8 @@ from router.principal_router import blp as PrincipalRouter
 from router.teacher_router import blp as TeacherRouter
 from router.user_router import blp as UserRouter
 from utils.custom_error import FailedValidation
-from config.display_menu import PromptMessage
-from set_app_config import set_app_config
+from utils.set_app_config import set_app_config
+from utils.jwt_exception_handler import jwt_exception_manager
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
@@ -55,55 +55,22 @@ def create_app():
     )
     app.register_error_handler(
         Exception,
-        lambda _: (ErrorResponse(500, "Something Went Wrong").get_json(), 500),
+        lambda error: (
+            ErrorResponse(500, f"Something Went Wrong {error}").get_json(),
+            500,
+        ),
     )
 
-    # create jwtmanager instance which will handle all the jwt related logic
-    jwt = JWTManager(app)
-
-    # custom errors for jwt failure
-    @jwt.token_in_blocklist_loader
-    def check_if_token_in_blocklist(_jwt_header, _jwt_payload):
-        pass
-
-    @jwt.revoked_token_loader
-    def revoked_token_callback(_jwt_header, _jwt_payload):
-        return (
-            ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Revoked")
-            ).get_json(),
-            401,
-        )
-
-    @jwt.expired_token_loader
-    def expired_token_callback(_jwt_header, _jwt_payload):
-        return (
-            ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Not Valid")
-            ).get_json(),
-            401,
-        )
-
-    @jwt.unauthorized_loader
-    def missing_token_callback(_error):
-        return (
-            ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Missing")
-            ).get_json(),
-            401,
-        )
-
-    @jwt.invalid_token_loader
-    def invalid_token_callback(_error):
-        return (
-            ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Invalid")
-            ).get_json(),
-            401,
-        )
+    app = jwt_exception_manager(app)
 
     # creating the api instance which will used to register blueprint for the app
     api = Api(app)
+
+    # setting req Id for logging
+    @app.before_request
+    def set_custom_headers():
+        request_id = ShortUUID().random(length=10)
+        request.environ["X-Request-Id"] = request_id
 
     api.register_blueprint(AuthRouter)
     api.register_blueprint(FeedBackRouter)

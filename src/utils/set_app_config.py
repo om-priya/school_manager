@@ -2,6 +2,8 @@
 Setting config of Flask
 """
 
+from datetime import timedelta
+
 
 def set_app_config(app):
     """Setting config for Flask APP"""
@@ -17,4 +19,6 @@ def set_app_config(app):
     )
     app.config["JWT_SECRET_KEY"] = "dbeywbsakxwj903jdsnxkcjdbdsmxxdionsalxlsakcufvdcd"
 
+    ACCESS_EXPIRES = timedelta(hours=1)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
     return app

@@ -1,6 +1,8 @@
 """
 File for user router
 """
+
+import logging
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask_jwt_extended import jwt_required
@@ -8,6 +10,7 @@ from flask_jwt_extended import jwt_required
 from controllers.user_controller import UserController
 from utils.role_checker_decorator import access_level
 from schema.user_schema import ChangePasswordSchema
+from helper.helper_function import get_request_id
 
 blp = Blueprint(
     "User Router",
@@ -15,6 +18,8 @@ blp = Blueprint(
     url_prefix="/api/v1/user",
     description="Common end points for all users",
 )
+
+logger = logging.getLogger(__name__)
 
 
 @blp.route("/profile")
@@ -25,6 +30,7 @@ class MyProfile(MethodView):
     @access_level(["teacher", "principal"])
     def get(self):
         """get method on /profile endpoint"""
+        logger.info(f"{get_request_id()} hit /profile get endpoint")
         return UserController().get_my_profile()
 
 
@@ -36,6 +42,7 @@ class MySalaryHistory(MethodView):
     @access_level(["teacher", "principal"])
     def get(self):
         """get method on /salary-history endpoint"""
+        logger.info(f"{get_request_id()} hit /salary-history get endpoint")
         return UserController().get_my_salary_history()
 
 
@@ -48,4 +55,5 @@ class ChangePassword(MethodView):
     @blp.arguments(ChangePasswordSchema)
     def post(self, change_password_details):
         """post method on /change-password endpoint"""
+        logger.info(f"{get_request_id()} hit /change-password post endpoint")
         return UserController().change_password(change_password_details)

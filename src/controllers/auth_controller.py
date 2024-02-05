@@ -1,6 +1,6 @@
 """This module controls the login and signup functionality"""
+
 import logging
-from datetime import timedelta
 
 from flask_jwt_extended import create_access_token
 from flask_smorest import abort
@@ -13,6 +13,7 @@ from utils.custom_error import (
     DuplicateEntry,
 )
 from handlers.auth_handler import AuthenticationHandler
+from helper.helper_function import get_request_id
 
 logger = logging.getLogger(__name__)
 
@@ -27,19 +28,26 @@ class AuthenticationController:
         request is on /login
         """
         try:
+            logger.info(f"{get_request_id()} calls the validation function")
+
             user_details = AuthenticationHandler.is_logged_in(
                 login_details["user_name"], login_details["password"]
             )
+
+            logger.info(f"{get_request_id()} successfully validated")
+
             access_token = create_access_token(
-                identity={"user_id": user_details[1], "role": user_details[2]},
-                expires_delta=timedelta(minutes=60),
+                identity={"user_id": user_details[1], "role": user_details[2]}
             )
+
+            logger.info(f"{get_request_id()} jwt token is generated and returned")
             return SuccessResponse(
                 200,
                 "User Logged In SuccessFully",
                 {"access_token": access_token},
             ).get_json()
         except InvalidCredentials:
+            logger.info(f"{get_request_id()} Invalid credentials is provided")
             return abort(
                 401,
                 message=ErrorResponse(
@@ -47,6 +55,7 @@ class AuthenticationController:
                 ).get_json(),
             )
         except NotActive:
+            logger.info(f"{get_request_id()} User Not Approved")
             return abort(
                 403,
                 message=ErrorResponse(
@@ -54,6 +63,7 @@ class AuthenticationController:
                 ).get_json(),
             )
         except DataNotFound:
+            logger.info(f"{get_request_id()} User No Longer Active/Deleted")
             return abort(404, message=ErrorResponse(404, "User Not Found").get_json())
 
     @staticmethod

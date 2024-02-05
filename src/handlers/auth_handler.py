@@ -1,4 +1,5 @@
 """This module controls the login and signup functionality"""
+
 import logging
 
 import mysql.connector
@@ -14,6 +15,7 @@ from utils.custom_error import (
     NotActive,
     DuplicateEntry,
 )
+from helper.helper_function import get_request_id
 
 
 logger = logging.getLogger(__name__)
@@ -41,13 +43,16 @@ class AuthenticationHandler:
         )
         # Checking For Credentials with db response
         if len(data) == 0:
-            logger.error("Wrong Credentials")
+            logger.error(f"{get_request_id()} Wrong Credentials")
             raise InvalidCredentials
         elif data[0]["status"] == "pending":
-            logger.error("Pending User %s tried to logged In", data[0]["user_id"])
+            logger.error(
+                f"{get_request_id()}Pending User %s tried to logged In",
+                data[0]["user_id"],
+            )
             raise NotActive
         elif data[0]["status"] == "deactivate":
-            logger.error("User %s don't exists", data[0]["user_id"])
+            logger.error(f"{get_request_id()}User %s don't exists", data[0]["user_id"])
             raise DataNotFound
         else:
             return [True, data[0]["user_id"], data[0]["role"]]
