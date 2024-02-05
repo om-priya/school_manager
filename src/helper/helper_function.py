@@ -7,10 +7,14 @@ from flask import request
 logger = logging.getLogger(__name__)
 
 
+def get_request_id():
+    return request.environ.get("X-Request-Id")
+
+
 def check_empty_data(res_data, prompt_message):
     """This function will check for whether data is there or not"""
     if len(res_data) == 0:
-        logger.error(prompt_message)
+        logger.error(f"{get_request_id} {prompt_message}")
         return True
 
     return False
@@ -26,7 +30,3 @@ def get_user_role_from_jwt():
     jwt = get_jwt()
     role = jwt.get("sub").get("role")
     return role
-
-
-def get_request_id():
-    return request.environ.get("X-Request-Id")

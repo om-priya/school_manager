@@ -1,8 +1,6 @@
 """ This Module contains database access class which will help in executing query """
-import logging
-from database.db_connector import DatabaseConnection
 
-logger = logging.getLogger("db_logger")
+from database.db_connector import DatabaseConnection
 
 
 class DatabaseAccess:

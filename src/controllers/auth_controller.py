@@ -75,6 +75,13 @@ class AuthenticationController:
             return SuccessResponse(
                 200, "User Signed Up SuccessFully wait for Approval"
             ).get_json()
+        except DataNotFound:
+            return abort(
+                404,
+                message=ErrorResponse(
+                    409, "No Such School present in the system"
+                ).get_json(),
+            )
         except DuplicateEntry:
             return abort(
                 409,

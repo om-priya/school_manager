@@ -1,4 +1,5 @@
 """This file contains a class for teacher"""
+
 import logging
 import shortuuid
 from models.users import User
@@ -7,6 +8,8 @@ from database.db_connector import DatabaseConnection
 from config.sqlite_queries import TeacherQueries, CreateTable
 from config.display_menu import PromptMessage
 from utils.hash_password import hash_password
+from utils.custom_error import DataNotFound
+from helper.helper_function import get_request_id
 
 logger = logging.getLogger(__name__)
 
@@ -66,11 +69,9 @@ class SaveTeacher:
         school_id = DatabaseAccess.execute_returning_query(
             TeacherQueries.GET_SCHOOL_ID, (teacher_obj.school_name,)
         )
-        print(school_id)
         if len(school_id) == 0:
-            print(PromptMessage.NO_SCHOOL_FOUND)
-            logger.error("No such school present in the system")
-            return
+            logger.error(f"{get_request_id()} No such school present in the system")
+            raise DataNotFound
 
         school_id = school_id[0]["school_id"]
         # creating tuple for execution
@@ -102,7 +103,8 @@ class SaveTeacher:
             cursor.execute(CreateTable.INSERT_INTO_USER, user_tuple)
             cursor.execute(TeacherQueries.INSERT_INTO_TEACHER, teacher_tuple)
 
-        logger.info("User %s %s Saved to Db", teacher_obj.name, teacher_obj.role)
-
-        logger.info("Teacher Saved to DB")
-        print(PromptMessage.SIGNED_UP_SUCCESS)
+        logger.info(
+            f"{get_request_id()} User %s %s Saved to Db",
+            teacher_obj.name,
+            teacher_obj.role,
+        )

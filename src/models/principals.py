@@ -1,17 +1,19 @@
 """This file contains a class for principal"""
+
 import logging
 import shortuuid
 from models.users import User
 
 from database.database_access import DatabaseAccess
 from database.db_connector import DatabaseConnection
-from config.display_menu import PromptMessage
 from config.sqlite_queries import (
     PrincipalQueries,
     TeacherQueries,
     CreateTable,
 )
+from helper.helper_function import get_request_id
 from utils.hash_password import hash_password
+from utils.custom_error import DataNotFound
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +72,8 @@ class SavePrincipal:
             TeacherQueries.GET_SCHOOL_ID, (principla_obj.school_name,)
         )
         if len(school_id) == 0:
-            print(PromptMessage.NO_SCHOOL_FOUND)
-            return
+            logger.error(f"{get_request_id()} no such school present in the system")
+            raise DataNotFound
 
         school_id = school_id[0]["school_id"]
         # creating tuple for execution
@@ -99,7 +101,4 @@ class SavePrincipal:
             cursor.execute(CreateTable.INSERT_INTO_USER, user_tuple)
             cursor.execute(PrincipalQueries.INSERT_INTO_PRINCIPAL, principal_tuple)
 
-        logger.info("User %s %s Saved to Db", principla_obj.name, principla_obj.role)
-
-        logger.info("Principal Saved to DB")
-        print(PromptMessage.SIGNED_UP_SUCCESS)
+        logger.info(f"{get_request_id()} User %s %s Saved to Db", principla_obj.name, principla_obj.role)

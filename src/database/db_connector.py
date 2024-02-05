@@ -1,8 +1,10 @@
 """ This Module is for creating context manager for db connection"""
+
 import logging
 import os
 import mysql.connector
 from config.sqlite_queries import DatabaseConfig
+from helper.helper_function import get_request_id
 
 logger = logging.getLogger("db_logger")
 
@@ -26,7 +28,9 @@ class DatabaseConnection:
 
     def __exit__(self, exc_type, exc_val, exc_traceback):
         if exc_type or exc_val or exc_traceback:
-            logger.error("Some error occurred")
+            logger.error(
+                f"{get_request_id()} Some error occurred {exc_type} {exc_val} {exc_traceback}"
+            )
             self.connection.close()
         else:
             self.connection.commit()
