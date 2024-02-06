@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token
 from flask_smorest import abort
 from shortuuid import ShortUUID
 
+from config.display_menu import PromptMessage
 from models.response_format import ErrorResponse, SuccessResponse
 from utils.custom_error import (
     DataNotFound,
@@ -45,28 +46,33 @@ class AuthenticationController:
             logger.info(f"{get_request_id()} jwt token is generated and returned")
             return SuccessResponse(
                 200,
-                "User Logged In SuccessFully",
+                PromptMessage.SUCCESS_ACTION.format("User Logged In"),
                 {"access_token": access_token},
             ).get_json()
         except InvalidCredentials:
-            logger.info(f"{get_request_id()} Invalid credentials is provided")
+            logger.error(f"{get_request_id()} Invalid credentials is provided")
             return abort(
                 401,
                 message=ErrorResponse(
-                    401, "Username or Passwrod is Incorrect"
+                    401, PromptMessage.INCORRECT_CREDENTIALS
                 ).get_json(),
             )
         except NotActive:
-            logger.info(f"{get_request_id()} User Not Approved")
+            logger.error(f"{get_request_id()} User Not Approved")
             return abort(
                 403,
                 message=ErrorResponse(
-                    403, "You Don't have access to the platform"
+                    403, PromptMessage.DENIED_ACCESS.format("Platform")
                 ).get_json(),
             )
         except DataNotFound:
-            logger.info(f"{get_request_id()} User No Longer Active/Deleted")
-            return abort(404, message=ErrorResponse(404, "User Not Found").get_json())
+            logger.error(f"{get_request_id()} User No Longer Active/Deleted")
+            return abort(
+                404,
+                message=ErrorResponse(
+                    404, PromptMessage.NOTHING_FOUND.format("User")
+                ).get_json(),
+            )
 
     @staticmethod
     def sign_up_controller(user_info):
@@ -74,22 +80,21 @@ class AuthenticationController:
         # Creating Object according to role and saving it
         try:
             AuthenticationHandler.sign_up(user_info)
-            return SuccessResponse(
-                200, "User Signed Up SuccessFully wait for Approval"
-            ).get_json()
+            logger.info(f"{get_request_id()} Signed Up Successfully")
+            return SuccessResponse(200, PromptMessage.SIGNED_UP_SUCCESS).get_json()
         except DataNotFound:
+            logger.error(f"{get_request_id()} Wrong School Name Provided")
             return abort(
                 404,
                 message=ErrorResponse(
-                    404, "No Such School present in the system"
+                    404, PromptMessage.NOTHING_FOUND.format("School")
                 ).get_json(),
             )
         except DuplicateEntry:
+            logger.error(f"{get_request_id()} Duplicate Credentials Provided")
             return abort(
                 409,
-                message=ErrorResponse(
-                    409, "User Already Exists With Provided Info"
-                ).get_json(),
+                message=ErrorResponse(409, PromptMessage.DUPLICATE_ENTRY).get_json(),
             )
 
     @staticmethod
@@ -97,12 +102,10 @@ class AuthenticationController:
         try:
             token_id = get_token_id_from_jwt()
             AuthenticationHandler.logout_handler(token_id)
-            return SuccessResponse(200, "Log Out Successfully").get_json()
+            return SuccessResponse(200, PromptMessage.LOGGED_OUT).get_json()
         except DuplicateEntry:
             logger.critical("Someone Tried to use blocklist token")
             return abort(
                 409,
-                message=ErrorResponse(
-                    409, "User Already Exists With Provided Info"
-                ).get_json(),
+                message=ErrorResponse(409, PromptMessage.DUPLICATE_ENTRY).get_json(),
             )

@@ -107,3 +107,5 @@ class PromptMessage:
     WRONG_QUERY = """kindly Check Your Query: """
     NEW_PASSWORD_PROMPT = "Enter Your New Password"
     TOKEN_RESPONSE = "Token is {}"
+    INCORRECT_CREDENTIALS = "Username or Passwrod is Incorrect"
+    DUPLICATE_ENTRY = "User Already Exists With Provided Info"
