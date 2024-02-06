@@ -35,11 +35,15 @@ def fetch_salary_history(user_id):
 
 def view_personal_info(role, user_id):
     """This function will print a user profile"""
+    logger.info(
+        f"{get_request_id()} calling handler for fetching user info based on role - {user_id, role}"
+    )
     if role == "principal":
         res_data = PrincipalHandler().get_principal_by_id(user_id)
     elif role == "teacher":
         res_data = TeacherHandler().get_teacher_by_id(user_id)
     else:
+        logger.info(f"{get_request_id()} role is different - {user_id, role}")
         raise FailedAction
 
     return res_data
@@ -65,17 +69,17 @@ def change_password_handler(user_id, username, password, new_password):
     hashed_new_password = hash_password(new_password)
 
     # update new password to db
-    logger.info(f"Changing password for user - {user_id}")
+    logger.info(f"{get_request_id()}Changing password for user - {user_id}")
     params = (hashed_new_password, user_id)
     DatabaseAccess.execute_non_returning_query(
         UserQueries.CHANGE_PASSWORD_QUERY, params
     )
-    logger.info(f"Blocklisting token - {user_id}")
+    logger.info(f"{get_request_id()}Blocklisting token - {user_id}")
     token_id = get_token_id_from_jwt()
     DatabaseAccess.execute_non_returning_query(CreateTable.CREATE_TOKEN_TABLE)
     DatabaseAccess.execute_non_returning_query(
         CreateTable.INSERT_INTO_TOKEN, (token_id,)
     )
     logger.info(
-        f"Password Changed for user {user_id} and token is blocked with token_id {token_id}"
+        f"{get_request_id()}Password Changed for user {user_id} and token is blocked with token_id {token_id}"
     )
