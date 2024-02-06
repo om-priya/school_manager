@@ -45,6 +45,8 @@ class TeacherQueries:
     UPDATE_TEACHER = """UPDATE {} SET {} = %s WHERE user_id = %s"""
     DELETE_TEACHER = """UPDATE credential SET status = 'deactivate'
         WHERE user_id = %s AND role = 'teacher'"""
+    FETCH_TEACHER_FEEDBACK = """SELECT feedback_id, message, created_date FROM feedbacks
+        WHERE given_to = %s"""
 
 
 class PrincipalQueries:

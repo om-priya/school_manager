@@ -5,7 +5,7 @@ import shortuuid
 from config.sqlite_queries import UserQueries, CreateTable
 from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess
-from helper.helper_function import check_empty_data
+from helper.helper_function import check_empty_data, get_request_id
 from utils.custom_error import DataNotFound
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class LeaveHandler:
             (leave_id, leave_date, no_of_days, self.user_id, "pending"),
         )
 
-        logger.info("Applied to leave by user %s", self.user_id)
+        logger.info(f"{get_request_id()} Applied to leave by user %s", self.user_id)
 
     def see_leave_status(self):
         """See Leave Status"""
@@ -40,8 +40,12 @@ class LeaveHandler:
         if check_empty_data(
             res_data, PromptMessage.NOTHING_FOUND.format("Leaves Record")
         ):
+            logger.error(
+                f"{get_request_id()} No leave Applied by user %s", self.user_id
+            )
             raise DataNotFound
 
+        logger.info(f"{get_request_id()} Leave Status for user %s", self.user_id)
         return res_data
 
     @staticmethod
@@ -55,6 +59,7 @@ class LeaveHandler:
         if check_empty_data(
             res_data, PromptMessage.NOTHING_FOUND.format("Pending leave request")
         ):
+            logger.error(f"{get_request_id()} No Pending Leave Request")
             raise DataNotFound
 
         # checking for valid id
@@ -62,10 +67,12 @@ class LeaveHandler:
             if leave_id == leave_record["leave_id"]:
                 break
         else:
-            logger.error("No such leave record Found")
+            logger.error(
+                f"{get_request_id()} No such leave record Found for leave id {leave_id}"
+            )
             raise DataNotFound
 
         DatabaseAccess.execute_non_returning_query(
             UserQueries.APPROVE_LEAVE, (leave_id,)
         )
-        logger.info("Leave Applied Successfully")
+        logger.info(f"{get_request_id()} Leave Applied Successfully")

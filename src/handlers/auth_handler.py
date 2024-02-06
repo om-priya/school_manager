@@ -55,6 +55,7 @@ class AuthenticationHandler:
             logger.error(f"{get_request_id()}User %s don't exists", data[0]["user_id"])
             raise DataNotFound
         else:
+            logger.error(f"{get_request_id()}User %s Logged In", data[0]["user_id"])
             return [True, data[0]["user_id"], data[0]["role"]]
 
     @staticmethod
@@ -65,21 +66,24 @@ class AuthenticationHandler:
         try:
             if user_info["role"] == "teacher":
                 new_teacher = Teacher(user_info)
-                logger.info("Initiating saving teacher")
+                logger.info(f"{get_request_id()} Initiating saving teacher")
                 SaveTeacher().save_teacher(new_teacher)
             else:
                 new_principal = Principal(user_info)
-                logger.info("Initiating saving principal")
+                logger.info(f"{get_request_id()} Initiating saving principal")
                 SavePrincipal().save_principal(new_principal)
         except mysql.connector.IntegrityError as integrity_error:
+            logger.error(f"{get_request_id()} Integrity Error {integrity_error}")
             raise DuplicateEntry from integrity_error
 
     @staticmethod
     def logout_handler(token_id):
         try:
+            logger.info(f"{get_request_id()} Saving token ID to db")
             DatabaseAccess.execute_non_returning_query(CreateTable.CREATE_TOKEN_TABLE)
             DatabaseAccess.execute_non_returning_query(
                 CreateTable.INSERT_INTO_TOKEN, (token_id,)
             )
         except mysql.connector.IntegrityError as integrity_error:
+            logger.error(f"{get_request_id()} Integrity Error {integrity_error}")
             raise DuplicateEntry from integrity_error
