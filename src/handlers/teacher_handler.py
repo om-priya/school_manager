@@ -1,11 +1,12 @@
 """This contains teacher handler functionality"""
+
 import logging
 from config.display_menu import PromptMessage
 from config.sqlite_queries import TeacherQueries
 from database.database_access import DatabaseAccess
 
 # from utils import validate
-from helper.helper_function import check_empty_data
+from helper.helper_function import check_empty_data, get_request_id
 from utils.custom_error import DataNotFound, FailedAction
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class TeacherHandler:
     @staticmethod
     def get_status(teacher_id):
         """This Function Will be responsible for fetching status"""
+        logger.info(f"{get_request_id()} fetching status of teacher {teacher_id}")
         res_data = DatabaseAccess.execute_returning_query(
             TeacherQueries.FETCH_TEACHER_STATUS, (teacher_id,)
         )
@@ -29,6 +31,7 @@ class TeacherHandler:
     @staticmethod
     def fetch_active_teacher():
         """Fetching the id of active teacher"""
+        logger.info(f"{get_request_id()} fetching all active teacher Ids")
         res_data = DatabaseAccess.execute_returning_query(
             TeacherQueries.FETCH_ACTIVE_TEACHER_ID
         )
@@ -42,12 +45,14 @@ class TeacherHandler:
 
         # checks to handle edge cases
         if check_empty_data(status, PromptMessage.NOTHING_FOUND.format("Teachers")):
+            logger.error(f"{get_request_id()} No Such teacher Found")
             raise DataNotFound
         elif status[0]["status"] != "pending":
-            logger.error("Teacher Can't be Approved")
+            logger.error(f"{get_request_id()} Teacher Can't be Approved")
             raise FailedAction
         else:
             # executing the query
+            logger.info(f"{get_request_id()} approving teacher with id {teacher_id}")
             DatabaseAccess.execute_non_returning_query(
                 TeacherQueries.APPROVE_TEACHER, (teacher_id,)
             )
@@ -59,6 +64,7 @@ class TeacherHandler:
         )
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Teachers")):
+            logger.error(f"{get_request_id()} No Such teacher Found")
             raise DataNotFound
 
         return res_data
@@ -70,6 +76,7 @@ class TeacherHandler:
         )
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Teachers")):
+            logger.error(f"{get_request_id()} No Such teacher Found")
             raise DataNotFound
 
         return res_data
@@ -151,7 +158,7 @@ class TeacherHandler:
             if tid["user_id"] == teacher_id:
                 break
         else:
-            logger.error("Can\'t perform delete action on entered user_id")
+            logger.error("Can't perform delete action on entered user_id")
             raise DataNotFound
         DatabaseAccess.execute_non_returning_query(
             TeacherQueries.DELETE_TEACHER, (teacher_id,)
