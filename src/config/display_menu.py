@@ -110,3 +110,4 @@ class PromptMessage:
     INCORRECT_CREDENTIALS = "Username or Passwrod is Incorrect"
     DUPLICATE_ENTRY = "User Already Exists With Provided Info"
     LIST_ENTRY = "Here's the list of {}"
+    ALREADY_EXITS = "{} already exits"
