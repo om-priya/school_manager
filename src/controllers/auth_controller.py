@@ -81,7 +81,7 @@ class AuthenticationController:
         try:
             AuthenticationHandler.sign_up(user_info)
             logger.info(f"{get_request_id()} Signed Up Successfully")
-            return SuccessResponse(200, PromptMessage.SIGNED_UP_SUCCESS).get_json()
+            return SuccessResponse(201, PromptMessage.SIGNED_UP_SUCCESS).get_json()
         except DataNotFound:
             logger.error(f"{get_request_id()} Wrong School Name Provided")
             return abort(
@@ -101,10 +101,13 @@ class AuthenticationController:
     def logout_controller():
         try:
             token_id = get_token_id_from_jwt()
+            logger.info(
+                f"{get_request_id()} token fetched from jwt and called logout handler"
+            )
             AuthenticationHandler.logout_handler(token_id)
             return SuccessResponse(200, PromptMessage.LOGGED_OUT).get_json()
         except DuplicateEntry:
-            logger.critical("Someone Tried to use blocklist token")
+            logger.critical(f"{get_request_id()} Someone Tried to use blocklist token")
             return abort(
                 409,
                 message=ErrorResponse(409, PromptMessage.DUPLICATE_ENTRY).get_json(),
