@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class EventController:
     def get_all_events(self):
+        """Getting all events from handlers anf formatting response"""
         try:
             user_id = get_user_id_from_jwt()
             logger.info(f"{get_request_id()} fetching all events")

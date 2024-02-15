@@ -30,7 +30,7 @@ class AuthenticationController:
         request is on /login
         """
         try:
-            logger.info(f"{get_request_id()} calls the validation function")
+            logger.info("%s calls the validation function", get_request_id())
 
             user_details = AuthenticationHandler.is_logged_in(
                 login_details["user_name"], login_details["password"]
@@ -99,6 +99,7 @@ class AuthenticationController:
 
     @staticmethod
     def logout_controller():
+        """Controller for /logout endpoint"""
         try:
             token_id = get_token_id_from_jwt()
             logger.info(

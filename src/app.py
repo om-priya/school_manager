@@ -24,6 +24,7 @@ from router.principal_router import blp as PrincipalRouter
 from router.teacher_router import blp as TeacherRouter
 from router.user_router import blp as UserRouter
 from utils.custom_error import FailedValidation
+from utils.initializer import initialize_app
 from utils.set_app_config import set_app_config
 from utils.jwt_exception_handler import jwt_exception_manager
 
@@ -45,10 +46,15 @@ def create_app():
     """
 
     # creating flask app instance with default configuration
+    initialize_app()
     app = Flask(__name__)
 
     app = set_app_config(app)
 
+    app.register_error_handler(
+        400,
+        lambda err: (ErrorResponse(400, str(err)).get_json(), 400),
+    )
     app.register_error_handler(
         FailedValidation,
         lambda err: (ErrorResponse(422, str(err)).get_json(), 422),

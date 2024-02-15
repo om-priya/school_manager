@@ -36,6 +36,7 @@ def initialize_app():
         cursor.execute(CreateTable.CREATE_TEACHER_TABLE)
         cursor.execute(CreateTable.CREATE_STAFF_MEMBER_TABLE)
         cursor.execute(CreateTable.CREATE_SALARY_TABLE)
+        cursor.execute(CreateTable.CREATE_TOKEN_TABLE)
         logger.debug("Table Created only once")
 
     # checking if super admin exists or not
