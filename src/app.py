@@ -65,7 +65,10 @@ def create_app():
     )
     app.register_error_handler(
         pymysql.Error,
-        lambda err: (ErrorResponse(500, f"Something went wrong with db {str(err)}").get_json(), 422),
+        lambda err: (
+            ErrorResponse(500, f"Something went wrong with db {str(err)}").get_json(),
+            422,
+        ),
     )
     app.register_error_handler(
         Exception,
@@ -106,10 +109,15 @@ def create_app():
         ) == os.getenv("TOKEN_SECRET"):
             tables_names = DatabaseAccess.execute_returning_query("SHOW tables")
             for table_name in tables_names:
-                DatabaseAccess.execute_non_returning_query(f"DELETE FROM {table_name['Tables_in_testDb']}")
+                DatabaseAccess.execute_non_returning_query(
+                    f"DELETE FROM {table_name['Tables_in_testDb']}"
+                )
             initialize_app()
             return {"message": "testDb Reset"}
 
         return {"message": "Hecker hai"}
 
     return app
+
+
+flask_app = create_app()
