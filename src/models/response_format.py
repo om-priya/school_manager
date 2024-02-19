@@ -64,7 +64,7 @@ class SuccessResponse:
 
     success = True
 
-    def __init__(self, status_code, message, res_data=None):
+    def __init__(self, status_code, message, res_data=[]):
         self.status_code = status_code
         self.message = message
         self.res_data = res_data

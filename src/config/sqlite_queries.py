@@ -4,8 +4,8 @@
 class DatabaseConfig:
     """This Class contains config for database"""
 
-    CREATE_DB = "CREATE DATABASE IF NOT EXISTS mydb"
-    USE_DB = "USE mydb"
+    CREATE_DB = "CREATE DATABASE IF NOT EXISTS testDb"
+    USE_DB = "USE testDb"
 
 
 class TeacherQueries:
@@ -42,7 +42,7 @@ class TeacherQueries:
     FETCH_TEACHER_STATUS = (
         """SELECT status FROM credential WHERE user_id = %s and role = 'teacher'"""
     )
-    UPDATE_TEACHER = """UPDATE {} SET {} = %s WHERE user_id = %s"""
+    UPDATE_TEACHER = """UPDATE user SET name = %s, gender = %s, email = %s, phone = %s WHERE user_id = %s"""
     DELETE_TEACHER = """UPDATE credential SET status = 'deactivate'
         WHERE user_id = %s AND role = 'teacher'"""
     FETCH_TEACHER_FEEDBACK = """SELECT feedback_id, message, created_date FROM feedbacks
@@ -65,7 +65,7 @@ class PrincipalQueries:
         FROM user AS u
         INNER JOIN credential AS c
         ON c.user_id = u.user_id
-        WHERE c.role = 'principal' AND c.status = 'active'"""
+        WHERE c.role = 'principal'"""
     GET_PRINCIPAL_BY_ID = """SELECT u.user_id, u.name, u.gender, u.email, c.status
         FROM user AS u
         INNER JOIN credential AS c
@@ -75,7 +75,7 @@ class PrincipalQueries:
         WHERE role = 'principal' AND status = 'active'"""
     FETCH_PENDING_PRINCIPAL_ID = """SELECT user_id FROM credential
         WHERE role = 'principal' AND status = 'pending'"""
-    UPDATE_PRINCIPAL = """UPDATE {} SET {} = %s WHERE user_id = %s"""
+    UPDATE_PRINCIPAL = """UPDATE {} SET name = %s, gender = %s, email = %s, phone = %s WHERE user_id = %s"""
     DELETE_PRINCIPAL = """UPDATE credential SET status = 'deactivate'
         WHERE user_id = %s AND role = 'principal'"""
     READ_FEEDBACKS_PRINCIPAL = """SELECT feedback_id, message, created_date FROM feedbacks
@@ -110,6 +110,7 @@ class UserQueries:
     FETCH_LEAVE_STATUS = (
         """SELECT leave_date, no_of_days, status FROM leaves WHERE user_id = %s"""
     )
+    FETCH_ALL_PENDING_LEAVE_REQUEST = """SELECT l.leave_id, l.leave_date, l.no_of_days, l.status, c.username FROM leaves AS l JOIN credential AS c ON l.user_id = c.user_id WHERE l.status='pending'"""
     GET_PENDING_LEAVES = """SELECT * FROM leaves WHERE status = 'pending'"""
     APPROVE_LEAVE = """UPDATE leaves SET status = 'approved'
         WHERE leave_id = %s AND status = 'pending'"""

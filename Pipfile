@@ -16,6 +16,8 @@ marshmallow = "*"
 flask-jwt-extended = "*"
 flask-smorest = "*"
 mysql-connector-python = "*"
+pymysql = "*"
+cryptography = "*"
 
 [dev-packages]
 

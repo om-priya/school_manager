@@ -24,7 +24,7 @@ class LeavesRouter(MethodView):
     """Class for handling /leaves endpoint"""
 
     @jwt_required()
-    @access_level(["principal", "teacher"])
+    @access_level(["superadmin", "principal", "teacher"])
     def get(self):
         """get method on /leaves endpoint"""
         logger.info(f"{get_request_id()} hit /leaves get endpoint")

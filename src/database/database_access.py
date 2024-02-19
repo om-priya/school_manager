@@ -25,7 +25,7 @@ class DatabaseAccess:
     def execute_returning_query(cls, query, params=None):
         """Execute a returning query (read)."""
         with DatabaseConnection() as connection:
-            cursor = connection.cursor(dictionary=True)
+            cursor = connection.cursor()
             if params is None:
                 cursor.execute(query)
             else:

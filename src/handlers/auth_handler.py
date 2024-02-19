@@ -3,6 +3,7 @@
 import logging
 
 import mysql.connector
+import pymysql
 
 from models.principals import Principal, SavePrincipal
 from models.teachers import Teacher, SaveTeacher
@@ -72,7 +73,7 @@ class AuthenticationHandler:
                 new_principal = Principal(user_info)
                 logger.info(f"{get_request_id()} Initiating saving principal")
                 SavePrincipal().save_principal(new_principal)
-        except mysql.connector.IntegrityError as integrity_error:
+        except pymysql.IntegrityError as integrity_error:
             logger.error(f"{get_request_id()} Integrity Error {integrity_error}")
             raise DuplicateEntry from integrity_error
 
@@ -84,6 +85,6 @@ class AuthenticationHandler:
             DatabaseAccess.execute_non_returning_query(
                 CreateTable.INSERT_INTO_TOKEN, (token_id,)
             )
-        except mysql.connector.IntegrityError as integrity_error:
+        except pymysql.IntegrityError as integrity_error:
             logger.error(f"{get_request_id()} Integrity Error {integrity_error}")
             raise DuplicateEntry from integrity_error

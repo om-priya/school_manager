@@ -31,11 +31,16 @@ class LeaveHandler:
 
         logger.info(f"{get_request_id()} Applied to leave by user %s", self.user_id)
 
-    def see_leave_status(self):
+    def see_leave_status(self, role):
         """See Leave Status"""
-        res_data = DatabaseAccess.execute_returning_query(
-            UserQueries.FETCH_LEAVE_STATUS, (self.user_id,)
-        )
+        if role == "superadmin":
+            res_data = DatabaseAccess.execute_returning_query(
+                UserQueries.FETCH_ALL_PENDING_LEAVE_REQUEST
+            )
+        else:
+            res_data = DatabaseAccess.execute_returning_query(
+                UserQueries.FETCH_LEAVE_STATUS, (self.user_id,)
+            )
 
         if check_empty_data(
             res_data, PromptMessage.NOTHING_FOUND.format("Leaves Record")

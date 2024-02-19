@@ -83,6 +83,27 @@ class PrincipalController:
                 ).get_json(),
             )
 
+    def update_principal_controller(self, principal_id, principal_updated_details):
+        try:
+            logger.info(f"{get_request_id()} Calling handler for updating principal")
+            PrincipalHandler().update_principal(principal_id, principal_updated_details)
+            logger.info(
+                f"{get_request_id()} formatting response after successfull updation"
+            )
+            return SuccessResponse(
+                200, PromptMessage.SUCCESS_ACTION.format("Principal Updated")
+            ).get_json()
+        except DataNotFound:
+            logger.info(
+                f"{get_request_id()} formatting response for no principal found to delete with id {principal_id}"
+            )
+            return abort(
+                404,
+                message=ErrorResponse(
+                    404, PromptMessage.NOTHING_FOUND.format("Principal")
+                ).get_json(),
+            )
+
     def delete_principal(self, principal_id):
         try:
             logger.info(f"{get_request_id()} Calling handler for deleting principal")

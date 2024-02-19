@@ -47,7 +47,7 @@ class AuthenticationController:
             return SuccessResponse(
                 200,
                 PromptMessage.SUCCESS_ACTION.format("User Logged In"),
-                {"access_token": access_token},
+                [{"access_token": access_token}],
             ).get_json()
         except InvalidCredentials:
             logger.error(f"{get_request_id()} Invalid credentials is provided")
@@ -81,7 +81,7 @@ class AuthenticationController:
         try:
             AuthenticationHandler.sign_up(user_info)
             logger.info(f"{get_request_id()} Signed Up Successfully")
-            return SuccessResponse(201, PromptMessage.SIGNED_UP_SUCCESS).get_json()
+            return SuccessResponse(201, PromptMessage.SIGNED_UP_SUCCESS).get_json(), 201
         except DataNotFound:
             logger.error(f"{get_request_id()} Wrong School Name Provided")
             return abort(
@@ -111,5 +111,7 @@ class AuthenticationController:
             logger.critical(f"{get_request_id()} Someone Tried to use blocklist token")
             return abort(
                 409,
-                message=ErrorResponse(409, PromptMessage.DUPLICATE_ENTRY).get_json(),
+                message=ErrorResponse(
+                    409, PromptMessage.TOKEN_RESPONSE.format("already Invalid")
+                ).get_json(),
             )

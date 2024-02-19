@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required
 
 from utils.role_checker_decorator import access_level
 from controllers.principal_controller import PrincipalController
-from schema.principal_schema import PrincipalIdSchema
+from schema.principal_schema import PrincipalIdSchema, PrincipalDetails
 from helper.helper_function import get_request_id
 
 blp = Blueprint(
@@ -51,10 +51,21 @@ class PrincipalById(MethodView):
     @jwt_required()
     @access_level(["superadmin"])
     @blp.arguments(PrincipalIdSchema, location="path")
-    def delete(self, principal_info, principal_id):
+    @blp.arguments(PrincipalDetails)
+    def put(self, principal_info, principal_updated_details, principal_id):
+        """get method on /principals/principal_id endpoint"""
+        logger.info(f"{get_request_id()} hit /principals/principal_id put endpoint")
+        return PrincipalController().update_principal_controller(
+            principal_info["principal_id"], principal_updated_details
+        )
+
+    @jwt_required()
+    @access_level(["superadmin"])
+    @blp.arguments(PrincipalIdSchema, location="path")
+    def delete(self, principal_id_obj, principal_id):
         """delete method on /principals/principal_id endpoint"""
         logger.info(f"{get_request_id()} hit /principals/principal_id delete endpoint")
-        return PrincipalController().delete_principal(principal_info["principal_id"])
+        return PrincipalController().delete_principal(principal_id_obj["principal_id"])
 
 
 @blp.route("/principals/<string:principal_id>/approve")

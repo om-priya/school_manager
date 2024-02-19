@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required
 
 from controllers.teacher_controller import TeacherController
 from utils.role_checker_decorator import access_level
-from schema.teacher_schema import TeacherIdSchema
+from schema.teacher_schema import TeacherIdSchema, TeacherDetails
 from helper.helper_function import get_request_id
 
 blp = Blueprint(
@@ -45,6 +45,15 @@ class TeachersById(MethodView):
         """get method on /teachers/teacher_id endpoint"""
         logger.info(f"{get_request_id()} hit /teachers/teachers_id get endpoint")
         return TeacherController().get_single_teacher(teacher_info["teacher_id"])
+
+    @jwt_required()
+    @access_level(["principal"])
+    @blp.arguments(TeacherIdSchema, location="path")
+    @blp.arguments(TeacherDetails)
+    def put(self, teacher_info, teacher_details, teacher_id):
+        """get method on /teachers/teacher_id endpoint"""
+        logger.info(f"{get_request_id()} hit /teachers/teachers_id get endpoint")
+        return TeacherController().update_teacher_controller(teacher_info["teacher_id"], teacher_details)
 
     @jwt_required()
     @access_level(["principal"])

@@ -4,11 +4,11 @@ from datetime import datetime
 from schema.config_schema import CustomSchema
 
 class LeaveSchema(CustomSchema):
-    leave_date = fields.Date(required=True)
-    no_of_daya = fields.String(required=True)
+    leave_date = fields.String(required=True)
+    no_of_days = fields.String(required=True)
 
     @validates_schema
-    def validate_date(self, data):
+    def validate_date(self, data, **kwargs):
         try:
             date_str = data["leave_date"]
             start_date = datetime.strptime(date_str, "%d-%m-%Y").date()

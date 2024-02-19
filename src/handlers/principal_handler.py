@@ -95,74 +95,26 @@ class PrincipalHandler:
 
         return res_data
 
-    # def update_principal(self):
-    #     """Update principal"""
-    #     # taking input from console
-    #     principal_id = validate.uuid_validator(
-    #         PromptMessage.TAKE_SPECIFIC_ID.format("Principal"),
-    #         RegexPatterns.UUID_PATTERN,
-    #     )
-    #     field_to_update = input(PromptMessage.FIELD_UPDATE).lower()
+    def update_principal(self, principal_id, principal_updated_details):
+        """Update principal"""
+        all_principal_id = self.get_all_active_pid()
 
-    #     options = (
-    #         TableHeaders.NAME.lower(),
-    #         TableHeaders.GENDER.lower(),
-    #         TableHeaders.EMAIL.lower(),
-    #         TableHeaders.PHONE.lower(),
-    #         TableHeaders.EXPERIENCE.lower(),
-    #     )
+        # Checking with assumption only one principal is present
+        if principal_id != all_principal_id[0]["user_id"]:
+            logger.error(f"{get_request_id()} no principal by Id {principal_id} found")
+            raise DataNotFound
 
-    #     # checking field to update
-    #     if field_to_update not in options:
-    #         logger.info("No Such Field is present")
-    #         print(PromptMessage.NOTHING_FOUND.format("Field"))
-    #         return
+        name = principal_updated_details["name"]
+        gender = principal_updated_details["gender"]
+        email = principal_updated_details["email"]
+        phone = principal_updated_details["phone"]
 
-    #     all_principal_id = self.get_all_active_pid()
-
-    #     # Checking with assumption only one principal is present
-    #     if principal_id != all_principal_id[0][0]:
-    #         print(PromptMessage.NOTHING_FOUND.format("Principal"))
-    #         return
-
-    #     # getting table name
-    #     if field_to_update in options[:4]:
-    #         table_name = "user"
-    #     else:
-    #         table_name = "principal"
-
-    #     # validating and saving to db
-    #     match field_to_update:
-    #         case "name":
-    #             update_value = validate.pattern_validator(
-    #                 PromptMessage.TAKE_INPUT.format("Name"), RegexPatterns.NAME_PATTERN
-    #             )
-    #         case "gender":
-    #             update_value = validate.pattern_validator(
-    #                 PromptMessage.TAKE_INPUT.format("Gender (M/F)"),
-    #                 RegexPatterns.GENDER_PATTERN,
-    #             )
-    #         case "email":
-    #             update_value = validate.pattern_validator(
-    #                 PromptMessage.TAKE_INPUT.format("email"),
-    #                 RegexPatterns.EMAIL_PATTERN,
-    #             )
-    #         case "phone":
-    #             update_value = validate.pattern_validator(
-    #                 PromptMessage.TAKE_INPUT.format("Phone Number"),
-    #                 RegexPatterns.PHONE_PATTERN,
-    #             )
-    #         case "experience":
-    #             update_value = validate.pattern_validator(
-    #                 PromptMessage.TAKE_INPUT.format("Experience in Year"),
-    #                 RegexPatterns.EXPERIENCE_PATTERN,
-    #             )
-
-    #     DatabaseAccess.execute_non_returning_query(
-    #         PrincipalQueries.UPDATE_PRINCIPAL.format(table_name, field_to_update),
-    #         (update_value, principal_id),
-    #     )
-    #     print(PromptMessage.SUCCESS_ACTION.format("Updated"))
+        user_table_updated = (name, gender, email, phone, principal_id)
+        DatabaseAccess.execute_non_returning_query(
+            PrincipalQueries.UPDATE_PRINCIPAL.format("user", user_table_updated),
+            (user_table_updated),
+        )
+        logger.info(f"{get_request_id()} Details updated Successfully")
 
     def delete_principal(self, principal_id):
         """Delete Principal"""

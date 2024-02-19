@@ -3,7 +3,7 @@ from flask_smorest import abort
 from handlers.leave_handler import LeaveHandler
 from models.response_format import SuccessResponse, ErrorResponse
 from utils.custom_error import DataNotFound
-from helper.helper_function import get_user_id_from_jwt, get_request_id
+from helper.helper_function import get_user_id_from_jwt, get_request_id, get_user_role_from_jwt
 from config.display_menu import PromptMessage
 
 logger = logging.getLogger(__name__)
@@ -13,10 +13,11 @@ class LeavesController:
     def get_leave_info(self):
         try:
             user_id = get_user_id_from_jwt()
+            role = get_user_role_from_jwt()
             logger.info(
                 f"{get_request_id()} calling handler for fetching leave records"
             )
-            res_data = LeaveHandler(user_id).see_leave_status()
+            res_data = LeaveHandler(user_id).see_leave_status(role)
             logger.info(
                 f"{get_request_id()} formatting response for leave records fetched"
             )
@@ -38,12 +39,12 @@ class LeavesController:
         user_id = get_user_id_from_jwt()
         logger.info(f"{get_request_id()} calling handler for creating leave request")
         LeaveHandler(user_id).apply_leave(
-            leave_details["leave_date"], leave_details["no_of_daya"]
+            leave_details["leave_date"], leave_details["no_of_days"]
         )
         logger.info(f"{get_request_id()} Leave Request created successfully formating response")
         return SuccessResponse(
             201, PromptMessage.ADDED_SUCCESSFULLY.format("Leave Request")
-        ).get_json()
+        ).get_json(), 201
 
     def approve_leave(self, leave_info):
         try:

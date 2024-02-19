@@ -76,6 +76,27 @@ class TeacherController:
                 ).get_json(),
             )
 
+    def update_teacher_controller(self, teacher_id, teacher_details):
+        try:
+            logger.info(
+                f"{get_request_id()} Calling handler for updating teacher details"
+            )
+            TeacherHandler().update_teacher(teacher_id, teacher_details)
+            logger.info(
+                f"{get_request_id()} formatting response after successfull approval"
+            )
+            return SuccessResponse(
+                200, PromptMessage.SUCCESS_ACTION.format("Teacher Updated")
+            ).get_json()
+        except DataNotFound:
+            logger.info(f"{get_request_id()} formatting response for no teacher found")
+            return abort(
+                404,
+                message=ErrorResponse(
+                    404, PromptMessage.NOTHING_FOUND.format("Teacher")
+                ).get_json(),
+            )
+
     def delete_teacher(self, teacher_id):
         try:
             logger.info(f"{get_request_id()} Calling handler for deleting teacher")
