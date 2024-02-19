@@ -106,7 +106,7 @@ def create_app():
         ) == os.getenv("TOKEN_SECRET"):
             tables_names = DatabaseAccess.execute_returning_query("SHOW tables")
             for table_name in tables_names:
-                DatabaseAccess.execute_non_returning_query(f"DELETE FROM {table_name["Tables_in_testDb"]}")
+                DatabaseAccess.execute_non_returning_query(f"DELETE FROM {table_name['Tables_in_testDb']}")
             initialize_app()
             return {"message": "testDb Reset"}
 
