@@ -37,8 +37,8 @@ class IssueController:
         logger.info(f"{get_request_id()} calling handler for creating issues")
         IssueHandler(user_id).raise_issue(issue_mssg["issue_message"])
         logger.info(
-            f"{get_request_id()} formatting response after successfull creation of iisue"
+            f"{get_request_id()} formatting response after successfull creation of issue"
         )
         return SuccessResponse(
             201, PromptMessage.ADDED_SUCCESSFULLY.format("Issue")
-        ).get_json()
+        ).get_json(), 201

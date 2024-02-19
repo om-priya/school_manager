@@ -29,14 +29,14 @@ class TeacherQueries:
         FROM user AS u
         INNER JOIN credential AS c 
         ON u.user_id = c.user_id 
-        WHERE c.role = 'teacher' AND c.status = 'active'"""
+        WHERE c.role = 'teacher'"""
     APPROVE_TEACHER = """UPDATE credential SET status = 'active'
         WHERE user_id = %s AND status = 'pending' AND role = 'teacher'"""
     GET_TEACHER_BY_ID = """SELECT u.user_id, u.name, u.phone, u.email, c.status
         FROM user AS u
         INNER JOIN credential AS c
         ON u.user_id = c.user_id
-        WHERE u.user_id = %s AND c.role = 'teacher' AND c.status = 'active'"""
+        WHERE u.user_id = %s AND c.role = 'teacher'"""
     FETCH_ACTIVE_TEACHER_ID = """SELECT user_id FROM credential
         WHERE role = 'teacher' AND status = 'active'"""
     FETCH_TEACHER_STATUS = (
@@ -237,9 +237,9 @@ class CreateTable:
     INSERT_INTO_NOTICE = """INSERT INTO notice
         (notice_id, created_by, notice_message, created_date)
         VALUES (%s, %s, %s, %s)"""
-    INSERT_INTO_ISSUE = """INSERT INTO issue
-        (issue_id, issue_VARCHAR(256), raised_by)
-        VALUES (%s, %s, %s)"""
+    INSERT_INTO_ISSUE = (
+        """INSERT INTO issue (issue_id, issue_message, raised_by) VALUES (%s, %s, %s)"""
+    )
     INSERT_INTO_FEEDBACKS = """INSERT INTO feedbacks
         (feedback_id, message, created_date, given_to, raised_by) 
         VALUES (%s, %s, %s, %s, %s)"""

@@ -50,7 +50,7 @@ class FeedbackHandler:
 
         # checking teacher's Id
         for data in res_data:
-            if data[0] == teacher_id:
+            if data["user_id"] == teacher_id:
                 break
         else:
             logger.error(f"{get_request_id()} Wrong Teacher Id - {teacher_id}")

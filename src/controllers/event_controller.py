@@ -37,6 +37,9 @@ class EventController:
         logger.info(
             f"{get_request_id()} event created successfully formatting response"
         )
-        return SuccessResponse(
-            201, PromptMessage.ADDED_SUCCESSFULLY.format("Event")
-        ).get_json()
+        return (
+            SuccessResponse(
+                201, PromptMessage.ADDED_SUCCESSFULLY.format("Event")
+            ).get_json(),
+            201,
+        )

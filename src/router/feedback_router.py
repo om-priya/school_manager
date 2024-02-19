@@ -44,4 +44,4 @@ class GetFeedBacksById(MethodView):
         logger.info(f"{get_request_id()} hit /feedbacks/teacher_id post endpoint")
         return FeedbackController().give_teacher_feedback(
             teacher["teacher_id"], feedback_info
-        )
+        ), 201
