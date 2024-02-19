@@ -57,7 +57,7 @@ class LeavesController:
                 200, PromptMessage.APPROVE_SUCCESS.format("Leave")
             ).get_json()
         except DataNotFound:
-            logger.error(f"{get_request_id()} formatting response for no leave record found for leave_id {leave_info["leave_id"]}")
+            logger.error(f"{get_request_id()} formatting response for no leave record found for leave_id {leave_info['leave_id']}")
             return abort(
                 404,
                 message=ErrorResponse(
