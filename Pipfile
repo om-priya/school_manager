@@ -18,6 +18,7 @@ flask-smorest = "*"
 mysql-connector-python = "*"
 pymysql = "*"
 cryptography = "*"
+gunicorn = "*"
 
 [dev-packages]
 
