@@ -99,6 +99,10 @@ class PrincipalHandler:
         """Update principal"""
         all_principal_id = self.get_all_active_pid()
 
+        if check_empty_data(all_principal_id):
+            logger.error(f"{get_request_id()} no principal by Id {principal_id} found")
+            raise DataNotFound
+
         # Checking with assumption only one principal is present
         if principal_id != all_principal_id[0]["user_id"]:
             logger.error(f"{get_request_id()} no principal by Id {principal_id} found")
