@@ -107,9 +107,7 @@ class UserQueries:
     FETCH_FROM_CREDENTIALS = """SELECT user_id, role, status
         FROM credential
         WHERE username = %s AND password = %s"""
-    FETCH_LEAVE_STATUS = (
-        """SELECT leave_date, no_of_days, status FROM leaves WHERE user_id = %s"""
-    )
+    FETCH_LEAVE_STATUS = """SELECT l.leave_id, l.leave_date, l.no_of_days, l.status, c.username FROM leaves AS l JOIN credential AS c ON l.user_id = c.user_id WHERE l.user_id = %s """
     FETCH_ALL_PENDING_LEAVE_REQUEST = """SELECT l.leave_id, l.leave_date, l.no_of_days, l.status, c.username FROM leaves AS l JOIN credential AS c ON l.user_id = c.user_id WHERE l.status='pending'"""
     GET_PENDING_LEAVES = """SELECT * FROM leaves WHERE status = 'pending'"""
     APPROVE_LEAVE = """UPDATE leaves SET status = 'approved'

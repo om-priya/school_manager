@@ -2,8 +2,13 @@ import logging
 from flask_smorest import abort
 from handlers.leave_handler import LeaveHandler
 from models.response_format import SuccessResponse, ErrorResponse
-from utils.custom_error import DataNotFound
-from helper.helper_function import get_user_id_from_jwt, get_request_id, get_user_role_from_jwt
+from config.http_status_code import HttpStatusCode
+from utils.custom_error import ApplicationError
+from helper.helper_function import (
+    get_user_id_from_jwt,
+    get_request_id,
+    get_user_role_from_jwt,
+)
 from config.display_menu import PromptMessage
 
 logger = logging.getLogger(__name__)
@@ -22,17 +27,15 @@ class LeavesController:
                 f"{get_request_id()} formatting response for leave records fetched"
             )
             return SuccessResponse(
-                200, PromptMessage.LIST_ENTRY.format("Leaves Record"), res_data
+                HttpStatusCode.SUCCESS,
+                PromptMessage.LIST_ENTRY.format("Leaves Record"),
+                res_data,
             ).get_json()
-        except DataNotFound:
-            logger.error(
-                f"{get_request_id()} formatting response for no leave record found"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Leave Record")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def apply_for_leave(self, leave_details):
@@ -41,26 +44,34 @@ class LeavesController:
         LeaveHandler(user_id).apply_leave(
             leave_details["leave_date"], leave_details["no_of_days"]
         )
-        logger.info(f"{get_request_id()} Leave Request created successfully formating response")
-        return SuccessResponse(
-            201, PromptMessage.ADDED_SUCCESSFULLY.format("Leave Request")
-        ).get_json(), 201
+        logger.info(
+            f"{get_request_id()} Leave Request created successfully formating response"
+        )
+        return (
+            SuccessResponse(
+                HttpStatusCode.SUCCESS_CREATED,
+                PromptMessage.ADDED_SUCCESSFULLY.format("Leave Request"),
+            ).get_json(),
+            HttpStatusCode.SUCCESS_CREATED,
+        )
 
     def approve_leave(self, leave_info):
         try:
-            logger.info(f"{get_request_id()} calling handler for approving leave request")
+            logger.info(
+                f"{get_request_id()} calling handler for approving leave request"
+            )
 
             LeaveHandler.approve_leave(leave_info["leave_id"])
 
-            logger.info(f"{get_request_id()} Leave Request approved successfully formating response")
+            logger.info(
+                f"{get_request_id()} Leave Request approved successfully formating response"
+            )
             return SuccessResponse(
-                200, PromptMessage.APPROVE_SUCCESS.format("Leave")
+                HttpStatusCode.SUCCESS, PromptMessage.APPROVE_SUCCESS.format("Leave")
             ).get_json()
-        except DataNotFound:
-            logger.error(f"{get_request_id()} formatting response for no leave record found for leave_id {leave_info['leave_id']}")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Leave Record")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )

@@ -6,7 +6,13 @@ from handlers.user_handler import (
     fetch_salary_history,
     change_password_handler,
 )
-from utils.custom_error import DataNotFound, FailedAction, InvalidCredentials
+from utils.custom_error import (
+    DataNotFound,
+    FailedAction,
+    InvalidCredentials,
+    ApplicationError,
+)
+from config.http_status_code import HttpStatusCode
 from models.response_format import SuccessResponse, ErrorResponse
 from helper.helper_function import (
     get_user_id_from_jwt,
@@ -29,20 +35,11 @@ class UserController:
                 f"{get_request_id()} formatting response for user_profile fetched"
             )
             return SuccessResponse(200, "Your Information", res_data).get_json()
-        except DataNotFound:
-            logger.critical(
-                f"{get_request_id()} formatting response for no user found but the user is logged In"
-            )
+        except ApplicationError as error:
+            logger.critical(f"{get_request_id()} {error.err_message}")
             return abort(
-                404, message=ErrorResponse(404, "No Such User Found").get_json()
-            )
-        except FailedAction:
-            logger.critical(
-                f"{get_request_id()} user with no access tried to access this user - {user_id}"
-            )
-            return abort(
-                403,
-                message=ErrorResponse(403, "You don't have access to This").get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def get_my_salary_history(self):
@@ -51,9 +48,11 @@ class UserController:
 
             res_data = fetch_salary_history(user_id)
             return SuccessResponse(200, "Salary History", res_data).get_json()
-        except DataNotFound:
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404, message=ErrorResponse(404, "No Salary History Found").get_json()
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def change_password(self, user_details):
@@ -70,10 +69,9 @@ class UserController:
             return SuccessResponse(
                 200, "Password Changed Successfully Please Log_In Again"
             ).get_json()
-        except InvalidCredentials:
-            abort(
-                400,
-                message=ErrorResponse(
-                    400, "Check Your Username and Password"
-                ).get_json(),
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
+            return abort(
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )

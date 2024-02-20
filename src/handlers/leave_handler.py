@@ -4,9 +4,10 @@ import logging
 import shortuuid
 from config.sqlite_queries import UserQueries, CreateTable
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from database.database_access import DatabaseAccess
 from helper.helper_function import check_empty_data, get_request_id
-from utils.custom_error import DataNotFound
+from utils.custom_error import ApplicationError
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,10 @@ class LeaveHandler:
             logger.error(
                 f"{get_request_id()} No leave Applied by user %s", self.user_id
             )
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Leave Record"),
+            )
 
         logger.info(f"{get_request_id()} Leave Status for user %s", self.user_id)
         return res_data
@@ -65,7 +69,10 @@ class LeaveHandler:
             res_data, PromptMessage.NOTHING_FOUND.format("Pending leave request")
         ):
             logger.error(f"{get_request_id()} No Pending Leave Request")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Leave Record"),
+            )
 
         # checking for valid id
         for leave_record in res_data:
@@ -75,7 +82,10 @@ class LeaveHandler:
             logger.error(
                 f"{get_request_id()} No such leave record Found for leave id {leave_id}"
             )
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Leave Record"),
+            )
 
         DatabaseAccess.execute_non_returning_query(
             UserQueries.APPROVE_LEAVE, (leave_id,)

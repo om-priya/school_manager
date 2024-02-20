@@ -4,9 +4,10 @@ import logging
 import shortuuid
 from config.sqlite_queries import UserQueries, CreateTable
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from database.database_access import DatabaseAccess
 from helper.helper_function import check_empty_data, get_request_id
-from utils.custom_error import DataNotFound
+from utils.custom_error import ApplicationError
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +26,9 @@ class IssueHandler:
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Issues")):
             logger.error(f"{get_request_id()} No such Issues found")
-            raise DataNotFound
+            raise ApplicationError(HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("Issue"))
 
-        logger.error(f"{get_request_id()} Issues found")
+        logger.info(f"{get_request_id()} Issues found")
         return res_data
 
     def raise_issue(self, issue_message):

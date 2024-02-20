@@ -7,12 +7,11 @@ from flask_smorest import abort
 from shortuuid import ShortUUID
 
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from models.response_format import ErrorResponse, SuccessResponse
 from utils.custom_error import (
-    DataNotFound,
-    InvalidCredentials,
-    NotActive,
-    DuplicateEntry,
+    DbException,
+    ApplicationError,
 )
 from handlers.auth_handler import AuthenticationHandler
 from helper.helper_function import get_request_id, get_token_id_from_jwt
@@ -45,33 +44,15 @@ class AuthenticationController:
 
             logger.info(f"{get_request_id()} jwt token is generated and returned")
             return SuccessResponse(
-                200,
+                HttpStatusCode.SUCCESS,
                 PromptMessage.SUCCESS_ACTION.format("User Logged In"),
                 [{"access_token": access_token}],
             ).get_json()
-        except InvalidCredentials:
-            logger.error(f"{get_request_id()} Invalid credentials is provided")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                401,
-                message=ErrorResponse(
-                    401, PromptMessage.INCORRECT_CREDENTIALS
-                ).get_json(),
-            )
-        except NotActive:
-            logger.error(f"{get_request_id()} User Not Approved")
-            return abort(
-                403,
-                message=ErrorResponse(
-                    403, PromptMessage.DENIED_ACCESS.format("Platform")
-                ).get_json(),
-            )
-        except DataNotFound:
-            logger.error(f"{get_request_id()} User No Longer Active/Deleted")
-            return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("User")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     @staticmethod
@@ -82,19 +63,17 @@ class AuthenticationController:
             AuthenticationHandler.sign_up(user_info)
             logger.info(f"{get_request_id()} Signed Up Successfully")
             return SuccessResponse(201, PromptMessage.SIGNED_UP_SUCCESS).get_json(), 201
-        except DataNotFound:
-            logger.error(f"{get_request_id()} Wrong School Name Provided")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("School")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
-        except DuplicateEntry:
-            logger.error(f"{get_request_id()} Duplicate Credentials Provided")
+        except DbException as error:
+            logger.error(f"{get_request_id()} Db Error {error.err_message}")
             return abort(
-                409,
-                message=ErrorResponse(409, PromptMessage.DUPLICATE_ENTRY).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     @staticmethod
@@ -107,11 +86,9 @@ class AuthenticationController:
             )
             AuthenticationHandler.logout_handler(token_id)
             return SuccessResponse(200, PromptMessage.LOGGED_OUT).get_json()
-        except DuplicateEntry:
-            logger.critical(f"{get_request_id()} Someone Tried to use blocklist token")
+        except DbException as error:
+            logger.error(f"{get_request_id()} Db Error {error.err_message}")
             return abort(
-                409,
-                message=ErrorResponse(
-                    409, PromptMessage.TOKEN_RESPONSE.format("already Invalid")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )

@@ -5,9 +5,10 @@ import logging
 import shortuuid
 from config.sqlite_queries import TeacherQueries, CreateTable, PrincipalQueries
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from database.database_access import DatabaseAccess
 from helper.helper_function import check_empty_data, get_request_id
-from utils.custom_error import DataNotFound
+from utils.custom_error import ApplicationError
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,9 @@ class FeedbackHandler:
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("FeedBack")):
             logger.error(f"{get_request_id()} No such feedbacks found")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("Feedback")
+            )
 
         return res_data
 
@@ -46,7 +49,9 @@ class FeedbackHandler:
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Teacher")):
             logger.error(f"{get_request_id()} No such Teacher found")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("Teacher")
+            )
 
         # checking teacher's Id
         for data in res_data:
@@ -54,7 +59,9 @@ class FeedbackHandler:
                 break
         else:
             logger.error(f"{get_request_id()} Wrong Teacher Id - {teacher_id}")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("Teacher")
+            )
 
         # Taking Info and saving it to db
         f_id = shortuuid.ShortUUID().random(length=6)

@@ -1,10 +1,11 @@
 import logging
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from handlers.event_handler import EventHandler
 from flask_smorest import abort
 from helper.helper_function import get_user_id_from_jwt, get_request_id
 from models.response_format import SuccessResponse, ErrorResponse
-from utils.custom_error import DataNotFound
+from utils.custom_error import ApplicationError
 
 logger = logging.getLogger(__name__)
 
@@ -17,17 +18,15 @@ class EventController:
             logger.info(f"{get_request_id()} fetching all events")
             res_data = EventHandler(user_id).read_event()
             return SuccessResponse(
-                200, PromptMessage.LIST_ENTRY.format("Events"), res_data
+                HttpStatusCode.SUCCESS,
+                PromptMessage.LIST_ENTRY.format("Events"),
+                res_data,
             ).get_json()
-        except DataNotFound:
-            logger.error(
-                f"{get_request_id()} No events founds formatting error response"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Events")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def post_create_event(self, event_data):
@@ -39,7 +38,8 @@ class EventController:
         )
         return (
             SuccessResponse(
-                201, PromptMessage.ADDED_SUCCESSFULLY.format("Event")
+                HttpStatusCode.SUCCESS_CREATED,
+                PromptMessage.ADDED_SUCCESSFULLY.format("Event"),
             ).get_json(),
-            201,
+            HttpStatusCode.SUCCESS_CREATED,
         )

@@ -3,7 +3,8 @@ from handlers.feedback_handler import FeedbackHandler
 from flask_smorest import abort
 from models.response_format import SuccessResponse, ErrorResponse
 from config.display_menu import PromptMessage
-from utils.custom_error import DataNotFound
+from config.http_status_code import HttpStatusCode
+from utils.custom_error import ApplicationError
 from helper.helper_function import (
     get_user_id_from_jwt,
     get_request_id,
@@ -23,17 +24,15 @@ class FeedbackController:
 
             logger.info(f"{get_request_id()} Feedbacks found now formatting response")
             return SuccessResponse(
-                200, PromptMessage.LIST_ENTRY.format("Feedbacks"), res_data
+                HttpStatusCode.SUCCESS,
+                PromptMessage.LIST_ENTRY.format("Feedbacks"),
+                res_data,
             ).get_json()
-        except DataNotFound:
-            logger.error(
-                f"{get_request_id()} Feedbacks not found now formatting response"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Feedback")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def give_teacher_feedback(self, teacher_id, feedback_info):
@@ -49,13 +48,12 @@ class FeedbackController:
                 f"{get_request_id()} Feedbacks created for teacher {teacher_id}"
             )
             return SuccessResponse(
-                201, PromptMessage.ADDED_SUCCESSFULLY.format("Feedback")
+                HttpStatusCode.SUCCESS_CREATED,
+                PromptMessage.ADDED_SUCCESSFULLY.format("Feedback"),
             ).get_json()
-        except DataNotFound:
-            logger.error(f"{get_request_id()} Wrong Teacher Id Provided")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Teacher")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )

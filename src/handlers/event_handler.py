@@ -4,8 +4,9 @@ from datetime import datetime
 import logging
 import shortuuid
 
-from utils.custom_error import DataNotFound
+from utils.custom_error import ApplicationError
 from config.sqlite_queries import CreateTable, UserQueries
+from config.http_status_code import HttpStatusCode
 from config.display_menu import PromptMessage
 from database.database_access import DatabaseAccess
 from helper.helper_function import check_empty_data, get_request_id
@@ -28,7 +29,9 @@ class EventHandler:
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("events")):
             logger.error(f"{get_request_id()} No such events found")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("Events")
+            )
 
         logger.info(f"{get_request_id()} Returning events found")
         return res_data

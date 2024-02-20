@@ -1,6 +1,20 @@
 """Custom Error Classes for handling API failures"""
 
 
+class ApplicationError(Exception):
+    """Will throw application error"""
+
+    def __init__(self, code, err_message):
+        self.code = code
+        self.err_message = err_message
+
+
+class DbException(Exception):
+    def __init__(self, code, err_message):
+        self.code = code
+        self.err_message = err_message
+
+
 class DataNotFound(Exception):
     """No resouce found"""
 

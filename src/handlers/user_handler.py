@@ -6,9 +6,15 @@ which are shared between all roles
 import logging
 from config.display_menu import PromptMessage
 from config.sqlite_queries import UserQueries, CreateTable
+from config.http_status_code import HttpStatusCode
 from database.database_access import DatabaseAccess
 from utils.hash_password import hash_password
-from utils.custom_error import FailedAction, DataNotFound, InvalidCredentials
+from utils.custom_error import (
+    FailedAction,
+    DataNotFound,
+    InvalidCredentials,
+    ApplicationError,
+)
 from handlers.principal_handler import PrincipalHandler
 from handlers.teacher_handler import TeacherHandler
 from helper.helper_function import get_request_id, get_token_id_from_jwt
@@ -27,7 +33,9 @@ def fetch_salary_history(user_id):
     # if there is no any records for a teacher
     if len(res_data) == 0:
         logger.error(f"{get_request_id()} No Salary History Found")
-        raise DataNotFound
+        raise ApplicationError(
+            HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("Records")
+        )
 
     logger.info(f"{get_request_id()} Returning Salary History for user - {user_id}")
     return res_data
@@ -44,7 +52,9 @@ def view_personal_info(role, user_id):
         res_data = TeacherHandler().get_teacher_by_id(user_id)
     else:
         logger.info(f"{get_request_id()} role is different - {user_id, role}")
-        raise FailedAction
+        raise ApplicationError(
+            HttpStatusCode.FORBIDDEN, PromptMessage.DENIED_ACCESS.format("Portal")
+        )
 
     return res_data
 
@@ -64,7 +74,9 @@ def change_password_handler(user_id, username, password, new_password):
 
     if len(res_data) == 0:
         logger.error(f"{get_request_id()} Wrong Credentials")
-        raise InvalidCredentials
+        raise ApplicationError(
+            HttpStatusCode.BAD_REQUEST, PromptMessage.INCORRECT_CREDENTIALS
+        )
 
     hashed_new_password = hash_password(new_password)
 

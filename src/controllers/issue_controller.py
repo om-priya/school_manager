@@ -2,10 +2,11 @@ import logging
 
 from flask_smorest import abort
 from handlers.issue_handler import IssueHandler
-from utils.custom_error import DataNotFound
+from utils.custom_error import ApplicationError
 from models.response_format import SuccessResponse, ErrorResponse
 from helper.helper_function import get_user_id_from_jwt
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from helper.helper_function import get_request_id
 
 logger = logging.getLogger(__name__)
@@ -20,15 +21,15 @@ class IssueController:
 
             logger.info(f"{get_request_id()} formatting response for issues fetched")
             return SuccessResponse(
-                200,
+                HttpStatusCode.SUCCESS,
                 PromptMessage.LIST_ENTRY.format("Issues raised by teachers"),
                 res_data,
             ).get_json()
-        except DataNotFound:
-            logger.error(f"{get_request_id()} formatting response for no issues found")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(404, PromptMessage.NOTHING_FOUND.format("Issue")),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def create_issue_controller(self, issue_mssg):
@@ -39,6 +40,10 @@ class IssueController:
         logger.info(
             f"{get_request_id()} formatting response after successfull creation of issue"
         )
-        return SuccessResponse(
-            201, PromptMessage.ADDED_SUCCESSFULLY.format("Issue")
-        ).get_json(), 201
+        return (
+            SuccessResponse(
+                HttpStatusCode.SUCCESS_CREATED,
+                PromptMessage.ADDED_SUCCESSFULLY.format("Issue"),
+            ).get_json(),
+            HttpStatusCode.SUCCESS_CREATED,
+        )

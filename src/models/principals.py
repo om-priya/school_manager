@@ -11,9 +11,11 @@ from config.sqlite_queries import (
     TeacherQueries,
     CreateTable,
 )
+from config.http_status_code import HttpStatusCode
+from config.display_menu import PromptMessage
 from helper.helper_function import get_request_id
 from utils.hash_password import hash_password
-from utils.custom_error import DataNotFound
+from utils.custom_error import ApplicationError
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +75,9 @@ class SavePrincipal:
         )
         if len(school_id) == 0:
             logger.error(f"{get_request_id()} no such school present in the system")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("School")
+            )
 
         school_id = school_id[0]["school_id"]
         # creating tuple for execution
