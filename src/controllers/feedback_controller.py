@@ -1,6 +1,5 @@
 import logging
 from handlers.feedback_handler import FeedbackHandler
-from flask_smorest import abort
 from models.response_format import SuccessResponse, ErrorResponse
 from config.display_menu import PromptMessage
 from config.http_status_code import HttpStatusCode
@@ -30,10 +29,7 @@ class FeedbackController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def give_teacher_feedback(self, teacher_id, feedback_info):
         try:
@@ -53,7 +49,4 @@ class FeedbackController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code

@@ -1,0 +1,5956 @@
+{
+	"info": {
+		"_postman_id": "90796c94-1903-427f-9fe9-1b07c5d8b9bf",
+		"name": "SCHOOL MANAGEMENT SYSTEM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26185262"
+	},
+	"item": [
+		{
+			"name": "Config Test",
+			"item": [
+				{
+					"name": "Set Routes Config",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Server is Running\", ()=>{\r",
+									"    pm.expect(response.server).to.eql(\"Is Up\")\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{School BaseUrl V1}}/",
+							"host": [
+								"{{School BaseUrl V1}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tear Down Test Db",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Token-Secret",
+								"value": "secrettokenforsecretthings",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{School BaseUrl V1}}/teardown",
+							"host": [
+								"{{School BaseUrl V1}}"
+							],
+							"path": [
+								"teardown"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Happy Path",
+			"item": [
+				{
+					"name": "User Router",
+					"item": [
+						{
+							"name": "Get My Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/user/profile",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"user",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Salary History",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/user/salary-history",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"user",
+										"salary-history"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change My Password Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check Success Status\", function () {\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_name\":\"ompriya52\",\r\n    \"password\":\"Ompriya@52\",\r\n    \"new_password\":\"Ompriya@24\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/user/change-password",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"user",
+										"change-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change My Password Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check Success Status\", function () {\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_name\":\"ompriya23\",\r\n    \"password\":\"Ompriya@23\",\r\n    \"new_password\":\"Ompriya@24\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/user/change-password",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"user",
+										"change-password"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Teacher Router",
+					"item": [
+						{
+							"name": "Get All Teachers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"email\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"name\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"phone\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"status\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"user_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"email\",\r",
+											"                \"name\",\r",
+											"                \"phone\",\r",
+											"                \"status\",\r",
+											"                \"user_id\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											"let responseData = response.data.json;\r",
+											"\r",
+											"responseData.forEach((item)=>{\r",
+											"    if(item[\"status\"] == \"pending\"){\r",
+											"        pm.collectionVariables.set(\"pending_teacher_id\", item[\"user_id\"]);\r",
+											"    }\r",
+											"})\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"email\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"name\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"phone\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"status\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"user_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"email\",\r",
+											"                \"name\",\r",
+											"                \"phone\",\r",
+											"                \"status\",\r",
+											"                \"user_id\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "{{pending_teacher_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Approve Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											"\r",
+											"const pendingTeacherId = pm.collectionVariables.get(\"pending_teacher_id\")\r",
+											"pm.collectionVariables.unset(\"pending_teacher_id\")\r",
+											"pm.collectionVariables.set(\"teacher_id\", pendingTeacherId)\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id/approve",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id",
+										"approve"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "{{pending_teacher_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    errorOccured = true\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "{{teacher_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"TestUser Yadav\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya23@gmail.com\",\r\n    \"phone\": \"9898988998\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "{{teacher_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Principal Router",
+					"item": [
+						{
+							"name": "Get All Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"email\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"gender\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"name\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"status\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"user_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"email\",\r",
+											"                \"gender\",\r",
+											"                \"name\",\r",
+											"                \"status\",\r",
+											"                \"user_id\"\r",
+											"              ]\r",
+											"            },\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"email\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"gender\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"name\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"status\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"user_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"email\",\r",
+											"                \"gender\",\r",
+											"                \"name\",\r",
+											"                \"status\",\r",
+											"                \"user_id\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											"let responseData = response.data.json;\r",
+											"\r",
+											"responseData.forEach((item)=>{\r",
+											"    if(item[\"status\"] == \"pending\"){\r",
+											"        pm.collectionVariables.set(\"pending_principal_id\", item[\"user_id\"]);\r",
+											"    }\r",
+											"})\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Principal By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"email\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"gender\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"name\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"status\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"user_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"email\",\r",
+											"                \"gender\",\r",
+											"                \"name\",\r",
+											"                \"status\",\r",
+											"                \"user_id\"\r",
+											"              ]\r",
+											"            },\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"email\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"gender\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"name\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"status\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"user_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"email\",\r",
+											"                \"gender\",\r",
+											"                \"name\",\r",
+											"                \"status\",\r",
+											"                \"user_id\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principal_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principal_id"
+									],
+									"variable": [
+										{
+											"key": "principal_id",
+											"value": "{{pending_principal_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Approve Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											"\r",
+											"const pendingPrincipalId = pm.collectionVariables.get(\"pending_principal_id\")\r",
+											"pm.collectionVariables.unset(\"pending_principal_id\")\r",
+											"pm.collectionVariables.set(\"principal_id\", pendingPrincipalId)\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principal_id/approve",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principal_id",
+										"approve"
+									],
+									"variable": [
+										{
+											"key": "principal_id",
+											"value": "{{pending_principal_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    errorOccured = true\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principla_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principla_id"
+									],
+									"variable": [
+										{
+											"key": "principla_id",
+											"value": "{{principal_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya52@gmail.com\",\r\n    \"phone\": \"9898989898\"   \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principla_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principla_id"
+									],
+									"variable": [
+										{
+											"key": "principla_id",
+											"value": "{{principal_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Leave Router",
+					"item": [
+						{
+							"name": "Approve Leave",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/leaves/:leave_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"leaves",
+										":leave_id"
+									],
+									"variable": [
+										{
+											"key": "leave_id",
+											"value": "{{leave_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Leaves",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"leave_date\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"leave_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"no_of_days\": {\r",
+											"                  \"type\": \"integer\"\r",
+											"                },\r",
+											"                \"status\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"username\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"leave_date\",\r",
+											"                \"leave_id\",\r",
+											"                \"no_of_days\",\r",
+											"                \"status\",\r",
+											"                \"username\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											"const leave_id = response.data.json[0].leave_id\r",
+											"pm.collectionVariables.set(\"leave_id\", leave_id)\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/leaves",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"leaves"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Apply For Leave",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"\r",
+											"if(statusCode != 201){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"leave_date\": \"17-02-2026\",\r\n    \"no_of_days\": \"{{$randomInt}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/leaves",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"leaves"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Auth Router",
+					"item": [
+						{
+							"name": "SignUp Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"\r",
+											"if(statusCode != 201){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Om Priya\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya23@gmail.com\",\r\n    \"phone\": \"8212307012\",\r\n    \"school_name\": \"dav public school\",\r\n    \"password\": \"Ompriya@23\",\r\n    \"role\": \"teacher\",\r\n    \"experience\": \"2\",\r\n    \"fav_subject\": \"coding\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/signup",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SignUp Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 201){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Om Priya\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya52@gmail.com\",\r\n    \"phone\": \"8229070121\",\r\n    \"school_name\": \"dav public school\",\r\n    \"password\": \"Ompriya@52\",\r\n    \"role\": \"principal\",\r\n    \"experience\": \"2\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/signup",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login Super Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"access_token\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"access_token\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"const accessToken = response.data.json[0].access_token\r",
+											"pm.collectionVariables.set(\"accessToken\", accessToken)\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check Success Status\", function () {\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_name\": \"ompriya18153789\",\r\n    \"password\": \"Ompriya#123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/login",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"access_token\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"access_token\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"const accessToken = response.data.json[0].access_token\r",
+											"pm.collectionVariables.set(\"accessToken\", accessToken)\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check Success Status\", function () {\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_name\": \"ompriya52\",\r\n    \"password\": \"Ompriya@52\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/login",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"access_token\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"access_token\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"const accessToken = response.data.json[0].access_token\r",
+											"pm.collectionVariables.set(\"accessToken\", accessToken)\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check Success Status\", function () {\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_name\": \"ompriya23\",\r\n    \"password\": \"Ompriya@23\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/login",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logout Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200\", () => {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response Type Check\", ()=> {\r",
+											"    pm.expect(response).to.be.a(\"object\");\r",
+											"    pm.expect(response.message).to.be.a(\"string\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Response Message Field\", ()=> {\r",
+											"    pm.expect(response.message).to.eql(\"Logged Out Successfully\")\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/logout",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Event Router",
+					"item": [
+						{
+							"name": "Fetch All Events",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"notice_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"notice_message\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"notice_id\",\r",
+											"                \"notice_message\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/events",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Event",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 201){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"event_message\": \"Test Event Message\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/events",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Issue Router",
+					"item": [
+						{
+							"name": "Raise Issue",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 201){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"issue_message\": \"Test Issue Message\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/issues",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"issues"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Issues",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"issue_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"issue_message\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"raised_by\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"issue_id\",\r",
+											"                \"issue_message\",\r",
+											"                \"raised_by\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/issues",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"issues"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "FeedBack Router",
+					"item": [
+						{
+							"name": "Fetch All Feedbacks",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 200){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": [\r",
+											"            {\r",
+											"              \"type\": \"object\",\r",
+											"              \"properties\": {\r",
+											"                \"created_date\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"feedback_id\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                },\r",
+											"                \"message\": {\r",
+											"                  \"type\": \"string\"\r",
+											"                }\r",
+											"              },\r",
+											"              \"required\": [\r",
+											"                \"created_date\",\r",
+											"                \"feedback_id\",\r",
+											"                \"message\"\r",
+											"              ]\r",
+											"            }\r",
+											"          ]\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/feedbacks",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"feedbacks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Give Feedback For a Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const statusCode = pm.response.code;\r",
+											"\r",
+											"if(statusCode != 201){\r",
+											"    postman.setNextRequest(null);\r",
+											"    throw Error\r",
+											"}\r",
+											"\r",
+											"let responseSchema = {\r",
+											"  \"type\": \"object\",\r",
+											"  \"properties\": {\r",
+											"    \"data\": {\r",
+											"      \"type\": \"object\",\r",
+											"      \"properties\": {\r",
+											"        \"json\": {\r",
+											"          \"type\": \"array\",\r",
+											"          \"items\": {}\r",
+											"        }\r",
+											"      },\r",
+											"      \"required\": [\r",
+											"        \"json\"\r",
+											"      ]\r",
+											"    },\r",
+											"    \"message\": {\r",
+											"      \"type\": \"string\"\r",
+											"    },\r",
+											"    \"status_code\": {\r",
+											"      \"type\": \"integer\"\r",
+											"    },\r",
+											"    \"success\": {\r",
+											"      \"type\": \"boolean\"\r",
+											"    }\r",
+											"  },\r",
+											"  \"required\": [\r",
+											"    \"data\",\r",
+											"    \"message\",\r",
+											"    \"status_code\",\r",
+											"    \"success\"\r",
+											"  ]\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Check Response Schema\", ()=>{\r",
+											"    pm.response.to.have.jsonSchema (responseSchema);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check Success Status\", ()=>{\r",
+											"    pm.expect(response.success).to.eql(true)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"feedback_message\": \"Test Feedback Message\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/feedbacks/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"feedbacks",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "{{teacher_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Token Error",
+			"item": [
+				{
+					"name": "Token Missing",
+					"item": [
+						{
+							"name": "Missing Token Get All Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Get Principal By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principal_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principal_id"
+									],
+									"variable": [
+										{
+											"key": "principal_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Approve Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principal_id/approve",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principal_id",
+										"approve"
+									],
+									"variable": [
+										{
+											"key": "principal_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Update Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya52@gmail.com\",\r\n    \"phone\": \"9898989898\"   \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principla_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principla_id"
+									],
+									"variable": [
+										{
+											"key": "principla_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Delete Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/principals/:principla_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"principals",
+										":principla_id"
+									],
+									"variable": [
+										{
+											"key": "principla_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Get All Teachers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Get Single Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Approve Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id/approve",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id",
+										"approve"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Update Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"TestUser Yadav\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya23@gmail.com\",\r\n    \"phone\": \"9898988998\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Delete Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"teachers",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Create Event",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"event_message\": \"Test Event Message\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/events",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Fetch All Events",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/events",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Give Feedback For a Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"feedback_message\": \"Test Feedback Message\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/feedbacks/:teacher_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"feedbacks",
+										":teacher_id"
+									],
+									"variable": [
+										{
+											"key": "teacher_id",
+											"value": "as23Ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Fetch All Feedbacks",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/feedbacks",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"feedbacks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Apply For Leave",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"leave_date\": \"17-02-2026\",\r\n    \"no_of_days\": \"{{$randomInt}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/leaves",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"leaves"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Get All Leaves",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/leaves",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"leaves"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Approve Leave",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/leaves/:leave_id",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"leaves",
+										":leave_id"
+									],
+									"variable": [
+										{
+											"key": "leave_id",
+											"value": "ase3as"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Get My Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/user/profile",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"user",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Change My Password",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_name\":\"ompriya42\",\r\n    \"password\":\"Ompriya@42\",\r\n    \"new_password\":\"Ompriya@24\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/user/change-password",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"user",
+										"change-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Get Salary History",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/user/salary-history",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"user",
+										"salary-history"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Raise Issue",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"issue_message\": \"Test Issue Message\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{School BaseUrl V1}}/issues",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"issues"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Token Fetch Issues",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{School BaseUrl V1}}/issues",
+									"host": [
+										"{{School BaseUrl V1}}"
+									],
+									"path": [
+										"issues"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const response = pm.response.json()",
+									"",
+									"const responseSchema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"err_message\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"err_status_code\": {",
+									"      \"type\": \"integer\"",
+									"    },",
+									"    \"success\": {",
+									"      \"type\": \"boolean\"",
+									"    }",
+									"  },",
+									"  \"required\": [",
+									"    \"err_message\",",
+									"    \"err_status_code\",",
+									"    \"success\"",
+									"  ]",
+									"}",
+									"",
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Check Success Status\", ()=>{",
+									"    pm.expect(response.success).to.eql(false)",
+									"})",
+									"",
+									"pm.test(\"Check Response Schema\", ()=>{",
+									"    pm.response.to.have.jsonSchema (responseSchema);",
+									"})"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Token Denied Access",
+					"item": [
+						{
+							"name": "User Router",
+							"item": [
+								{
+									"name": "Denied Access Get My Profile",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/user/profile",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"user",
+												"profile"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Get Salary History",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/user/salary-history",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"user",
+												"salary-history"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Change My Password",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"user_name\":\"ompriya42\",\r\n    \"password\":\"Ompriya@42\",\r\n    \"new_password\":\"Ompriya@24\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{School BaseUrl V1}}/user/change-password",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"user",
+												"change-password"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Teacher Router",
+							"item": [
+								{
+									"name": "Denied Access Get All Teachers",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/teachers",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"teachers"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Get Single Teacher",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"teachers",
+												":teacher_id"
+											],
+											"variable": [
+												{
+													"key": "teacher_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Approve Teacher",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/teachers/:teacher_id/approve",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"teachers",
+												":teacher_id",
+												"approve"
+											],
+											"variable": [
+												{
+													"key": "teacher_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Delete Teacher",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"teachers",
+												":teacher_id"
+											],
+											"variable": [
+												{
+													"key": "teacher_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Update Teacher",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"TestUser Yadav\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya23@gmail.com\",\r\n    \"phone\": \"9898988998\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{School BaseUrl V1}}/teachers/:teacher_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"teachers",
+												":teacher_id"
+											],
+											"variable": [
+												{
+													"key": "teacher_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Principal Router",
+							"item": [
+								{
+									"name": "Denied Access Get All Principal",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/principals",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"principals"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Get Principal By Id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/principals/:principal_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"principals",
+												":principal_id"
+											],
+											"variable": [
+												{
+													"key": "principal_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Approve Principal",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/principals/:principal_id/approve",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"principals",
+												":principal_id",
+												"approve"
+											],
+											"variable": [
+												{
+													"key": "principal_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Delete Principal",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/principals/:principla_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"principals",
+												":principla_id"
+											],
+											"variable": [
+												{
+													"key": "principla_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Update Principal",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya52@gmail.com\",\r\n    \"phone\": \"9898989898\"   \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{School BaseUrl V1}}/principals/:principla_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"principals",
+												":principla_id"
+											],
+											"variable": [
+												{
+													"key": "principla_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Leave Router",
+							"item": [
+								{
+									"name": "Denied Access Approve Leave",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/leaves/:leave_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"leaves",
+												":leave_id"
+											],
+											"variable": [
+												{
+													"key": "leave_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Get All Leaves",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/leaves",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"leaves"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Apply For Leave",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"leave_date\": \"17-02-2026\",\r\n    \"no_of_days\": \"{{$randomInt}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{School BaseUrl V1}}/leaves",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"leaves"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Event Router",
+							"item": [
+								{
+									"name": "Denied Access Fetch All Events",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/events",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"events"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Create Event",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"event_message\": \"Test Event Message\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{School BaseUrl V1}}/events",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"events"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Issue Router",
+							"item": [
+								{
+									"name": "Denied Access Raise Issue",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"issue_message\": \"Test Issue Message\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{School BaseUrl V1}}/issues",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"issues"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Fetch Issues",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/issues",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"issues"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "FeedBack Router",
+							"item": [
+								{
+									"name": "Denied Access Fetch All Feedbacks",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{School BaseUrl V1}}/feedbacks",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"feedbacks"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Denied Access Give Feedback For a Teacher",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{accessToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"feedback_message\": \"Test Feedback Message\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{School BaseUrl V1}}/feedbacks/:teacher_id",
+											"host": [
+												"{{School BaseUrl V1}}"
+											],
+											"path": [
+												"feedbacks",
+												":teacher_id"
+											],
+											"variable": [
+												{
+													"key": "teacher_id",
+													"value": "as23ws"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const response = pm.response.json()",
+									"",
+									"const responseSchema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"err_message\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"err_status_code\": {",
+									"      \"type\": \"integer\"",
+									"    },",
+									"    \"success\": {",
+									"      \"type\": \"boolean\"",
+									"    }",
+									"  },",
+									"  \"required\": [",
+									"    \"err_message\",",
+									"    \"err_status_code\",",
+									"    \"success\"",
+									"  ]",
+									"}",
+									"",
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Check Success Status\", ()=>{",
+									"    pm.expect(response.success).to.eql(false)",
+									"})",
+									"",
+									"pm.test(\"Check Response Schema\", ()=>{",
+									"    pm.response.to.have.jsonSchema (responseSchema);",
+									"})"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Fuzz Testing",
+			"item": [
+				{
+					"name": "SignUp Teacher Invalid Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const statusCode = pm.response.code;\r",
+									"\r",
+									"let responseSchema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"err_message\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"err_status_code\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"success\": {\r",
+									"      \"type\": \"boolean\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"err_message\",\r",
+									"    \"err_status_code\",\r",
+									"    \"success\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Check Response Schema\", ()=>{\r",
+									"    pm.response.to.have.jsonSchema (responseSchema);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Status code is 400\", ()=>{\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check Success Status\", ()=>{\r",
+									"    pm.expect(response.success).to.eql(false)\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Om Priya\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya23@gmail.com\",\r\n    \"phone\": \"8212307012\"\r\n    \"school_name\": \"dav public school\",\r\n    \"password\": \"Ompriya@23\",\r\n    \"role\": \"teacher\",\r\n    \"experience\": \"2\",\r\n    \"fav_subject\": \"coding\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{School BaseUrl V1}}/signup",
+							"host": [
+								"{{School BaseUrl V1}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignUp Principal Schema Error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const statusCode = pm.response.code;\r",
+									"\r",
+									"let responseSchema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"err_message\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"err_status_code\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"success\": {\r",
+									"      \"type\": \"boolean\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"err_message\",\r",
+									"    \"err_status_code\",\r",
+									"    \"success\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Check Response Schema\", ()=>{\r",
+									"    pm.response.to.have.jsonSchema (responseSchema);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Status code is 422\", ()=>{\r",
+									"    pm.response.to.have.status(422);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check Success Status\", ()=>{\r",
+									"    pm.expect(response.success).to.eql(false)\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Om Priya\",\r\n    \"gender\": \"m\",\r\n    \"email\": \"ompriya52@gmail.com\",\r\n    \"phone\": \"8229070121\",\r\n    \"password\": \"Ompriya@52\",\r\n    \"role\": \"principal\",\r\n    \"experience\": \"2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{School BaseUrl V1}}/signup",
+							"host": [
+								"{{School BaseUrl V1}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"",
+					"",
+					"",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"postman.setNextRequest(get_next_request());",
+					"",
+					"function get_next_request(){",
+					"    let routes;",
+					"     if (Array.isArray(pm.globals.get(\"remainingRoutes\")) === true) {",
+					"        routes = pm.globals.get(\"remainingRoutes\");",
+					"    }else{",
+					"        routes = pm.iterationData.get(\"routes\");",
+					"    }",
+					"    const nextRequest = routes.shift();",
+					"    pm.globals.set(\"remainingRoutes\", routes);",
+					"",
+					"    if (nextRequest === undefined) {",
+					"        pm.globals.clear(\"remainingRoutes\");",
+					"        return null;",
+					"    }",
+					"    return nextRequest;",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "School BaseUrl V1",
+			"value": "http://localhost:5000/api/v1"
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "principal_id",
+			"value": ""
+		},
+		{
+			"key": "pending_teacher_id",
+			"value": ""
+		},
+		{
+			"key": "teacher_id",
+			"value": ""
+		},
+		{
+			"key": "leave_id",
+			"value": ""
+		}
+	]
+}

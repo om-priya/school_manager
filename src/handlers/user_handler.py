@@ -9,12 +9,7 @@ from config.sqlite_queries import UserQueries, CreateTable
 from config.http_status_code import HttpStatusCode
 from database.database_access import DatabaseAccess
 from utils.hash_password import hash_password
-from utils.custom_error import (
-    FailedAction,
-    DataNotFound,
-    InvalidCredentials,
-    ApplicationError,
-)
+from utils.custom_error import ApplicationError
 from handlers.principal_handler import PrincipalHandler
 from handlers.teacher_handler import TeacherHandler
 from helper.helper_function import get_request_id, get_token_id_from_jwt

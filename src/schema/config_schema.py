@@ -1,4 +1,4 @@
-from marshmallow import Schema, ValidationError
+from marshmallow import Schema
 from utils.custom_error import FailedValidation
 
 

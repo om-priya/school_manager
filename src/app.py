@@ -67,7 +67,7 @@ def create_app():
         pymysql.Error,
         lambda err: (
             ErrorResponse(500, f"Something went wrong with db {str(err)}").get_json(),
-            422,
+            500,
         ),
     )
     app.register_error_handler(

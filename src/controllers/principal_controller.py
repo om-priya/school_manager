@@ -1,7 +1,6 @@
 """ This module is responsible for handling all the controlers for principal """
 
-from flask_smorest import abort
-from utils.custom_error import DataNotFound, AlreadyPresent, ApplicationError
+from utils.custom_error import ApplicationError
 from models.response_format import SuccessResponse, ErrorResponse
 from handlers.principal_handler import PrincipalHandler
 from helper.helper_function import get_request_id
@@ -24,10 +23,7 @@ class PrincipalController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def get_single_principal(self, principal_id):
         try:
@@ -41,10 +37,7 @@ class PrincipalController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def approve_principal(self, principal_id):
         try:
@@ -58,10 +51,7 @@ class PrincipalController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def update_principal_controller(self, principal_id, principal_updated_details):
         try:
@@ -75,10 +65,7 @@ class PrincipalController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def delete_principal(self, principal_id):
         try:
@@ -92,7 +79,4 @@ class PrincipalController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code

@@ -4,7 +4,6 @@ provided token
 """
 
 import logging
-from flask_smorest import abort
 
 from models.response_format import ErrorResponse
 from helper.helper_function import (
@@ -13,6 +12,7 @@ from helper.helper_function import (
     get_token_id_from_jwt,
 )
 from config.sqlite_queries import UserQueries
+from config.http_status_code import HttpStatusCode
 from database.database_access import DatabaseAccess
 
 logger = logging.getLogger(__name__)
@@ -35,15 +35,22 @@ def access_level(role):
                 return func(*args, **kwargs)
             elif token_role not in role:
                 logger.warn(f"{get_request_id()} has not access to the endpoint")
-                return abort(
-                    403, message=ErrorResponse(403, "Unauthorized Access").get_json()
+                return (
+                    ErrorResponse(
+                        HttpStatusCode.FORBIDDEN, "Unauthorized Access"
+                    ).get_json(),
+                    HttpStatusCode.FORBIDDEN,
                 )
+
             elif res_data:
                 logger.critical(
                     f"{get_request_id()} has access the endpoint with blocked token"
                 )
-                return abort(
-                    401, message=ErrorResponse(401, "Token is Blocked").get_json()
+                return (
+                    ErrorResponse(
+                        HttpStatusCode.FORBIDDEN, "Token is Blocked"
+                    ).get_json(),
+                    HttpStatusCode.FORBIDDEN,
                 )
 
         return wrapper

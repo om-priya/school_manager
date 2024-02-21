@@ -1,5 +1,4 @@
 import logging
-from flask_smorest import abort
 from handlers.leave_handler import LeaveHandler
 from models.response_format import SuccessResponse, ErrorResponse
 from config.http_status_code import HttpStatusCode
@@ -33,10 +32,7 @@ class LeavesController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def apply_for_leave(self, leave_details):
         user_id = get_user_id_from_jwt()
@@ -71,7 +67,4 @@ class LeavesController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code

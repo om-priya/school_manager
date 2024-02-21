@@ -1,7 +1,6 @@
 """ This Module Contains all the functionality that a teacher can perform """
 
 import logging
-from flask_smorest import abort
 
 from utils.custom_error import ApplicationError
 from models.response_format import SuccessResponse, ErrorResponse
@@ -23,10 +22,7 @@ class TeacherController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def get_single_teacher(self, teacher_id):
         try:
@@ -38,10 +34,7 @@ class TeacherController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def approve_teacher(self, teacher_id):
         try:
@@ -55,10 +48,7 @@ class TeacherController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def update_teacher_controller(self, teacher_id, teacher_details):
         try:
@@ -74,10 +64,7 @@ class TeacherController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def delete_teacher(self, teacher_id):
         try:
@@ -89,7 +76,4 @@ class TeacherController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code

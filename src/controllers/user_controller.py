@@ -1,17 +1,11 @@
 import logging
-from flask_smorest import abort
 
 from handlers.user_handler import (
     view_personal_info,
     fetch_salary_history,
     change_password_handler,
 )
-from utils.custom_error import (
-    DataNotFound,
-    FailedAction,
-    InvalidCredentials,
-    ApplicationError,
-)
+from utils.custom_error import ApplicationError
 from config.http_status_code import HttpStatusCode
 from models.response_format import SuccessResponse, ErrorResponse
 from helper.helper_function import (
@@ -34,26 +28,24 @@ class UserController:
             logger.info(
                 f"{get_request_id()} formatting response for user_profile fetched"
             )
-            return SuccessResponse(200, "Your Information", res_data).get_json()
+            return SuccessResponse(
+                HttpStatusCode.SUCCESS, "Your Information", res_data
+            ).get_json()
         except ApplicationError as error:
             logger.critical(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def get_my_salary_history(self):
         try:
             user_id = get_user_id_from_jwt()
 
             res_data = fetch_salary_history(user_id)
-            return SuccessResponse(200, "Salary History", res_data).get_json()
+            return SuccessResponse(
+                HttpStatusCode.SUCCESS, "Salary History", res_data
+            ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def change_password(self, user_details):
         try:
@@ -67,11 +59,9 @@ class UserController:
             change_password_handler(user_id, user_name, password, new_password)
 
             return SuccessResponse(
-                200, "Password Changed Successfully Please Log_In Again"
+                HttpStatusCode.SUCCESS,
+                "Password Changed Successfully Please Log_In Again",
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code

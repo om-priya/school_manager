@@ -1,6 +1,5 @@
 import logging
 
-from flask_smorest import abort
 from handlers.issue_handler import IssueHandler
 from utils.custom_error import ApplicationError
 from models.response_format import SuccessResponse, ErrorResponse
@@ -27,10 +26,7 @@ class IssueController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     def create_issue_controller(self, issue_mssg):
         user_id = get_user_id_from_jwt()

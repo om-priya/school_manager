@@ -3,7 +3,6 @@
 import logging
 
 from flask_jwt_extended import create_access_token
-from flask_smorest import abort
 from shortuuid import ShortUUID
 
 from config.display_menu import PromptMessage
@@ -50,10 +49,7 @@ class AuthenticationController:
             ).get_json()
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     @staticmethod
     def sign_up_controller(user_info):
@@ -65,16 +61,10 @@ class AuthenticationController:
             return SuccessResponse(201, PromptMessage.SIGNED_UP_SUCCESS).get_json(), 201
         except ApplicationError as error:
             logger.error(f"{get_request_id()} {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
         except DbException as error:
             logger.error(f"{get_request_id()} Db Error {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code
 
     @staticmethod
     def logout_controller():
@@ -88,7 +78,4 @@ class AuthenticationController:
             return SuccessResponse(200, PromptMessage.LOGGED_OUT).get_json()
         except DbException as error:
             logger.error(f"{get_request_id()} Db Error {error.err_message}")
-            return abort(
-                error.code,
-                message=ErrorResponse(error.code, error.err_message).get_json(),
-            )
+            return ErrorResponse(error.code, error.err_message).get_json(), error.code

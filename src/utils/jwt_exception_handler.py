@@ -7,6 +7,7 @@ import logging
 from flask_jwt_extended import JWTManager
 from models.response_format import ErrorResponse
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from helper.helper_function import get_request_id
 
 logger = logging.getLogger(__name__)
@@ -21,9 +22,10 @@ def jwt_exception_manager(app):
         logger.warning(f"{get_request_id()} token is revoked")
         return (
             ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Revoked")
+                HttpStatusCode.UNAUTHORIZE,
+                PromptMessage.TOKEN_RESPONSE.format("Revoked"),
             ).get_json(),
-            401,
+            HttpStatusCode.UNAUTHORIZE,
         )
 
     @jwt.expired_token_loader
@@ -31,9 +33,10 @@ def jwt_exception_manager(app):
         logger.warning(f"{get_request_id()} token is expired")
         return (
             ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Not Valid")
+                HttpStatusCode.UNAUTHORIZE,
+                PromptMessage.TOKEN_RESPONSE.format("Not Valid"),
             ).get_json(),
-            401,
+            HttpStatusCode.UNAUTHORIZE,
         )
 
     @jwt.unauthorized_loader
@@ -41,9 +44,10 @@ def jwt_exception_manager(app):
         logger.warning(f"{get_request_id()} token is missing")
         return (
             ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Missing")
+                HttpStatusCode.UNAUTHORIZE,
+                PromptMessage.TOKEN_RESPONSE.format("Missing"),
             ).get_json(),
-            401,
+            HttpStatusCode.UNAUTHORIZE,
         )
 
     @jwt.invalid_token_loader
@@ -51,9 +55,10 @@ def jwt_exception_manager(app):
         logger.warning(f"{get_request_id()} token is invalid")
         return (
             ErrorResponse(
-                401, PromptMessage.TOKEN_RESPONSE.format("Invalid")
+                HttpStatusCode.UNAUTHORIZE,
+                PromptMessage.TOKEN_RESPONSE.format("Invalid"),
             ).get_json(),
-            401,
+            HttpStatusCode.UNAUTHORIZE,
         )
 
     return app
