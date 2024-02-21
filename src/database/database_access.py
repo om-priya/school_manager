@@ -1,19 +1,19 @@
 """ This Module contains database access class which will help in executing query """
-import logging
-from database.db_connector import DatabaseConnection
-from config.sqlite_queries import DatabaseConfig
 
-logger = logging.getLogger("db_logger")
+from database.db_connector import DatabaseConnection
 
 
 class DatabaseAccess:
-    DB_PATH = DatabaseConfig.DB_PATH
+    """
+    This is a database access class which will acts as an intermediatary
+    between our database and buisness logic
+    """
 
     # execute query of non returning type such as update, delete, insert
     @classmethod
     def execute_non_returning_query(cls, query, params=None):
         """Execute a non-returning query (update, delete, insert)."""
-        with DatabaseConnection(cls.DB_PATH) as connection:
+        with DatabaseConnection() as connection:
             cursor = connection.cursor()
             if params is None:
                 cursor.execute(query)
@@ -24,7 +24,7 @@ class DatabaseAccess:
     @classmethod
     def execute_returning_query(cls, query, params=None):
         """Execute a returning query (read)."""
-        with DatabaseConnection(cls.DB_PATH) as connection:
+        with DatabaseConnection() as connection:
             cursor = connection.cursor()
             if params is None:
                 cursor.execute(query)

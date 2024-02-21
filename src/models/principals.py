@@ -1,8 +1,8 @@
 """This file contains a class for principal"""
+
 import logging
 import shortuuid
 from models.users import User
-from config.display_menu import PromptMessage
 
 from database.database_access import DatabaseAccess
 from database.db_connector import DatabaseConnection
@@ -10,10 +10,12 @@ from config.sqlite_queries import (
     PrincipalQueries,
     TeacherQueries,
     CreateTable,
-    DatabaseConfig,
 )
-from utils.exception_handler import exception_checker
+from config.http_status_code import HttpStatusCode
+from config.display_menu import PromptMessage
+from helper.helper_function import get_request_id
 from utils.hash_password import hash_password
+from utils.custom_error import ApplicationError
 
 logger = logging.getLogger(__name__)
 
@@ -52,8 +54,13 @@ class Principal(User):
         self.status = "pending"
         self.password = hash_password(principal_info["password"])
 
-    @exception_checker
-    def save_principal(self):
+
+class SavePrincipal:
+    """
+    Save Principal class to initiate the process of saving to db
+    """
+
+    def save_principal(self, principla_obj):
         """
         Save the Principal object to the database.
 
@@ -64,33 +71,38 @@ class Principal(User):
         None
         """
         school_id = DatabaseAccess.execute_returning_query(
-            TeacherQueries.GET_SCHOOL_ID, (self.school_name,)
+            TeacherQueries.GET_SCHOOL_ID, (principla_obj.school_name,)
         )
         if len(school_id) == 0:
-            print(PromptMessage.NO_SCHOOL_FOUND)
-            return
+            logger.error(f"{get_request_id()} no such school present in the system")
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND, PromptMessage.NOTHING_FOUND.format("School")
+            )
 
-        school_id = school_id[0][0]
+        school_id = school_id[0]["school_id"]
         # creating tuple for execution
         cred_tuple = (
-            self.username,
-            self.password,
-            self.user_id,
-            self.role,
-            self.status,
+            principla_obj.username,
+            principla_obj.password,
+            principla_obj.user_id,
+            principla_obj.role,
+            principla_obj.status,
         )
-        map_tuple = (self.user_id, school_id)
-        user_tuple = (self.user_id, self.name, self.gender, self.email, self.phone)
-        principal_tuple = (self.user_id, self.experience)
+        map_tuple = (principla_obj.user_id, school_id)
+        user_tuple = (
+            principla_obj.user_id,
+            principla_obj.name,
+            principla_obj.gender,
+            principla_obj.email,
+            principla_obj.phone,
+        )
+        principal_tuple = (principla_obj.user_id, principla_obj.experience)
 
-        with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
+        with DatabaseConnection() as connection:
             cursor = connection.cursor()
             cursor.execute(CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple)
             cursor.execute(CreateTable.INSERT_INTO_MAPPING, map_tuple)
             cursor.execute(CreateTable.INSERT_INTO_USER, user_tuple)
             cursor.execute(PrincipalQueries.INSERT_INTO_PRINCIPAL, principal_tuple)
 
-        logger.info("User %s %s Saved to Db", self.name, self.role)
-
-        logger.info("Principal Saved to DB")
-        print(PromptMessage.SIGNED_UP_SUCCESS)
+        logger.info(f"{get_request_id()} User %s %s Saved to Db", principla_obj.name, principla_obj.role)

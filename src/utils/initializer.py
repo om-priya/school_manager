@@ -3,7 +3,7 @@
 import logging
 from database.database_access import DatabaseAccess
 from database.db_connector import DatabaseConnection
-from config.sqlite_queries import CreateTable, UserQueries, DatabaseConfig
+from config.sqlite_queries import CreateTable, UserQueries
 from utils.super_admin_info import create_super_admin
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ def initialize_app():
     """
 
     # creating table in the db
-    with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
+    with DatabaseConnection() as connection:
         cursor = connection.cursor()
         # query to create table only once
         cursor.execute(CreateTable.CREATE_CREDENTIALS_TABLE)
@@ -36,6 +36,7 @@ def initialize_app():
         cursor.execute(CreateTable.CREATE_TEACHER_TABLE)
         cursor.execute(CreateTable.CREATE_STAFF_MEMBER_TABLE)
         cursor.execute(CreateTable.CREATE_SALARY_TABLE)
+        cursor.execute(CreateTable.CREATE_TOKEN_TABLE)
         logger.debug("Table Created only once")
 
     # checking if super admin exists or not

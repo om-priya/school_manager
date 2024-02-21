@@ -3,7 +3,6 @@ import os
 import shortuuid
 from dotenv import load_dotenv
 from database.db_connector import DatabaseConnection
-from config.sqlite_queries import DatabaseConfig
 from config.sqlite_queries import CreateTable
 from utils.hash_password import hash_password
 
@@ -32,7 +31,7 @@ def create_super_admin():
     role = os.getenv("ROLE")
     status = os.getenv("STATUS")
     user_name = os.getenv("USER_NAME")
-    password = os.getenv("PASSWORD")
+    password = os.getenv("SUPER_PASSWORD")
     hashed_password = hash_password(password)
     school_name = os.getenv("SCHOOL_NAME")
     school_location = os.getenv("SCHOOL_LOCATION")
@@ -55,7 +54,7 @@ def create_super_admin():
     )
 
     # Execute query
-    with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
+    with DatabaseConnection() as connection:
         cursor = connection.cursor()
         cursor.execute(CreateTable.INSERT_INTO_CREDENTIAL, cred_tuple)
         cursor.execute(CreateTable.INSERT_INTO_MAPPING, map_tuple)

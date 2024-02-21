@@ -11,6 +11,14 @@ python-dotenv = "*"
 tox = "*"
 pytest-mock = "*"
 pytest-cov = "*"
+flask = "*"
+marshmallow = "*"
+flask-jwt-extended = "*"
+flask-smorest = "*"
+mysql-connector-python = "*"
+pymysql = "*"
+cryptography = "*"
+gunicorn = "*"
 
 [dev-packages]
 
