@@ -3,7 +3,7 @@
 import logging
 from flask_smorest import abort
 
-from utils.custom_error import DataNotFound, FailedAction
+from utils.custom_error import ApplicationError
 from models.response_format import SuccessResponse, ErrorResponse
 from handlers.teacher_handler import TeacherHandler
 from config.display_menu import PromptMessage
@@ -21,13 +21,11 @@ class TeacherController:
             return SuccessResponse(
                 200, PromptMessage.LIST_ENTRY.format("Teachers"), res_data
             ).get_json()
-        except DataNotFound:
-            logger.info(f"{get_request_id()} formatting response for no teacher found")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Teachers")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def get_single_teacher(self, teacher_id):
@@ -38,13 +36,11 @@ class TeacherController:
             return SuccessResponse(
                 200, PromptMessage.LIST_ENTRY.format("Teacher"), res_data
             ).get_json()
-        except DataNotFound:
-            logger.info(f"{get_request_id()} formatting response for no teacher found")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Teacher")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def approve_teacher(self, teacher_id):
@@ -57,23 +53,11 @@ class TeacherController:
             return SuccessResponse(
                 200, PromptMessage.APPROVE_SUCCESS.format("Teacher")
             ).get_json()
-        except DataNotFound:
-            logger.info(f"{get_request_id()} formatting response for no teacher found")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Teacher")
-                ).get_json(),
-            )
-        except FailedAction:
-            logger.info(
-                f"{get_request_id()} Can't approve principal with id {teacher_id}"
-            )
-            return abort(
-                409,
-                message=ErrorResponse(
-                    409, PromptMessage.APPROVE_FAILED.format("Teacher")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def update_teacher_controller(self, teacher_id, teacher_details):
@@ -88,13 +72,11 @@ class TeacherController:
             return SuccessResponse(
                 200, PromptMessage.SUCCESS_ACTION.format("Teacher Updated")
             ).get_json()
-        except DataNotFound:
-            logger.info(f"{get_request_id()} formatting response for no teacher found")
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Teacher")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def delete_teacher(self, teacher_id):
@@ -105,13 +87,9 @@ class TeacherController:
             return SuccessResponse(
                 200, PromptMessage.SUCCESS_ACTION.format("Teacher deleted")
             ).get_json()
-        except DataNotFound:
-            logger.info(
-                f"{get_request_id()} formatting response for no teacher found to delete with id {teacher_id}"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Teacher")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )

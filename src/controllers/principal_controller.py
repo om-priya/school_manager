@@ -1,7 +1,7 @@
 """ This module is responsible for handling all the controlers for principal """
 
 from flask_smorest import abort
-from utils.custom_error import DataNotFound, AlreadyPresent
+from utils.custom_error import DataNotFound, AlreadyPresent, ApplicationError
 from models.response_format import SuccessResponse, ErrorResponse
 from handlers.principal_handler import PrincipalHandler
 from helper.helper_function import get_request_id
@@ -22,15 +22,11 @@ class PrincipalController:
             return SuccessResponse(
                 200, PromptMessage.LIST_ENTRY.format("Principals"), res_data
             ).get_json()
-        except DataNotFound:
-            logger.info(
-                f"{get_request_id()} formatting response for no principal found"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Principal")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def get_single_principal(self, principal_id):
@@ -43,15 +39,11 @@ class PrincipalController:
             return SuccessResponse(
                 200, PromptMessage.LIST_ENTRY.format("Principal"), res_data
             ).get_json()
-        except DataNotFound:
-            logger.info(
-                f"{get_request_id()} formatting response for no principal found"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Principal")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def approve_principal(self, principal_id):
@@ -64,23 +56,11 @@ class PrincipalController:
             return SuccessResponse(
                 200, PromptMessage.APPROVE_SUCCESS.format("Principal")
             ).get_json()
-        except DataNotFound:
-            logger.info(
-                f"{get_request_id()} formatting response for no principal found"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Principal")
-                ).get_json(),
-            )
-        except AlreadyPresent:
-            logger.info(f"{get_request_id()} Tried to add more than one principal")
-            return abort(
-                409,
-                message=ErrorResponse(
-                    409, PromptMessage.ALREADY_EXITS.format("Principal")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def update_principal_controller(self, principal_id, principal_updated_details):
@@ -93,15 +73,11 @@ class PrincipalController:
             return SuccessResponse(
                 200, PromptMessage.SUCCESS_ACTION.format("Principal Updated")
             ).get_json()
-        except DataNotFound:
-            logger.info(
-                f"{get_request_id()} formatting response for no principal found to delete with id {principal_id}"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Principal")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )
 
     def delete_principal(self, principal_id):
@@ -114,13 +90,9 @@ class PrincipalController:
             return SuccessResponse(
                 200, PromptMessage.SUCCESS_ACTION.format("Principal Deleted")
             ).get_json()
-        except DataNotFound:
-            logger.info(
-                f"{get_request_id()} formatting response for no principal found to delete with id {principal_id}"
-            )
+        except ApplicationError as error:
+            logger.error(f"{get_request_id()} {error.err_message}")
             return abort(
-                404,
-                message=ErrorResponse(
-                    404, PromptMessage.NOTHING_FOUND.format("Principal")
-                ).get_json(),
+                error.code,
+                message=ErrorResponse(error.code, error.err_message).get_json(),
             )

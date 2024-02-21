@@ -5,9 +5,10 @@ import logging
 # from utils import validate
 from config.sqlite_queries import PrincipalQueries
 from config.display_menu import PromptMessage
+from config.http_status_code import HttpStatusCode
 from helper.helper_function import check_empty_data
 from database.database_access import DatabaseAccess
-from utils.custom_error import DataNotFound, AlreadyPresent
+from utils.custom_error import ApplicationError
 from helper.helper_function import get_request_id
 
 logger = logging.getLogger(__name__)
@@ -51,7 +52,10 @@ class PrincipalHandler:
                 pending_id, PromptMessage.NOTHING_FOUND.format("request for approval")
             ):
                 logger.error(f"{get_request_id()} no pending request to approve")
-                raise DataNotFound
+                raise ApplicationError(
+                    HttpStatusCode.NOT_FOUND,
+                    PromptMessage.NOTHING_FOUND.format("Principal"),
+                )
 
             # checking whether input id is in pending or not
             for p_id in pending_id:
@@ -59,7 +63,10 @@ class PrincipalHandler:
                     break
             else:
                 logger.info(f"{get_request_id()} Invalid Id's Given")
-                raise DataNotFound
+                raise ApplicationError(
+                    HttpStatusCode.NOT_FOUND,
+                    PromptMessage.NOTHING_FOUND.format("Principal"),
+                )
             # saving to db after checking edge cases
 
             DatabaseAccess.execute_non_returning_query(
@@ -67,7 +74,9 @@ class PrincipalHandler:
             )
         else:
             logger.warning(f"{get_request_id()} Can't add more than one principal")
-            raise AlreadyPresent
+            raise ApplicationError(
+                HttpStatusCode.CONFLICT, PromptMessage.ALREADY_EXITS.format("Principal")
+            )
 
     def get_all_principal(self):
         """Get All principals"""
@@ -78,7 +87,10 @@ class PrincipalHandler:
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
             logger.error(f"{get_request_id()} No principal Found")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Principal"),
+            )
 
         return res_data
 
@@ -91,7 +103,10 @@ class PrincipalHandler:
 
         if check_empty_data(res_data, PromptMessage.NOTHING_FOUND.format("Principal")):
             logger.error(f"{get_request_id()} no principal by Id {principal_id} found")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Principal"),
+            )
 
         return res_data
 
@@ -103,12 +118,18 @@ class PrincipalHandler:
             all_principal_id, PromptMessage.NOTHING_FOUND.format("Principal")
         ):
             logger.error(f"{get_request_id()} no principal by Id {principal_id} found")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Principal"),
+            )
 
         # Checking with assumption only one principal is present
         if principal_id != all_principal_id[0]["user_id"]:
             logger.error(f"{get_request_id()} no principal by Id {principal_id} found")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Principal"),
+            )
 
         name = principal_updated_details["name"]
         gender = principal_updated_details["gender"]
@@ -128,7 +149,10 @@ class PrincipalHandler:
 
         if principal_id != all_principal_id[0]["user_id"]:
             logger.error(f"{get_request_id()} No Such Principal With id {principal_id}")
-            raise DataNotFound
+            raise ApplicationError(
+                HttpStatusCode.NOT_FOUND,
+                PromptMessage.NOTHING_FOUND.format("Principal"),
+            )
 
         logger.info(
             f"{get_request_id()} Initiating deleting operations for {principal_id}"
