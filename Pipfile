@@ -19,6 +19,7 @@ mysql-connector-python = "*"
 pymysql = "*"
 cryptography = "*"
 gunicorn = "*"
+flask-cors = "*"
 
 [dev-packages]
 

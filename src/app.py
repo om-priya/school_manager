@@ -15,6 +15,7 @@ import pymysql
 
 from flask import Flask, request
 from flask_smorest import Api
+from flask_cors import CORS
 from shortuuid import ShortUUID
 
 from database.database_access import DatabaseAccess
@@ -52,6 +53,7 @@ def create_app():
     # creating flask app instance with default configuration
     initialize_app()
     app = Flask(__name__)
+    CORS(app)
 
     app = set_app_config(app)
 
@@ -110,10 +112,10 @@ def create_app():
             tables_names = DatabaseAccess.execute_returning_query("SHOW tables")
             for table_name in tables_names:
                 DatabaseAccess.execute_non_returning_query(
-                    f"DELETE FROM {table_name['Tables_in_testDb']}"
+                    f"DELETE FROM {table_name['Tables_in_mydb']}"
                 )
             initialize_app()
-            return {"message": "testDb Reset"}
+            return {"message": "mydb Reset"}
 
         return {"message": "Hecker hai"}
 

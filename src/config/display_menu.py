@@ -92,7 +92,7 @@ class PromptMessage:
     LOGGED_OUT = """Logged Out Successfully"""
     DATE_INPUT = """Enter date in format dd-mm-yyyy: """
     NO_SCHOOL_FOUND = """Wrong School Or School is not in the system"""
-    SIGNED_UP_SUCCESS = """Signed Up Successfully Wait for Super Admin to approve it."""
+    SIGNED_UP_SUCCESS = """Signed Up Successfully Wait for Approval."""
     WRONG_CREDENTIALS = """Wrong Credentials"""
     PENDING_USER_LOG_IN = """Ask Super Admin to approve first"""
     APPROVE_PROMPT = "Enter the {} you want to approve: "

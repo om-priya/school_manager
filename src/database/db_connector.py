@@ -18,11 +18,11 @@ class DatabaseConnection:
 
     def __enter__(self):
         self.connection = pymysql.connect(
-            port=int(os.getenv("DB_PORT")),
+            # port=int(os.getenv("DB_PORT")),
             cursorclass=pymysql.cursors.DictCursor,
-            host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("HOST"),
+            user=os.getenv("USER"),
+            password=os.getenv("PASSWORD"),
         )
         cursor = self.connection.cursor()
         cursor.execute(DatabaseConfig.CREATE_DB)

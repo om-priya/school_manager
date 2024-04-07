@@ -4,8 +4,8 @@
 class DatabaseConfig:
     """This Class contains config for database"""
 
-    CREATE_DB = "CREATE DATABASE IF NOT EXISTS testDb"
-    USE_DB = "USE testDb"
+    CREATE_DB = "CREATE DATABASE IF NOT EXISTS mydb"
+    USE_DB = "USE mydb"
 
 
 class TeacherQueries:
